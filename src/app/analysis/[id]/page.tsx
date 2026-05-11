@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { mockAnalysis, type Analysis } from "@/lib/mockAnalysis";
+import { getCase } from "@/lib/cases";
 import { ShieldMark } from "@/components/Logo";
 
 type LoadState =
@@ -21,14 +22,10 @@ export default function AnalysisPage() {
       setState({ status: "ready", analysis: mockAnalysis, demo: true });
       return;
     }
-    try {
-      const raw = sessionStorage.getItem("claimshield:analysis");
-      if (raw) {
-        setState({ status: "ready", analysis: JSON.parse(raw) as Analysis, demo: false });
-        return;
-      }
-    } catch {
-      /* ignore */
+    const c = getCase(id ?? "");
+    if (c) {
+      setState({ status: "ready", analysis: c, demo: false });
+      return;
     }
     setState({ status: "missing" });
   }, [id]);
@@ -47,11 +44,14 @@ export default function AnalysisPage() {
         <ShieldMark className="mx-auto h-10 w-10" />
         <h1 className="mt-4 text-2xl font-semibold tracking-tight">No analysis found</h1>
         <p className="mt-2 text-ink-muted">
-          This result has expired or was opened in a new browser. Run a fresh analysis to see your case.
+          We couldn&apos;t find this case in your browser storage — it may have been opened on another device or cleared. Try your saved cases, or run a fresh analysis.
         </p>
-        <div className="mt-6 flex justify-center gap-2">
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link href="/start" className="rounded-full bg-shield-600 text-white px-5 py-2.5 text-sm font-medium hover:bg-shield-700">
             Start an analysis
+          </Link>
+          <Link href="/cases" className="rounded-full bg-white border border-black/10 px-5 py-2.5 text-sm font-medium hover:border-black/30">
+            My cases
           </Link>
           <Link href="/analysis/demo" className="rounded-full bg-white border border-black/10 px-5 py-2.5 text-sm font-medium hover:border-black/30">
             View a sample
@@ -108,6 +108,12 @@ function ResultHeader({ a }: { a: Analysis }) {
         </p>
       </div>
       <div className="flex gap-2">
+        <Link
+          href="/cases"
+          className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm hover:border-black/30"
+        >
+          My cases
+        </Link>
         <Link
           href="/start"
           className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm hover:border-black/30"

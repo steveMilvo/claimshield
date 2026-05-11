@@ -12,6 +12,7 @@ export function SiteFooter() {
         <div className="flex gap-6">
           <Link href="/#how">How it works</Link>
           <Link href="/#pricing">Pricing</Link>
+          <Link href="/cases">My cases</Link>
           <Link href="/legal">Legal</Link>
           <a href="mailto:info@milvotech.com">Contact</a>
         </div>

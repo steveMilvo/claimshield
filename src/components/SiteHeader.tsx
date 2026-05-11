@@ -12,6 +12,7 @@ export function SiteHeader() {
           <Link href="/#how" className="hover:text-ink">How it works</Link>
           <Link href="/#pricing" className="hover:text-ink">Pricing</Link>
           <Link href="/#faq" className="hover:text-ink">FAQ</Link>
+          <Link href="/cases" className="hover:text-ink">My cases</Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link

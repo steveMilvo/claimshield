@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
+import { saveCase } from "@/lib/cases";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -51,8 +52,8 @@ export default function StartPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `Request failed (${res.status}).`);
 
-      sessionStorage.setItem("claimshield:analysis", JSON.stringify(data.analysis));
-      router.push("/analysis/result");
+      const id = saveCase(data.analysis);
+      router.push(`/analysis/${id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
       setAnalysing(false);
