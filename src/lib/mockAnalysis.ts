@@ -2,7 +2,14 @@ export type AnalysisFinding = {
   kind: "exclusion" | "regulation" | "valuation" | "procedure";
   title: string;
   detail: string;
-  citation?: string;
+  citation?: string | null;
+};
+
+export type Comparable = {
+  reference: string;
+  insurer: string;
+  settlement: string;
+  note: string;
 };
 
 export type Analysis = {
@@ -16,6 +23,7 @@ export type Analysis = {
   score: number;
   scoreLabel: "Strong" | "Moderate" | "Weak";
   findings: AnalysisFinding[];
+  comparables: Comparable[];
   generatedDocs: { name: string; kind: "appeal" | "demand" | "complaint" }[];
   nextSteps: { title: string; detail: string; due: string }[];
   appealLetter: string;
@@ -60,6 +68,11 @@ export const mockAnalysis: Analysis = {
         "Insurer must respond within 30 calendar days. AFCA complaint may be lodged after IDR is exhausted or upon expiry.",
       citation: "ASIC RG 271",
     },
+  ],
+  comparables: [
+    { reference: "AU-MTR-08172", insurer: "Auric Mutual", settlement: "$7,150", note: "Same exclusion contested" },
+    { reference: "AU-MTR-04429", insurer: "Cobalt General", settlement: "$6,980", note: "GICOP §8.7 cited" },
+    { reference: "AU-MTR-11203", insurer: "Auric Mutual", settlement: "$7,640", note: "Endorsement E-12 invoked" },
   ],
   generatedDocs: [
     { name: "Appeal Letter — Auric Mutual (IDR)", kind: "appeal" },

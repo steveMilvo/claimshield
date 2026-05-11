@@ -10,20 +10,21 @@ This is the consumer web UI for ClaimShield (MilvoTech Pty Ltd). It scaffolds th
 - **/analysis/[id]** — results: recoverable upside, findings, comparables, next steps, ClaimShield Score, generated appeal letter.
 - **/legal** — disclaimers and data-handling notes.
 
-Built with Next.js (App Router), TypeScript, Tailwind CSS. Analysis is currently powered by mock data (`src/lib/mockAnalysis.ts`) so the flow is clickable end-to-end without a backend.
+Built with Next.js (App Router), TypeScript, Tailwind CSS. The `/start` flow uploads the policy + insurer letter to `POST /api/analyze`, which calls the Claude API (`claude-opus-4-7`, structured outputs) to parse the documents and produce the analysis. `/analysis/demo` shows a static sample (`src/lib/mockAnalysis.ts`).
 
 ## Getting started
 
 ```bash
 npm install
+cp .env.example .env.local   # then set ANTHROPIC_API_KEY
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000. Without `ANTHROPIC_API_KEY`, `/start` will return an error on submit — `/analysis/demo` still works offline.
 
 ## What's next
 
-- Wire the upload step to a real parsing backend (LegisPro / SynthexIQ orchestration).
-- Replace `mockAnalysis` with live results from the analysis API.
+- Persist analyses server-side (currently held in `sessionStorage` between `/start` and `/analysis`).
+- Generate real downloadable documents (DOCX) from the appeal/demand/complaint text.
 - AFCA complaint submission integration.
-- Auth + saved cases.
+- Auth + saved cases; Stripe for the pricing tiers.

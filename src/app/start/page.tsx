@@ -25,6 +25,7 @@ export default function StartPage() {
   const [offerAmount, setOfferAmount] = useState("");
   const [estimateAmount, setEstimateAmount] = useState("");
   const [analysing, setAnalysing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function next() {
     setStep((s) => (Math.min(3, s + 1) as Step));
@@ -32,9 +33,30 @@ export default function StartPage() {
   function back() {
     setStep((s) => (Math.max(0, s - 1) as Step));
   }
-  function runAnalysis() {
+
+  async function runAnalysis() {
     setAnalysing(true);
-    setTimeout(() => router.push("/analysis/demo"), 1800);
+    setError(null);
+    try {
+      const fd = new FormData();
+      if (policyFile) fd.append("policy", policyFile);
+      if (letterFile) fd.append("letter", letterFile);
+      fd.append("category", category);
+      fd.append("insurer", insurer);
+      fd.append("description", description);
+      fd.append("offerAmount", offerAmount);
+      fd.append("estimateAmount", estimateAmount);
+
+      const res = await fetch("/api/analyze", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || `Request failed (${res.status}).`);
+
+      sessionStorage.setItem("claimshield:analysis", JSON.stringify(data.analysis));
+      router.push("/analysis/result");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
+      setAnalysing(false);
+    }
   }
 
   return (
@@ -174,6 +196,16 @@ export default function StartPage() {
                 </>
               )}
             </button>
+            {error && (
+              <div className="mt-3 rounded-lg bg-danger/10 border border-danger/20 px-4 py-3 text-sm text-danger">
+                {error}
+              </div>
+            )}
+            {analysing && (
+              <p className="mt-3 text-xs text-ink-muted text-center">
+                Reading your documents and cross-referencing the regulations — this can take a minute.
+              </p>
+            )}
             <p className="mt-3 text-xs text-ink-muted text-center">
               Free preview. You&apos;ll see the recoverable upside before any
               payment.
