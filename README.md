@@ -7,7 +7,7 @@ This is the consumer web UI for ClaimShield (MilvoTech Pty Ltd). It scaffolds th
 
 - **Landing page** — brand intro, how it works, pricing, FAQ.
 - **/start** — guided claim flow: upload policy → describe loss → upload insurer letter → run analysis.
-- **/analysis/[id]** — results: recoverable upside, findings, comparables, next steps, ClaimShield Score, and the generated appeal letter, settlement demand, and AFCA complaint — each downloadable as a `.docx` via `POST /api/document`.
+- **/analysis/[id]** — results: recoverable upside, findings, comparables, next steps, ClaimShield Score, and the generated appeal letter, settlement demand, and AFCA complaint — each downloadable as a `.docx` via `POST /api/document` (which uses the LegisPro engine when `LEGISPRO_BASE_URL` / `LEGISPRO_API_KEY` are set, and a built-in generator otherwise).
 - **/cases** — saved-case dashboard. Each completed analysis is stored locally (browser `localStorage`) so you can reopen it later; cards show insurer, ClaimShield Score, and recoverable upside, with delete.
 - **/legal** — disclaimers and data-handling notes.
 

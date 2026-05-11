@@ -289,11 +289,11 @@ function DocumentsCard({ a }: { a: Analysis }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  async function download(name: string, body: string) {
+  async function download(name: string, body: string, kind: "appeal" | "demand" | "complaint") {
     setBusy(name);
     setError(null);
     try {
-      await downloadDocx(name, body);
+      await downloadDocx(name, body, kind);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed.");
     } finally {
@@ -314,7 +314,7 @@ function DocumentsCard({ a }: { a: Analysis }) {
               </div>
             </div>
             <button
-              onClick={() => download(d.name, bodyForKind(a, d.kind))}
+              onClick={() => download(d.name, bodyForKind(a, d.kind), d.kind)}
               disabled={busy === d.name}
               className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-full bg-shield-600 text-white hover:bg-shield-700 disabled:opacity-60"
             >
@@ -347,7 +347,7 @@ function AppealLetterCard({ letter }: { letter: string }) {
     setBusy(true);
     setError(null);
     try {
-      await downloadDocx("ClaimShield Appeal Letter", letter);
+      await downloadDocx("ClaimShield Appeal Letter", letter, "appeal");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed.");
     } finally {
