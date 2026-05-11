@@ -7,7 +7,7 @@ This is the consumer web UI for ClaimShield (MilvoTech Pty Ltd). It scaffolds th
 
 - **Landing page** — brand intro, how it works, pricing, FAQ.
 - **/start** — guided claim flow: upload policy → describe loss → upload insurer letter → run analysis.
-- **/analysis/[id]** — results: recoverable upside, findings, comparables, next steps, ClaimShield Score, generated appeal letter.
+- **/analysis/[id]** — results: recoverable upside, findings, comparables, next steps, ClaimShield Score, and the generated appeal letter, settlement demand, and AFCA complaint — each downloadable as a `.docx` via `POST /api/document`.
 - **/cases** — saved-case dashboard. Each completed analysis is stored locally (browser `localStorage`) so you can reopen it later; cards show insurer, ClaimShield Score, and recoverable upside, with delete.
 - **/legal** — disclaimers and data-handling notes.
 
@@ -26,6 +26,5 @@ Open http://localhost:3000. Without `ANTHROPIC_API_KEY`, `/start` will return an
 ## What's next
 
 - Move the case store server-side behind auth (currently `localStorage`, per-browser).
-- Generate real downloadable documents (DOCX) from the appeal/demand/complaint text.
 - AFCA complaint submission integration.
 - Stripe for the pricing tiers.

@@ -27,6 +27,8 @@ export type Analysis = {
   generatedDocs: { name: string; kind: "appeal" | "demand" | "complaint" }[];
   nextSteps: { title: string; detail: string; due: string }[];
   appealLetter: string;
+  demandLetter: string;
+  complaintText: string;
 };
 
 export const mockAnalysis: Analysis = {
@@ -118,4 +120,47 @@ In the absence of a substantive response within the timeframes required by ASIC 
 Yours faithfully,
 [Your Name]
 [Date]`,
+  demandLetter: `WITHOUT PREJUDICE — SETTLEMENT DEMAND
+
+To: Auric Mutual Insurance — Claims Resolution
+Re: Claim AM-9842-0411 — [Your Name]
+Date: [Date]
+
+I refer to your settlement offer of $2,100 dated 04/05/2026. That offer is rejected.
+
+On the evidence — three independent repair quotes averaging $7,400, the assessor's report dated 27/04/2026, and Endorsement E-12 which reinstates cover for the documented loss — the fair settlement value of this claim is no less than $7,400.
+
+I demand that Auric Mutual pay $7,400 in full and final settlement of claim AM-9842-0411 within 10 business days of the date of this letter.
+
+If payment is not received within that period, I will (a) lodge a complaint with the Australian Financial Complaints Authority, and (b) reserve all rights to recover interest and any costs of pursuing the claim. This letter may be tendered as evidence of your failure to settle at fair value as required by the General Insurance Code of Practice §8.7.
+
+Yours faithfully,
+[Your Name]
+[Contact details]`,
+  complaintText: `AUSTRALIAN FINANCIAL COMPLAINTS AUTHORITY — COMPLAINT
+
+Complainant: [Your Name], [Address], [Phone], [Email]
+Financial firm: Auric Mutual Insurance
+Policy / claim number: AM-9842-0411
+Product: Comprehensive Motor insurance
+
+What happened:
+On [date of loss] my vehicle sustained rear-quarter collision damage caused by a third party. I lodged a claim with Auric Mutual. On 04/05/2026 the insurer offered $2,100, relying on exclusion 2.4(b) to deny full cover for consequential water ingress.
+
+Why I am complaining:
+1. Exclusion 2.4(b) applies only to deliberate acts of the insured. This loss arose from third-party negligence and the exclusion is not engaged.
+2. Endorsement E-12, incorporated at policy issuance, expressly reinstates cover for accidental water ingress consequential to a covered impact event.
+3. The offer of $2,100 represents 28% of the documented repair cost. Three independent quotes place the fair repair cost at $7,400 ± $400. This breaches the fair-settlement obligation under the General Insurance Code of Practice §8.7.
+
+What I want:
+Payment of the claim at fair value — no less than $7,400.
+
+Steps already taken:
+I raised the matter through Auric Mutual's internal dispute resolution process on [date]. [The insurer has not substantively responded within 30 days / The insurer's IDR response dated [date] maintained the original position.]
+
+Documents attached:
+- Insurer denial / offer letter dated 04/05/2026
+- Three independent repair quotes
+- Assessor's report dated 27/04/2026
+- Policy schedule and Endorsement E-12`,
 };

@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { mockAnalysis, type Analysis } from "@/lib/mockAnalysis";
 import { getCase } from "@/lib/cases";
+import { downloadDocx } from "@/lib/downloadDocx";
 import { ShieldMark } from "@/components/Logo";
 
 type LoadState =
@@ -84,7 +85,7 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
 
         <aside className="lg:col-span-5 space-y-6">
           <ScoreCard score={a.score} label={a.scoreLabel} />
-          <DocumentsCard docs={a.generatedDocs} />
+          <DocumentsCard a={a} />
           <AppealLetterCard letter={a.appealLetter} />
           <DisclaimerCard />
         </aside>
@@ -277,32 +278,83 @@ function ScoreCard({ score, label }: { score: number; label: string }) {
   );
 }
 
-function DocumentsCard({ docs }: { docs: Analysis["generatedDocs"] }) {
+function bodyForKind(a: Analysis, kind: string): string {
+  if (kind === "demand") return a.demandLetter;
+  if (kind === "complaint") return a.complaintText;
+  return a.appealLetter;
+}
+
+function DocumentsCard({ a }: { a: Analysis }) {
   const icons: Record<string, string> = { appeal: "📩", demand: "💰", complaint: "🏛️" };
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function download(name: string, body: string) {
+    setBusy(name);
+    setError(null);
+    try {
+      await downloadDocx(name, body);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Download failed.");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <Card eyebrow="Ready to send" title="Generated documents">
       <ul className="space-y-2">
-        {docs.map((d) => (
-          <li key={d.name} className="flex items-center justify-between rounded-xl border border-black/5 bg-canvas/60 px-4 py-3">
-            <div className="flex items-center gap-3">
-              <span className="text-lg" aria-hidden>{icons[d.kind] ?? "📄"}</span>
-              <div>
-                <div className="font-medium text-sm">{d.name}</div>
+        {a.generatedDocs.map((d) => (
+          <li key={d.name} className="flex items-center justify-between gap-3 rounded-xl border border-black/5 bg-canvas/60 px-4 py-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="text-lg shrink-0" aria-hidden>{icons[d.kind] ?? "📄"}</span>
+              <div className="min-w-0">
+                <div className="font-medium text-sm truncate">{d.name}</div>
                 <div className="text-xs text-ink-muted capitalize">{d.kind}</div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <button className="text-xs font-medium px-3 py-1.5 rounded-full bg-white border border-black/10 hover:border-black/30">Preview</button>
-              <button className="text-xs font-medium px-3 py-1.5 rounded-full bg-shield-600 text-white hover:bg-shield-700">Download</button>
-            </div>
+            <button
+              onClick={() => download(d.name, bodyForKind(a, d.kind))}
+              disabled={busy === d.name}
+              className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-full bg-shield-600 text-white hover:bg-shield-700 disabled:opacity-60"
+            >
+              {busy === d.name ? "Preparing…" : "Download .docx"}
+            </button>
           </li>
         ))}
       </ul>
+      {error && <div className="mt-3 text-xs text-danger">{error}</div>}
     </Card>
   );
 }
 
 function AppealLetterCard({ letter }: { letter: string }) {
+  const [copied, setCopied] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function copy() {
+    try {
+      await navigator.clipboard?.writeText(letter);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  async function download() {
+    setBusy(true);
+    setError(null);
+    try {
+      await downloadDocx("ClaimShield Appeal Letter", letter);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Download failed.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <Card eyebrow="Preview" title="Your appeal letter">
       <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-sans text-ink-soft bg-canvas/60 rounded-xl border border-black/5 p-4 max-h-80 overflow-auto">
@@ -312,12 +364,19 @@ function AppealLetterCard({ letter }: { letter: string }) {
         <button className="rounded-full bg-shield-600 text-white text-sm font-medium px-4 py-2 hover:bg-shield-700">Send via ClaimShield</button>
         <button
           className="rounded-full bg-white border border-black/10 text-sm font-medium px-4 py-2 hover:border-black/30"
-          onClick={() => navigator.clipboard?.writeText(letter)}
+          onClick={copy}
         >
-          Copy text
+          {copied ? "Copied ✓" : "Copy text"}
         </button>
-        <button className="rounded-full bg-white border border-black/10 text-sm font-medium px-4 py-2 hover:border-black/30">Download .docx</button>
+        <button
+          className="rounded-full bg-white border border-black/10 text-sm font-medium px-4 py-2 hover:border-black/30 disabled:opacity-60"
+          onClick={download}
+          disabled={busy}
+        >
+          {busy ? "Preparing…" : "Download .docx"}
+        </button>
       </div>
+      {error && <div className="mt-2 text-xs text-danger">{error}</div>}
     </Card>
   );
 }

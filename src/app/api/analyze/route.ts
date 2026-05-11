@@ -42,6 +42,8 @@ const AnalysisSchema = z.object({
     z.object({ title: z.string(), detail: z.string(), due: z.string() }),
   ),
   appealLetter: z.string(),
+  demandLetter: z.string(),
+  complaintText: z.string(),
 });
 
 const SYSTEM_PROMPT = `You are ClaimShield, an AI insurance-claim analyst working on behalf of policyholders in Australia. You read insurance policies and insurer denial / settlement letters, identify where the insurer has misapplied exclusions or breached its regulatory obligations, value the loss against comparable claims, and draft the documents the policyholder needs to fight back.
@@ -61,6 +63,10 @@ When you receive a claim, produce a single structured analysis with these fields
 - generatedDocs: the documents you have prepared — typically an appeal letter (kind "appeal"), a settlement demand (kind "demand"), and an AFCA complaint (kind "complaint"). Give each a descriptive name.
 - nextSteps: 2-4 concrete next moves, each with a title, a detail line, and a due window (e.g. "Within 2 days", "Day 30").
 - appealLetter: a complete, ready-to-send appeal / internal-dispute-resolution letter addressed to the insurer. Cite the specific policy provisions and regulations from your findings. Use [Your Name] / [Date] placeholders. Professional but firm. ~250-400 words.
+- demandLetter: a "without prejudice" settlement demand letter — rejects the current offer, states the fair settlement figure, gives a deadline (e.g. 10 business days), and flags escalation to AFCA. Use [Your Name] / [Date] placeholders. ~150-250 words.
+- complaintText: a pre-formatted complaint to the relevant external dispute body (AFCA for Australia; name the FOS / state Department of Insurance equivalent only if the documents indicate a different jurisdiction). Structure it with clear sections — complainant details, what happened, why I am complaining (numbered), what I want, steps already taken, documents attached — using bracketed placeholders for anything not in the documents.
+
+The three documents should reference the same facts, figures and provisions you used in findings. Keep them consistent with each other.
 
 If the documents are too thin to analyse confidently, still produce the structure: make conservative estimates, set a lower score, and say so plainly in lossDescription and findings.`;
 
