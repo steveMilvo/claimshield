@@ -1,47 +1,57 @@
 import Link from "next/link";
-import { ShieldMark } from "@/components/Logo";
+import { BlueprintMark } from "@/components/Logo";
 
 export default function HomePage() {
   return (
     <>
+      <DisclaimerBanner />
       <Hero />
       <TrustBar />
+      <Problem />
       <HowItWorks />
-      <MagicMoment />
-      <Categories />
-      <Pricing />
+      <ReportSections />
+      <WhoIsItFor />
       <FAQ />
       <CTA />
     </>
   );
 }
 
+function DisclaimerBanner() {
+  return (
+    <div className="bg-gold-50 border-b border-gold-200 text-center px-5 py-2 text-xs text-gold-700">
+      <strong>General information only.</strong> Reports are designed to be reviewed by a registered tax agent — not acted on alone.{" "}
+      <Link href="/legal" className="underline hover:text-gold-900">Read full disclaimer.</Link>
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="absolute inset-0 dotted-grid opacity-50" aria-hidden />
+      <div className="absolute inset-0 dotted-grid opacity-40" aria-hidden />
       <div className="relative mx-auto max-w-6xl px-5 pt-16 pb-20 md:pt-24 md:pb-28 grid md:grid-cols-12 gap-10 items-center">
         <div className="md:col-span-7">
-          <span className="inline-flex items-center gap-2 rounded-full bg-shield-50 text-shield-700 text-xs font-medium px-3 py-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-shield-500" />
-            New · AI-powered insurance claim negotiator
+          <span className="inline-flex items-center gap-2 rounded-full bg-blueprint-50 text-blueprint-700 text-xs font-medium px-3 py-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-blueprint-500" />
+            Updated for the 2026–27 Federal Budget · Australian structures only
           </span>
           <h1 className="mt-5 text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
-            Your insurer just said no.
+            Structure your business right —
             <br />
-            <span className="text-shield-600">We say try again.</span>
+            <span className="text-blueprint-600">before it costs you.</span>
           </h1>
           <p className="mt-5 text-lg text-ink-muted max-w-xl">
-            ClaimShield reads your policy, picks apart the denial, and writes
-            you an expert-level appeal in 60 seconds — so you keep the dollars
-            you&apos;re owed.
+            Founder Tax Blueprint analyses every Australian business structure
+            against your specific circumstances and exit plan — so you don&rsquo;t
+            lock in the wrong decisions at day zero.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href="/start"
-              className="inline-flex items-center rounded-full bg-shield-600 text-white font-medium px-5 py-3 hover:bg-shield-700 transition"
+              className="inline-flex items-center rounded-full bg-blueprint-600 text-white font-medium px-5 py-3 hover:bg-blueprint-700 transition"
             >
-              Fight my claim — free analysis
+              Start free Blueprint →
             </Link>
             <Link
               href="/#how"
@@ -50,10 +60,9 @@ function Hero() {
               See how it works
             </Link>
           </div>
-          <div className="mt-7 flex items-center gap-4 text-sm text-ink-muted">
-            <Stars />
-            <span>Built for AU policies. US &amp; UK coming soon.</span>
-          </div>
+          <p className="mt-5 text-xs text-ink-muted">
+            Takes ~5 minutes · General information only · Designed to be reviewed with your accountant
+          </p>
         </div>
 
         <div className="md:col-span-5">
@@ -64,79 +73,61 @@ function Hero() {
   );
 }
 
-function Stars() {
-  return (
-    <div className="flex items-center gap-1 text-shield-600">
-      {[0, 1, 2, 3, 4].map((i) => (
-        <svg key={i} viewBox="0 0 20 20" className="h-4 w-4 fill-current">
-          <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9 4.8 17.6l1-5.8L1.5 7.7l5.9-.9L10 1.5z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
 function HeroCard() {
   return (
-    <div className="relative rounded-2xl bg-white shadow-card border border-black/5 p-5">
+    <div className="relative rounded-2xl bg-white shadow-card border border-black/5 p-5 space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs font-medium text-ink-muted">
-          <ShieldMark className="h-5 w-5" />
-          ClaimShield Analysis
+          <BlueprintMark className="h-5 w-5" />
+          Blueprint Analysis
         </div>
-        <span className="text-xs rounded-full bg-accent/10 text-accent-dark px-2 py-0.5">
-          Strong case
+        <span className="text-xs rounded-full bg-blueprint-50 text-blueprint-700 px-2 py-0.5 font-medium">
+          HoldCo/OpCo recommended
         </span>
       </div>
 
-      <div className="mt-4 rounded-xl shield-gradient text-white p-4">
-        <div className="text-xs/5 opacity-80">Recoverable upside</div>
-        <div className="mt-1 text-3xl font-semibold tracking-tight">
-          + $5,300
-        </div>
+      <div className="rounded-xl blueprint-gradient text-white p-4">
+        <div className="text-xs/5 opacity-80">Estimated CGT saving at exit</div>
+        <div className="mt-1 text-3xl font-semibold tracking-tight">$280K+</div>
         <div className="text-xs opacity-80">
-          Insurer offered $2,100 on a $7,400 claim
+          $10M exit · wrong structure vs right structure
         </div>
       </div>
 
-      <ul className="mt-4 space-y-2 text-sm">
+      <ul className="space-y-2 text-sm">
         <li className="flex gap-2">
-          <Check />
+          <GoldCheck />
           <span>
-            Exclusion <span className="font-medium">2.4(b)</span> misapplied —
-            event is covered under endorsement E-12.
+            IP assigned to <span className="font-medium">HoldCo before OpCo has value</span> —
+            protected from trading liabilities.
           </span>
         </li>
         <li className="flex gap-2">
-          <Check />
+          <GoldCheck />
           <span>
-            Settlement breaches <span className="font-medium">GICOP §8.7</span>{" "}
-            — fair-value obligation.
+            <span className="font-medium">Division 152</span> small business concessions: eligible — up to $500K retirement exemption.
           </span>
         </li>
         <li className="flex gap-2">
-          <Check />
+          <GoldCheck />
           <span>
-            Appeal letter + AFCA complaint generated &amp; ready to send.
+            <span className="font-medium">Singapore holding structure</span> viable if raising international VC — modelled in report.
           </span>
         </li>
       </ul>
 
-      <div className="mt-5 grid grid-cols-2 gap-2">
-        <div className="rounded-lg bg-shield-50 text-shield-700 text-xs font-medium px-3 py-2 text-center">
-          ClaimShield Score 86
-        </div>
-        <div className="rounded-lg bg-canvas text-ink-soft text-xs font-medium px-3 py-2 text-center">
-          ~60 seconds
-        </div>
+      <div className="grid grid-cols-3 gap-2 text-xs font-medium text-center">
+        <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">8 structures</div>
+        <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">3 exit scenarios</div>
+        <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">18–28 pages</div>
       </div>
     </div>
   );
 }
 
-function Check() {
+function GoldCheck() {
   return (
-    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent-dark">
+    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold-100 text-gold-600">
       <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">
         <path d="M7.6 13.2L4.4 10l-1.1 1.1 4.3 4.3 9.1-9.1-1.1-1.1z" />
       </svg>
@@ -146,19 +137,62 @@ function Check() {
 
 function TrustBar() {
   const items = [
-    "AU policies supported today",
-    "AFCA complaint ready",
-    "No lawyer required",
-    "Pay only if you win more",
+    "All Australian domestic structures",
+    "International holding structures (SG, US, UK, HK)",
+    "Division 152 CGT concessions",
+    "2026–27 Budget changes modelled",
+    "Exit strategy tax modelling",
+    "Accountant-ready brief included",
   ];
   return (
     <section className="border-y border-black/5 bg-white/60">
-      <div className="mx-auto max-w-6xl px-5 py-4 flex flex-wrap items-center gap-x-8 gap-y-2 text-sm text-ink-muted">
+      <div className="mx-auto max-w-6xl px-5 py-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-ink-muted">
         {items.map((t) => (
           <span key={t} className="inline-flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-shield-500" />
+            <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
             {t}
           </span>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Problem() {
+  const decisions = [
+    {
+      title: "IP in the wrong entity",
+      body: "IP assigned to a sole trader or the wrong company cannot be retrospectively transferred at nil value once it has commercial worth. The window closes the moment you make your first invoice.",
+      tag: "Irreversible",
+    },
+    {
+      title: "Trust chosen without understanding the 2027 changes",
+      body: "From 1 July 2027, a 30% minimum CGT rate applies to trust capital gain distributions — eliminating the strategy of distributing gains to low-bracket beneficiaries. The trust advantage on exit is materially reduced.",
+      tag: "High impact",
+    },
+    {
+      title: "No holding company before the business has value",
+      body: "A Singapore flip or HoldCo restructure after your OpCo has real value triggers CGT for all shareholders. The cost can be $50,000–$200,000 in legal and tax fees. It must happen at day zero.",
+      tag: "Costly to fix",
+    },
+  ];
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-20">
+      <SectionHeader
+        eyebrow="The problem"
+        title="120,000+ founders get this wrong every year"
+        body="Australia has some of the most complex structuring decisions in the world — and most founders make them without any modelling."
+      />
+      <div className="mt-10 grid md:grid-cols-3 gap-5">
+        {decisions.map((d) => (
+          <div key={d.title} className="rounded-2xl bg-white border border-black/5 shadow-card p-6">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-danger/10 text-danger text-xs font-medium px-2.5 py-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-danger" />
+              {d.tag}
+            </span>
+            <h3 className="mt-3 font-semibold leading-snug">{d.title}</h3>
+            <p className="mt-2 text-sm text-ink-muted leading-relaxed">{d.body}</p>
+          </div>
         ))}
       </div>
     </section>
@@ -169,37 +203,31 @@ function HowItWorks() {
   const steps = [
     {
       n: "01",
-      title: "Upload your policy",
-      body:
-        "PDF, photo, or insurer portal. We parse 40–80 page policies and turn them into plain English.",
+      title: "Answer the questionnaire",
+      body: "Six sections, ~30 questions. Your circumstances, business type, revenue projections, capital plans, exit strategy, and preferences. Takes about 5 minutes.",
     },
     {
       n: "02",
-      title: "Add the denial or offer",
-      body:
-        "Drop in the letter and a few details. We cross-reference clauses, exclusions, and the rules your insurer must follow.",
+      title: "The engine models your scenarios",
+      body: "A codified tax rule engine runs every relevant structure against your inputs — income tax, CGT, Division 152, DTA rates, and the 2026–27 Budget changes. No free-form AI guesswork on the numbers.",
     },
     {
       n: "03",
-      title: "Send the response",
-      body:
-        "Get a formal appeal, demand letter and AFCA-ready complaint — with step-by-step guidance on what to send, when, and to whom.",
+      title: "Get your personalised report",
+      body: "An 18–28 page structured report: structure comparison matrix, exit tax modelling, irreversibility map, action checklist, and a one-page brief ready to hand to your accountant.",
     },
   ];
   return (
     <section id="how" className="mx-auto max-w-6xl px-5 py-20">
       <SectionHeader
         eyebrow="How it works"
-        title="From denial to dollars in three steps"
-        body="Insurers have analysts and lawyers. You have ClaimShield — the same firepower, instantly, without hiring anyone."
+        title="From questionnaire to report in minutes"
+        body="The AI handles narrative and scenario analysis. A codified rule engine handles all the numbers — so they&rsquo;re accurate."
       />
       <div className="mt-10 grid md:grid-cols-3 gap-5">
         {steps.map((s) => (
-          <div
-            key={s.n}
-            className="rounded-2xl bg-white border border-black/5 shadow-card p-6"
-          >
-            <div className="text-xs font-mono text-shield-600">{s.n}</div>
+          <div key={s.n} className="rounded-2xl bg-white border border-black/5 shadow-card p-6">
+            <div className="text-xs font-mono text-blueprint-600">{s.n}</div>
             <div className="mt-2 text-lg font-semibold">{s.title}</div>
             <p className="mt-2 text-ink-muted text-sm leading-relaxed">{s.body}</p>
           </div>
@@ -209,207 +237,74 @@ function HowItWorks() {
   );
 }
 
-function MagicMoment() {
+function ReportSections() {
+  const sections = [
+    { title: "Your Situation Summary", body: "Plain-English recap of all inputs, confirming your context before any analysis." },
+    { title: "Structure Comparison Matrix", body: "All relevant structures scored side-by-side across tax efficiency, asset protection, capital raising, compliance cost, and exit flexibility." },
+    { title: "Exit Tax Modelling", body: "CGT outcome under each structure, including Division 152 eligibility, indexation calculation, and the new 30% minimum rate impact." },
+    { title: "International Analysis", body: "Where relevant: Singapore, Delaware, UK, HK, NZ, and Ireland structures with CFC analysis, substance requirements, and DTA implications." },
+    { title: "The Irreversibility Map", body: "Colour-coded: green (reversible), amber (costly to change), red (irreversible once acted on). So you know what must be decided now." },
+    { title: "2026–27 Budget Impact", body: "Specific impact of the new CGT indexation regime, 30% minimum rate, and individual tax cuts on your modelled scenarios." },
+    { title: "Action Checklist", body: "Time-sequenced: before registration, within 30 days, within 90 days, and what can wait." },
+    { title: "Accountant Brief", body: "One page. Key inputs, structures to discuss, and specific questions for your registered tax agent — ready to hand over." },
+  ];
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16">
-      <div className="rounded-3xl shield-gradient text-white p-8 md:p-12 relative overflow-hidden">
-        <div className="absolute -right-10 -top-10 h-60 w-60 rounded-full bg-white/10 blur-2xl" />
-        <div className="absolute -left-10 -bottom-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-        <div className="relative grid md:grid-cols-2 gap-10 items-center">
-          <div>
-            <div className="text-shield-100 text-sm">The magic moment</div>
-            <h3 className="mt-2 text-3xl md:text-4xl font-semibold leading-tight">
-              You were about to accept $2,100 on a $7,400 claim.
-            </h3>
-            <p className="mt-3 text-shield-100 max-w-md">
-              ClaimShield highlights the exact clause your insurer is
-              misapplying, names the regulation they&apos;re ignoring, and
-              hands you a letter that makes them blink.
-            </p>
+    <section id="report" className="mx-auto max-w-6xl px-5 py-20">
+      <SectionHeader
+        eyebrow="The report"
+        title="Eight sections covering every dimension"
+        body="Not a one-paragraph summary — a comprehensive scenario document designed to work alongside your accountant."
+      />
+      <div className="mt-10 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {sections.map((s, i) => (
+          <div key={s.title} className="rounded-2xl bg-white border border-black/5 shadow-card p-5">
+            <div className="text-[10px] font-mono text-blueprint-600 mb-2">§{String(i + 1).padStart(2, "0")}</div>
+            <div className="font-semibold text-sm leading-snug">{s.title}</div>
+            <p className="mt-1.5 text-xs text-ink-muted leading-relaxed">{s.body}</p>
           </div>
-          <div className="rounded-2xl bg-white/10 border border-white/15 p-5 backdrop-blur">
-            <div className="text-xs text-shield-100">Excerpt — your appeal</div>
-            <p className="mt-2 text-sm leading-relaxed">
-              &ldquo;The denial relies on exclusion 2.4(b), which by its own
-              terms applies only to deliberate acts. Endorsement E-12,
-              incorporated at policy issuance, explicitly extends cover to
-              accidental water damage of the kind documented in my claim. The
-              offer of $2,100 also fails the fair-settlement obligation under
-              GICOP §8.7 in light of the three independent repair estimates
-              attached…&rdquo;
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );
 }
 
-function Categories() {
-  const rows = [
-    { name: "Auto / Motor", value: "$1,500 – $8,000", status: "Live" },
-    { name: "Home / Property", value: "$3,000 – $25,000", status: "Phase 2" },
-    { name: "Renters", value: "$500 – $5,000", status: "Phase 2" },
-    { name: "Travel", value: "$200 – $3,000", status: "Phase 2" },
-    { name: "Health / Medical", value: "$500 – $15,000", status: "Phase 3" },
-    { name: "Pet", value: "$500 – $5,000", status: "Phase 3" },
+function WhoIsItFor() {
+  const personas = [
+    {
+      title: "Pre-ABN founders",
+      body: "You haven't registered yet. This is the exact moment the report is designed for. Every decision is still open.",
+    },
+    {
+      title: "Early-stage founders (pre-revenue)",
+      body: "You're registered but haven't invoiced yet. IP assignment, trust setup, and HoldCo decisions can still be made at negligible cost.",
+    },
+    {
+      title: "Founders raising capital",
+      body: "About to take angel or VC money? The structure you raise into determines your tax position on exit — and whether investors will even invest.",
+    },
+    {
+      title: "Accountants and tax agents",
+      body: "Use the Practice Edition as a client-intake and modelling tool. Generates branded reports under your firm's name.",
+    },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-20">
       <SectionHeader
-        eyebrow="Coverage"
-        title="The categories where most dollars get lost"
-        body="MVP launches with auto/motor in Australia. We&rsquo;re expanding fast."
+        eyebrow="Who it's for"
+        title="Built for the decision point"
+        body="The moment before the first ABN, the first invoice, or the first shareholder round."
       />
-      <div className="mt-8 rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-canvas text-ink-muted">
-            <tr>
-              <th className="text-left font-medium px-5 py-3">Category</th>
-              <th className="text-left font-medium px-5 py-3">Typical dispute value</th>
-              <th className="text-left font-medium px-5 py-3">Availability</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.name} className="border-t border-black/5">
-                <td className="px-5 py-3 font-medium">{r.name}</td>
-                <td className="px-5 py-3 text-ink-muted">{r.value}</td>
-                <td className="px-5 py-3">
-                  <span
-                    className={
-                      r.status === "Live"
-                        ? "inline-flex items-center gap-1.5 rounded-full bg-accent/10 text-accent-dark px-2 py-0.5 text-xs"
-                        : "inline-flex items-center gap-1.5 rounded-full bg-shield-50 text-shield-700 px-2 py-0.5 text-xs"
-                    }
-                  >
-                    <span
-                      className={
-                        r.status === "Live"
-                          ? "h-1.5 w-1.5 rounded-full bg-accent"
-                          : "h-1.5 w-1.5 rounded-full bg-shield-500"
-                      }
-                    />
-                    {r.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </section>
-  );
-}
-
-function Pricing() {
-  const tiers = [
-    {
-      name: "Policy Review",
-      price: "$29",
-      tag: "No claim required",
-      bullets: [
-        "Full policy parsed to plain English",
-        "Inclusions, exclusions, sub-limits",
-        "Jurisdiction-specific notes",
-      ],
-    },
-    {
-      name: "Claim Analysis",
-      price: "$79",
-      tag: "Most popular",
-      featured: true,
-      bullets: [
-        "Everything in Policy Review",
-        "Denial / offer analysis",
-        "Appeal letter generated",
-        "Step-by-step guidance",
-      ],
-    },
-    {
-      name: "Premium Defence",
-      price: "$149",
-      tag: "Full escalation",
-      bullets: [
-        "Everything in Claim Analysis",
-        "Regulator complaint filed (AFCA)",
-        "30 days follow-up guidance",
-        "Escalation playbook",
-      ],
-    },
-  ];
-  return (
-    <section id="pricing" className="mx-auto max-w-6xl px-5 py-20">
-      <SectionHeader
-        eyebrow="Pricing"
-        title="Flat fees. Or pay only when you win more."
-        body="Choose a tier — or opt into success pricing: 15% of the extra recovery, capped. No win, no fee."
-      />
-      <div className="mt-10 grid md:grid-cols-3 gap-5">
-        {tiers.map((t) => (
-          <div
-            key={t.name}
-            className={
-              "rounded-2xl border p-6 shadow-card " +
-              (t.featured
-                ? "bg-ink text-white border-ink"
-                : "bg-white border-black/5")
-            }
-          >
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">{t.name}</div>
-              <span
-                className={
-                  "text-xs rounded-full px-2 py-0.5 " +
-                  (t.featured
-                    ? "bg-white/15 text-white"
-                    : "bg-shield-50 text-shield-700")
-                }
-              >
-                {t.tag}
-              </span>
+      <div className="mt-10 grid md:grid-cols-2 gap-5">
+        {personas.map((p) => (
+          <div key={p.title} className="rounded-2xl bg-white border border-black/5 shadow-card p-6 flex gap-4">
+            <span className="mt-1 h-2 w-2 rounded-full bg-gold-400 shrink-0" />
+            <div>
+              <div className="font-semibold">{p.title}</div>
+              <p className="mt-1.5 text-sm text-ink-muted">{p.body}</p>
             </div>
-            <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-4xl font-semibold tracking-tight">{t.price}</span>
-              <span className={t.featured ? "text-white/60 text-sm" : "text-ink-muted text-sm"}>
-                AUD
-              </span>
-            </div>
-            <ul className={"mt-5 space-y-2 text-sm " + (t.featured ? "text-white/80" : "text-ink-muted")}>
-              {t.bullets.map((b) => (
-                <li key={b} className="flex gap-2">
-                  <span
-                    className={
-                      "mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full " +
-                      (t.featured ? "bg-white/15" : "bg-accent/15 text-accent-dark")
-                    }
-                  >
-                    <svg viewBox="0 0 20 20" className="h-3 w-3 fill-current">
-                      <path d="M7.6 13.2L4.4 10l-1.1 1.1 4.3 4.3 9.1-9.1-1.1-1.1z" />
-                    </svg>
-                  </span>
-                  <span>{b}</span>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/start"
-              className={
-                "mt-6 inline-flex w-full items-center justify-center rounded-full px-4 py-2.5 font-medium transition " +
-                (t.featured
-                  ? "bg-white text-ink hover:bg-shield-50"
-                  : "bg-shield-600 text-white hover:bg-shield-700")
-              }
-            >
-              Start with {t.name}
-            </Link>
           </div>
         ))}
       </div>
-      <p className="mt-6 text-xs text-ink-muted">
-        ClaimShield provides information and document preparation. We are not a
-        law firm and do not provide legal advice.
-      </p>
     </section>
   );
 }
@@ -417,25 +312,33 @@ function Pricing() {
 function FAQ() {
   const qs = [
     {
-      q: "Is this legal advice?",
-      a: "No. ClaimShield is an information and document preparation tool. We translate your policy, analyse the insurer's reasoning, and prepare templates you can send. For complex matters we'll flag when a licensed professional makes sense.",
+      q: "Is this tax advice?",
+      a: "No. Founder Tax Blueprint generates general information only — not personal tax advice, financial advice, or a tax agent service under TASA 2009. Reports are designed to be used by a registered tax agent, or handed to your accountant for professional review before you act.",
     },
     {
-      q: "What does it do with my documents?",
-      a: "Policies and claim letters are processed in memory. We don't persist raw documents on our servers. Only anonymised outcomes feed back into the system intelligence.",
+      q: "How accurate are the numbers?",
+      a: "Tax calculations use a codified rule engine with hard-coded ATO rates, thresholds, and concessions — not AI-generated figures. The AI generates the narrative and scenario analysis. Numbers are based on your self-reported inputs and may not reflect your full circumstances.",
     },
     {
-      q: "What if I'm not in Australia?",
-      a: "We launch with Australian auto/motor claims and AFCA. US (state DOIs) and UK (FOS) are next.",
+      q: "Why does the 2026–27 Budget matter so much?",
+      a: "From 1 July 2027, the CGT 50% discount is replaced with indexation and a 30% minimum rate applies. This fundamentally changes the calculus for trust structures and short-hold assets. Any report generated before modelling these changes is already out of date.",
     },
     {
-      q: "What's the ClaimShield Score?",
-      a: "A 0–100 strength-of-position rating based on policy fit, regulatory leverage, and comparable outcomes. Higher score = stronger appeal.",
+      q: "I already have a structure — is it too late?",
+      a: "Many decisions are still open. The Irreversibility Map in the report shows exactly what can still be changed and at what cost. The report also flags which decisions must be made urgently.",
+    },
+    {
+      q: "What is the Practice Edition?",
+      a: "A B2B white-label version for accounting firms. Generates reports branded to your firm, with your registration number and PI details. Includes a client intake portal and unlimited reports. Coming soon — contact us to register interest.",
+    },
+    {
+      q: "What about SMSF and ESS?",
+      a: "The report flags SMSF investment and ESS/ESOP opportunities where relevant, and notes which structures are compatible. Detailed SMSF and ESS modelling requires specialist advice and is noted as such in the report.",
     },
   ];
   return (
     <section id="faq" className="mx-auto max-w-6xl px-5 py-20">
-      <SectionHeader eyebrow="FAQ" title="Quick answers" />
+      <SectionHeader eyebrow="FAQ" title="Common questions" />
       <div className="mt-8 grid md:grid-cols-2 gap-5">
         {qs.map((x) => (
           <div key={x.q} className="rounded-2xl bg-white border border-black/5 shadow-card p-6">
@@ -451,22 +354,26 @@ function FAQ() {
 function CTA() {
   return (
     <section className="mx-auto max-w-6xl px-5 pb-20">
-      <div className="rounded-3xl bg-ink text-white p-10 md:p-14 text-center relative overflow-hidden">
-        <div className="absolute inset-0 dotted-grid opacity-20" />
+      <div className="rounded-3xl blueprint-gradient text-white p-10 md:p-14 text-center relative overflow-hidden">
+        <div className="absolute -right-10 -top-10 h-60 w-60 rounded-full bg-white/10 blur-2xl" />
+        <div className="absolute -left-10 -bottom-16 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
         <div className="relative">
           <h3 className="text-3xl md:text-4xl font-semibold tracking-tight">
-            Don&apos;t leave thousands on the table.
+            Get your Blueprint before you register.
           </h3>
           <p className="mt-3 text-white/70 max-w-xl mx-auto">
-            Run a free analysis on your denial or settlement offer. If we can
-            help you recover more, you&apos;ll see the number before you pay.
+            Answer six sections. Get a report that covers every viable structure,
+            models your exit, and gives your accountant exactly what they need.
           </p>
           <Link
             href="/start"
-            className="mt-6 inline-flex items-center rounded-full bg-white text-ink font-medium px-5 py-3 hover:bg-shield-50 transition"
+            className="mt-6 inline-flex items-center rounded-full bg-white text-ink font-medium px-6 py-3 hover:bg-gold-50 transition"
           >
-            Start free analysis →
+            Start free Blueprint →
           </Link>
+          <p className="mt-4 text-xs text-white/50">
+            General information only. Always obtain advice from a registered tax agent before acting.
+          </p>
         </div>
       </div>
     </section>
@@ -484,7 +391,7 @@ function SectionHeader({
 }) {
   return (
     <div className="max-w-2xl">
-      <div className="text-xs uppercase tracking-[0.18em] text-shield-600 font-semibold">
+      <div className="text-xs uppercase tracking-[0.18em] text-blueprint-600 font-semibold">
         {eyebrow}
       </div>
       <h2 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">

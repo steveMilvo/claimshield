@@ -4,9 +4,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "ClaimShield — Fighting back, automatically.",
+  title: "Founder Tax Blueprint — Structure your business right from day zero",
   description:
-    "ClaimShield is your AI-powered insurance claim negotiator. Upload your policy and denial letter; get an expert appeal, a regulator-ready complaint, and the dollars you're owed.",
+    "AI-powered tax structure and exit planning for Australian entrepreneurs. Get a comprehensive scenario report covering every viable structure, modelled against your circumstances and exit strategy.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

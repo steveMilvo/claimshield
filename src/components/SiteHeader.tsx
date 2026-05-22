@@ -9,17 +9,16 @@ export function SiteHeader() {
           <Logo />
         </Link>
         <nav className="hidden md:flex items-center gap-7 text-sm text-ink-muted">
-          <Link href="/#how" className="hover:text-ink">How it works</Link>
-          <Link href="/#pricing" className="hover:text-ink">Pricing</Link>
-          <Link href="/#faq" className="hover:text-ink">FAQ</Link>
-          <Link href="/cases" className="hover:text-ink">My cases</Link>
+          <Link href="/#how" className="hover:text-ink transition-colors">How it works</Link>
+          <Link href="/#report" className="hover:text-ink transition-colors">What&rsquo;s in the report</Link>
+          <Link href="/#faq" className="hover:text-ink transition-colors">FAQ</Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link
             href="/start"
-            className="inline-flex items-center rounded-full bg-shield-600 text-white text-sm font-medium px-4 py-2 hover:bg-shield-700 transition"
+            className="inline-flex items-center rounded-full bg-blueprint-500 text-white text-sm font-medium px-4 py-2 hover:bg-blueprint-600 transition"
           >
-            Fight my claim
+            Start free Blueprint →
           </Link>
         </div>
       </div>

@@ -1,43 +1,35 @@
 import { cn } from "@/lib/cn";
 
-export function Logo({ className, mark = false }: { className?: string; mark?: boolean }) {
-  return (
-    <span className={cn("inline-flex items-center gap-2 font-semibold tracking-tight", className)}>
-      <ShieldMark />
-      {!mark && (
-        <span>
-          Claim<span className="text-shield-600">Shield</span>
-        </span>
-      )}
-    </span>
-  );
-}
-
-export function ShieldMark({ className }: { className?: string }) {
+export function BlueprintMark({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 32 32"
-      className={cn("h-7 w-7", className)}
-      aria-hidden="true"
+      className={cn("h-8 w-8", className)}
+      fill="none"
+      aria-hidden
     >
-      <defs>
-        <linearGradient id="csg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#1F6FE5" />
-          <stop offset="100%" stopColor="#0A3173" />
-        </linearGradient>
-      </defs>
-      <path
-        d="M16 2.5l11 3.6v9c0 7.5-4.9 12.7-11 14.4-6.1-1.7-11-6.9-11-14.4v-9l11-3.6z"
-        fill="url(#csg)"
-      />
-      <path
-        d="M10.5 16.2l3.6 3.6 7.4-7.4"
-        fill="none"
-        stroke="white"
-        strokeWidth="2.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <rect width="32" height="32" rx="8" fill="#1455BF" />
+      <path d="M8 10h10a4 4 0 0 1 0 8H8V10z" fill="white" opacity="0.9" />
+      <rect x="8" y="22" width="16" height="2" rx="1" fill="#FBBF24" />
+      <rect x="8" y="14" width="6" height="2" rx="1" fill="white" opacity="0.5" />
     </svg>
   );
 }
+
+export function Logo({ className }: { className?: string }) {
+  return (
+    <div className={cn("flex items-center gap-2.5", className)}>
+      <BlueprintMark className="h-8 w-8" />
+      <div className="leading-tight">
+        <div className="text-sm font-bold text-ink tracking-tight">
+          Founder Tax Blueprint
+        </div>
+        <div className="text-[10px] text-ink-muted font-medium">
+          A SynthexIQ product
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const ShieldMark = BlueprintMark;

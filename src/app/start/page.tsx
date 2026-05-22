@@ -2,406 +2,284 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
-import { saveCase } from "@/lib/cases";
-
-type Step = 0 | 1 | 2 | 3;
-
-const steps = [
-  { label: "Policy", helper: "Upload your insurance policy" },
-  { label: "Loss", helper: "Tell us what happened" },
-  { label: "Insurer letter", helper: "Add the denial or offer" },
-  { label: "Analyse", helper: "We do the rest" },
-];
+import { SECTIONS, EMPTY_ANSWERS, Answers, Question } from "@/lib/questions";
+import { saveReport, GeneratedReport } from "@/lib/reportStore";
+import { BlueprintMark } from "@/components/Logo";
 
 export default function StartPage() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>(0);
-  const [policyFile, setPolicyFile] = useState<File | null>(null);
-  const [letterFile, setLetterFile] = useState<File | null>(null);
-  const [category, setCategory] = useState("auto");
-  const [insurer, setInsurer] = useState("");
-  const [description, setDescription] = useState("");
-  const [offerAmount, setOfferAmount] = useState("");
-  const [estimateAmount, setEstimateAmount] = useState("");
-  const [analysing, setAnalysing] = useState(false);
+  const [sectionIndex, setSectionIndex] = useState(0);
+  const [answers, setAnswers] = useState<Answers>({ ...EMPTY_ANSWERS });
+  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function next() {
-    setStep((s) => (Math.min(3, s + 1) as Step));
-  }
-  function back() {
-    setStep((s) => (Math.max(0, s - 1) as Step));
+  const section = SECTIONS[sectionIndex];
+  const isLast = sectionIndex === SECTIONS.length - 1;
+  const isFirst = sectionIndex === 0;
+
+  function setAnswer(id: string, value: string | string[]) {
+    setAnswers((prev) => ({ ...prev, [id]: value }));
   }
 
-  async function runAnalysis() {
-    setAnalysing(true);
+  function toggleCheckbox(id: string, value: string) {
+    const current = (answers[id as keyof Answers] as string[]) || [];
+    const updated = current.includes(value)
+      ? current.filter((v) => v !== value)
+      : [...current, value];
+    setAnswer(id, updated);
+  }
+
+  function visibleQuestions(q: Question[]): Question[] {
+    return q.filter((q) => !q.showIf || q.showIf(answers));
+  }
+
+  function sectionComplete(): boolean {
+    const visible = visibleQuestions(section.questions);
+    return visible
+      .filter((q) => q.required)
+      .every((q) => {
+        const val = answers[q.id as keyof Answers];
+        if (Array.isArray(val)) return val.length > 0;
+        return !!val;
+      });
+  }
+
+  async function generateReport() {
+    setGenerating(true);
     setError(null);
     try {
-      const fd = new FormData();
-      if (policyFile) fd.append("policy", policyFile);
-      if (letterFile) fd.append("letter", letterFile);
-      fd.append("category", category);
-      fd.append("insurer", insurer);
-      fd.append("description", description);
-      fd.append("offerAmount", offerAmount);
-      fd.append("estimateAmount", estimateAmount);
-
-      const res = await fetch("/api/analyze", { method: "POST", body: fd });
+      const res = await fetch("/api/generate-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers }),
+      });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || `Request failed (${res.status}).`);
-
-      const id = saveCase(data.analysis);
-      router.push(`/analysis/${id}`);
+      if (!res.ok) throw new Error(data?.error || `Request failed (${res.status})`);
+      const id = saveReport(answers, data.report as GeneratedReport);
+      router.push(`/report/${id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
-      setAnalysing(false);
+      setGenerating(false);
     }
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 py-10 md:py-14">
-      <Stepper current={step} />
+    <div className="mx-auto max-w-2xl px-5 py-10 md:py-14">
+      <SectionProgress current={sectionIndex} total={SECTIONS.length} />
 
       <div className="mt-8 rounded-2xl bg-white border border-black/5 shadow-card p-6 md:p-8">
-        {step === 0 && (
-          <StepShell
-            title="Upload your insurance policy"
-            sub="PDF, photo of the booklet, or insurer portal export. We'll parse it in plain English — even the 80-page ones."
-          >
-            <FileDrop
-              file={policyFile}
-              onFile={setPolicyFile}
-              accept=".pdf,image/*"
-              hint="Drop your policy PDF here, or click to choose"
+        <div className="mb-6">
+          <div className="text-xs font-mono text-blueprint-600">
+            Section {sectionIndex + 1} of {SECTIONS.length}
+          </div>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight">{section.title}</h2>
+          <p className="mt-1.5 text-sm text-ink-muted">{section.subtitle}</p>
+        </div>
+
+        <div className="space-y-8">
+          {visibleQuestions(section.questions).map((q) => (
+            <QuestionField
+              key={q.id}
+              question={q}
+              value={answers[q.id as keyof Answers]}
+              onChange={(val) => {
+                if (q.type === "checkbox") {
+                  toggleCheckbox(q.id, val as string);
+                } else {
+                  setAnswer(q.id, val);
+                }
+              }}
             />
-            <div className="mt-5 grid sm:grid-cols-2 gap-4">
-              <Field label="Insurance category">
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="input"
-                >
-                  <option value="auto">Auto / Motor</option>
-                  <option value="home">Home / Property</option>
-                  <option value="renters">Renters</option>
-                  <option value="travel">Travel</option>
-                  <option value="health">Health / Medical</option>
-                </select>
-              </Field>
-              <Field label="Insurer">
-                <input
-                  value={insurer}
-                  onChange={(e) => setInsurer(e.target.value)}
-                  placeholder="e.g. Auric Mutual"
-                  className="input"
-                />
-              </Field>
-            </div>
-          </StepShell>
+          ))}
+        </div>
+
+        {error && (
+          <div className="mt-6 rounded-lg bg-danger/10 border border-danger/20 px-4 py-3 text-sm text-danger">
+            {error}
+          </div>
         )}
 
-        {step === 1 && (
-          <StepShell
-            title="Tell us what happened"
-            sub="A few lines is fine. Add any incident reference, photos or repair quotes you have."
+        <div className="mt-8 flex items-center justify-between">
+          <button
+            onClick={() => setSectionIndex((i) => Math.max(0, i - 1))}
+            disabled={isFirst}
+            className={cn(
+              "text-sm font-medium px-4 py-2 rounded-full transition",
+              isFirst ? "text-ink-muted/40 cursor-not-allowed" : "text-ink hover:bg-canvas"
+            )}
           >
-            <Field label="Describe the loss">
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={5}
-                placeholder="e.g. Rear-quarter collision on 12 April; third party at fault…"
-                className="input"
-              />
-            </Field>
-            <div className="mt-4 grid sm:grid-cols-2 gap-4">
-              <Field label="Independent estimate / actual cost (AUD)">
-                <input
-                  inputMode="decimal"
-                  value={estimateAmount}
-                  onChange={(e) => setEstimateAmount(e.target.value)}
-                  placeholder="7400"
-                  className="input"
-                />
-              </Field>
-              <Field label="Supporting docs (optional)">
-                <FileDrop
-                  compact
-                  hint="Add photos, quotes, receipts"
-                  accept="image/*,.pdf"
-                />
-              </Field>
-            </div>
-          </StepShell>
-        )}
+            ← Back
+          </button>
 
-        {step === 2 && (
-          <StepShell
-            title="Add the denial or offer letter"
-            sub="The letter from your insurer. We'll cross-reference it line-by-line against your policy and the regulations they have to follow."
-          >
-            <FileDrop
-              file={letterFile}
-              onFile={setLetterFile}
-              accept=".pdf,image/*"
-              hint="Drop the denial letter / offer here"
-            />
-            <Field label="Settlement offered (AUD)" className="mt-5">
-              <input
-                inputMode="decimal"
-                value={offerAmount}
-                onChange={(e) => setOfferAmount(e.target.value)}
-                placeholder="2100"
-                className="input"
-              />
-            </Field>
-          </StepShell>
-        )}
-
-        {step === 3 && (
-          <StepShell
-            title="Ready to analyse"
-            sub="ClaimShield will parse your policy, audit the insurer's reasoning, value your loss against comparable claims, and draft your response."
-          >
-            <Summary
-              items={[
-                ["Category", labelForCategory(category)],
-                ["Insurer", insurer || "—"],
-                ["Policy file", policyFile?.name || "—"],
-                ["Letter file", letterFile?.name || "—"],
-                ["Offered", offerAmount ? `$${offerAmount}` : "—"],
-                ["Your estimate", estimateAmount ? `$${estimateAmount}` : "—"],
-              ]}
-            />
+          {isLast ? (
             <button
-              onClick={runAnalysis}
-              disabled={analysing}
+              onClick={generateReport}
+              disabled={generating || !sectionComplete()}
               className={cn(
-                "mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-medium transition",
-                analysing
-                  ? "bg-shield-300 text-white cursor-wait"
-                  : "bg-shield-600 text-white hover:bg-shield-700"
+                "inline-flex items-center gap-2 rounded-full text-sm font-medium px-5 py-2.5 transition",
+                generating || !sectionComplete()
+                  ? "bg-blueprint-300 text-white cursor-not-allowed"
+                  : "bg-blueprint-600 text-white hover:bg-blueprint-700"
               )}
             >
-              {analysing ? (
+              {generating ? (
                 <>
                   <Spinner />
-                  Analysing your claim…
+                  Generating your Blueprint…
                 </>
               ) : (
                 <>
-                  <ShieldMark className="h-5 w-5" />
-                  Run ClaimShield analysis
+                  <BlueprintMark className="h-4 w-4" />
+                  Generate my Blueprint
                 </>
               )}
             </button>
-            {error && (
-              <div className="mt-3 rounded-lg bg-danger/10 border border-danger/20 px-4 py-3 text-sm text-danger">
-                {error}
-              </div>
-            )}
-            {analysing && (
-              <p className="mt-3 text-xs text-ink-muted text-center">
-                Reading your documents and cross-referencing the regulations — this can take a minute.
-              </p>
-            )}
-            <p className="mt-3 text-xs text-ink-muted text-center">
-              Free preview. You&apos;ll see the recoverable upside before any
-              payment.
-            </p>
-          </StepShell>
-        )}
-
-        {step < 3 && (
-          <div className="mt-8 flex items-center justify-between">
+          ) : (
             <button
-              onClick={back}
-              disabled={step === 0}
+              onClick={() => setSectionIndex((i) => Math.min(SECTIONS.length - 1, i + 1))}
+              disabled={!sectionComplete()}
               className={cn(
-                "text-sm font-medium px-4 py-2 rounded-full",
-                step === 0
-                  ? "text-ink-muted/40 cursor-not-allowed"
-                  : "text-ink hover:bg-canvas"
+                "inline-flex items-center gap-2 rounded-full text-sm font-medium px-5 py-2.5 transition",
+                !sectionComplete()
+                  ? "bg-blueprint-300 text-white cursor-not-allowed"
+                  : "bg-blueprint-600 text-white hover:bg-blueprint-700"
               )}
-            >
-              ← Back
-            </button>
-            <button
-              onClick={next}
-              className="inline-flex items-center gap-2 rounded-full bg-shield-600 text-white text-sm font-medium px-5 py-2.5 hover:bg-shield-700 transition"
             >
               Continue →
             </button>
-          </div>
+          )}
+        </div>
+
+        {generating && (
+          <p className="mt-3 text-xs text-ink-muted text-center">
+            Modelling your structures and running tax calculations — this takes 30–60 seconds.
+          </p>
         )}
       </div>
 
-      <p className="mt-6 text-xs text-ink-muted text-center">
-        Your documents are processed in memory. We do not store raw policies or
-        claim letters on our servers.
+      <p className="mt-4 text-xs text-ink-muted text-center">
+        General information only. Your report is for use with a registered tax agent — not a substitute for professional advice.
       </p>
     </div>
   );
 }
 
-function labelForCategory(c: string) {
+function SectionProgress({ current, total }: { current: number; total: number }) {
   return (
-    {
-      auto: "Auto / Motor",
-      home: "Home / Property",
-      renters: "Renters",
-      travel: "Travel",
-      health: "Health / Medical",
-    }[c] || c
-  );
-}
-
-function StepShell({
-  title,
-  sub,
-  children,
-}: {
-  title: string;
-  sub: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div>
-      <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
-      <p className="mt-1.5 text-ink-muted text-sm">{sub}</p>
-      <div className="mt-6">{children}</div>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between text-xs text-ink-muted">
+        <span>{SECTIONS[current].title}</span>
+        <span>{current + 1} / {total}</span>
+      </div>
+      <div className="h-1.5 bg-black/5 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-blueprint-500 rounded-full transition-all duration-500"
+          style={{ width: `${((current + 1) / total) * 100}%` }}
+        />
+      </div>
+      <div className="flex gap-1">
+        {SECTIONS.map((s, i) => (
+          <div
+            key={s.id}
+            className={cn(
+              "flex-1 h-0.5 rounded-full transition",
+              i <= current ? "bg-blueprint-500" : "bg-black/10"
+            )}
+          />
+        ))}
+      </div>
     </div>
   );
 }
 
-function Stepper({ current }: { current: number }) {
+function QuestionField({
+  question: q,
+  value,
+  onChange,
+}: {
+  question: Question;
+  value: string | string[];
+  onChange: (val: string | string[]) => void;
+}) {
   return (
-    <ol className="flex items-center gap-2">
-      {steps.map((s, i) => {
-        const done = i < current;
-        const active = i === current;
-        return (
-          <li key={s.label} className="flex-1 flex items-center gap-2">
-            <div
-              className={cn(
-                "flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium w-full",
-                active && "bg-shield-50 text-shield-700",
-                done && "bg-accent/10 text-accent-dark",
-                !active && !done && "text-ink-muted"
-              )}
-            >
-              <span
+    <div>
+      <div className="text-sm font-medium text-ink leading-snug">{q.label}</div>
+      {q.hint && <div className="mt-0.5 text-xs text-ink-muted">{q.hint}</div>}
+
+      {(q.type === "radio" || q.type === "select") && q.options && (
+        <div className="mt-3 flex flex-col gap-2">
+          {q.options.map((opt) => {
+            const selected = value === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange(opt.value)}
                 className={cn(
-                  "inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px]",
-                  active && "bg-shield-600 text-white",
-                  done && "bg-accent text-white",
-                  !active && !done && "bg-black/5 text-ink-muted"
+                  "text-left rounded-xl border px-4 py-3 text-sm transition",
+                  selected
+                    ? "border-blueprint-500 bg-blueprint-50 text-blueprint-800 font-medium"
+                    : "border-black/10 bg-white text-ink-soft hover:border-blueprint-300 hover:bg-blueprint-50/40"
                 )}
               >
-                {done ? "✓" : i + 1}
-              </span>
-              <span className="hidden sm:inline">{s.label}</span>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
-
-function Field({
-  label,
-  children,
-  className,
-}: {
-  label: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <label className={cn("block", className)}>
-      <span className="text-xs font-medium text-ink-soft">{label}</span>
-      <div className="mt-1.5">{children}</div>
-      <style jsx>{`
-        :global(.input) {
-          width: 100%;
-          border-radius: 10px;
-          border: 1px solid rgba(11, 27, 43, 0.12);
-          background: white;
-          padding: 10px 12px;
-          font-size: 14px;
-          outline: none;
-          transition: border-color 120ms, box-shadow 120ms;
-        }
-        :global(.input:focus) {
-          border-color: #1f6fe5;
-          box-shadow: 0 0 0 4px rgba(31, 111, 229, 0.12);
-        }
-      `}</style>
-    </label>
-  );
-}
-
-function FileDrop({
-  file,
-  onFile,
-  hint,
-  accept,
-  compact,
-}: {
-  file?: File | null;
-  onFile?: (f: File | null) => void;
-  hint: string;
-  accept?: string;
-  compact?: boolean;
-}) {
-  return (
-    <label
-      className={cn(
-        "block cursor-pointer rounded-xl border-2 border-dashed border-black/15 hover:border-shield-500 hover:bg-shield-50/40 transition",
-        compact ? "p-4" : "p-8 text-center"
-      )}
-    >
-      <input
-        type="file"
-        accept={accept}
-        className="hidden"
-        onChange={(e) => onFile?.(e.target.files?.[0] ?? null)}
-      />
-      {file ? (
-        <div className="flex items-center gap-3">
-          <FileIcon />
-          <div className="text-sm">
-            <div className="font-medium">{file.name}</div>
-            <div className="text-ink-muted text-xs">
-              {(file.size / 1024).toFixed(0)} KB · click to replace
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className={cn(compact && "flex items-center gap-3")}>
-          <CloudUpIcon />
-          <div className={cn(compact ? "text-sm text-ink-muted" : "mt-3 text-sm text-ink-muted")}>
-            {hint}
-          </div>
+                <span className={cn(
+                  "inline-flex h-4 w-4 rounded-full border mr-2.5 items-center justify-center shrink-0 transition",
+                  selected ? "border-blueprint-500 bg-blueprint-500" : "border-black/20"
+                )}>
+                  {selected && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                </span>
+                {opt.label}
+                {opt.hint && <span className="ml-2 text-xs text-ink-muted">— {opt.hint}</span>}
+              </button>
+            );
+          })}
         </div>
       )}
-    </label>
-  );
-}
 
-function Summary({ items }: { items: [string, string][] }) {
-  return (
-    <dl className="grid sm:grid-cols-2 gap-3">
-      {items.map(([k, v]) => (
-        <div key={k} className="rounded-lg bg-canvas px-4 py-3">
-          <dt className="text-[11px] uppercase tracking-wider text-ink-muted">{k}</dt>
-          <dd className="mt-0.5 text-sm font-medium truncate">{v}</dd>
+      {q.type === "checkbox" && q.options && (
+        <div className="mt-3 flex flex-col gap-2">
+          {q.options.map((opt) => {
+            const arr = (value as string[]) || [];
+            const checked = arr.includes(opt.value);
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => onChange(opt.value)}
+                className={cn(
+                  "text-left rounded-xl border px-4 py-3 text-sm transition",
+                  checked
+                    ? "border-blueprint-500 bg-blueprint-50 text-blueprint-800 font-medium"
+                    : "border-black/10 bg-white text-ink-soft hover:border-blueprint-300 hover:bg-blueprint-50/40"
+                )}
+              >
+                <span className={cn(
+                  "inline-flex h-4 w-4 rounded border mr-2.5 items-center justify-center shrink-0 transition",
+                  checked ? "border-blueprint-500 bg-blueprint-500" : "border-black/20"
+                )}>
+                  {checked && (
+                    <svg viewBox="0 0 10 10" className="h-2.5 w-2.5 text-white fill-current">
+                      <path d="M1.5 5l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  )}
+                </span>
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
-      ))}
-    </dl>
+      )}
+
+      {q.type === "text" && (
+        <input
+          type="text"
+          value={(value as string) || ""}
+          onChange={(e) => onChange(e.target.value)}
+          className="mt-3 w-full rounded-xl border border-black/12 bg-white px-4 py-2.5 text-sm outline-none focus:border-blueprint-500 focus:ring-4 focus:ring-blueprint-500/10"
+        />
+      )}
+    </div>
   );
 }
 
@@ -410,28 +288,6 @@ function Spinner() {
     <svg viewBox="0 0 24 24" className="h-4 w-4 animate-spin">
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" fill="none" opacity="0.25" />
       <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function FileIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-8 w-8 text-shield-600">
-      <path
-        fill="currentColor"
-        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"
-      />
-    </svg>
-  );
-}
-
-function CloudUpIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-10 w-10 text-shield-600 mx-auto">
-      <path
-        fill="currentColor"
-        d="M19.35 10.04A7.49 7.49 0 0 0 12 4a7.5 7.5 0 0 0-6.96 4.78A5.5 5.5 0 0 0 6 19.5h13a4.5 4.5 0 0 0 .35-9.46zM13 13v4h-2v-4H8l4-4 4 4h-3z"
-      />
     </svg>
   );
 }

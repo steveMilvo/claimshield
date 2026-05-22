@@ -7,11 +7,19 @@ html, body {
   color: theme('colors.ink.DEFAULT');
 }
 
-.shield-gradient {
-  background: linear-gradient(135deg, #0A3173 0%, #1455BF 55%, #1F6FE5 100%);
+.blueprint-gradient {
+  background: linear-gradient(135deg, #041638 0%, #0A3173 50%, #1455BF 100%);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #8C6006 0%, #D4940A 60%, #FBBF24 100%);
 }
 
 .dotted-grid {
   background-image: radial-gradient(rgba(11,27,43,0.08) 1px, transparent 1px);
   background-size: 18px 18px;
+}
+
+.shield-gradient {
+  background: linear-gradient(135deg, #041638 0%, #0A3173 50%, #1455BF 100%);
 }
