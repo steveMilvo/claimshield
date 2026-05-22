@@ -231,24 +231,45 @@ export async function POST(req: NextRequest) {
     const prompt = buildPrompt(answers, taxData);
 
     const message = await client.messages.create({
-      model: "claude-opus-4-7",
-      max_tokens: 8000,
-      messages: [
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+      model: "claude-sonnet-4-6",
+      max_tokens: 16000,
+      system:
+        "You are the Founder Tax Blueprint report engine. You always respond with a single valid JSON object — no markdown code fences, no commentary, no leading or trailing text. Strings inside JSON must not contain unescaped newlines or quotes.",
+      messages: [{ role: "user", content: prompt }],
     });
 
     const raw = message.content[0].type === "text" ? message.content[0].text : "";
 
+    // Strip markdown code fences if present, then extract the outermost JSON object.
+    let jsonText = raw.trim();
+    jsonText = jsonText.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+    const firstBrace = jsonText.indexOf("{");
+    const lastBrace = jsonText.lastIndexOf("}");
+    if (firstBrace >= 0 && lastBrace > firstBrace) {
+      jsonText = jsonText.slice(firstBrace, lastBrace + 1);
+    }
+
     let report;
     try {
-      const jsonMatch = raw.match(/\{[\s\S]*\}/);
-      report = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
-    } catch {
-      return NextResponse.json({ error: "Failed to parse report from AI. Please try again." }, { status: 500 });
+      report = JSON.parse(jsonText);
+    } catch (parseErr) {
+      console.error("JSON parse failed. stop_reason:", message.stop_reason);
+      console.error("Raw response length:", raw.length);
+      console.error("Raw response (first 2000 chars):", raw.slice(0, 2000));
+      console.error("Raw response (last 500 chars):", raw.slice(-500));
+      console.error("Parse error:", parseErr);
+      return NextResponse.json(
+        {
+          error: "Failed to parse report from AI. Please try again.",
+          debug: {
+            stop_reason: message.stop_reason,
+            length: raw.length,
+            preview: raw.slice(0, 300),
+            tail: raw.slice(-300),
+          },
+        },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ report });
