@@ -1,7 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#F6F9FC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A3173" },
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -15,6 +25,13 @@ export const metadata: Metadata = {
     "ClaimShield is your AI-powered insurance claim negotiator. Upload your policy and denial letter; get an expert appeal, a regulator-ready complaint, and the dollars you're owed.",
   applicationName: "ClaimShield",
   authors: [{ name: "MilvoTech Pty Ltd" }],
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "ClaimShield",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: { telephone: false },
   openGraph: {
     type: "website",
     siteName: "ClaimShield",

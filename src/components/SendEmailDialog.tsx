@@ -70,6 +70,10 @@ export function SendEmailDialog({
   return (
     <div
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/40 backdrop-blur-sm p-4"
+      style={{
+        paddingTop: "max(1rem, env(safe-area-inset-top))",
+        paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+      }}
       onClick={onClose}
     >
       <div
@@ -77,7 +81,7 @@ export function SendEmailDialog({
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-2xl rounded-2xl bg-white shadow-card border border-black/5 max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl rounded-2xl bg-white shadow-card border border-black/5 max-h-[90dvh] flex flex-col"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-black/5">
           <div>
@@ -158,7 +162,7 @@ export function SendEmailDialog({
           border: 1px solid rgba(11, 27, 43, 0.12);
           background: white;
           padding: 10px 12px;
-          font-size: 14px;
+          font-size: 16px;
           outline: none;
           transition: border-color 120ms, box-shadow 120ms;
         }

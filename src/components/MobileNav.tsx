@@ -53,7 +53,8 @@ export function MobileNav() {
           aria-hidden
         >
           <div
-            className="absolute top-16 left-3 right-3 rounded-2xl bg-white border border-black/5 shadow-card p-3"
+            className="absolute left-3 right-3 rounded-2xl bg-white border border-black/5 shadow-card p-3"
+            style={{ top: "calc(4rem + env(safe-area-inset-top))" }}
             onClick={(e) => e.stopPropagation()}
             role="menu"
           >

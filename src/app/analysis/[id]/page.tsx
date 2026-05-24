@@ -363,14 +363,14 @@ function DocumentsCard({
             <div data-no-print="true" className="flex shrink-0 items-center gap-2">
               <button
                 onClick={() => onSend(d.kind)}
-                className="text-xs font-medium px-3 py-1.5 rounded-full bg-white border border-black/10 hover:border-black/30"
+                className="text-xs font-medium px-3 py-2 rounded-full bg-white border border-black/10 hover:border-black/30"
               >
                 Send
               </button>
               <button
                 onClick={() => download(d.name, bodyForKind(a, d.kind), d.kind)}
                 disabled={busy === d.name}
-                className="text-xs font-medium px-3 py-1.5 rounded-full bg-shield-600 text-white hover:bg-shield-700 disabled:opacity-60"
+                className="text-xs font-medium px-3 py-2 rounded-full bg-shield-600 text-white hover:bg-shield-700 disabled:opacity-60"
               >
                 {busy === d.name ? "Preparing…" : "Download .docx"}
               </button>

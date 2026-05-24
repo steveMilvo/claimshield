@@ -336,7 +336,7 @@ function Field({
           border: 1px solid rgba(11, 27, 43, 0.12);
           background: white;
           padding: 10px 12px;
-          font-size: 14px;
+          font-size: 16px;
           outline: none;
           transition: border-color 120ms, box-shadow 120ms;
         }

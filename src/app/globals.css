@@ -5,6 +5,37 @@
 html, body {
   background: theme('colors.canvas');
   color: theme('colors.ink.DEFAULT');
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+/* Mobile-safe form inputs: 16px font-size prevents iOS Safari from zooming on focus. */
+input, select, textarea, button {
+  font-family: inherit;
+}
+.input, input.input, select.input, textarea.input {
+  font-size: 16px;
+}
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari only */
+  textarea, input[type="text"], input[type="email"], input[type="search"],
+  input[type="number"], input[type="tel"], input[type="url"], input[type="password"], select {
+    font-size: 16px;
+  }
+}
+
+/* Safe-area-inset support for iPhone notch / home indicator and Android gesture bar. */
+header[data-no-print] {
+  padding-top: env(safe-area-inset-top);
+}
+footer[data-no-print] {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .shield-gradient {

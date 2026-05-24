@@ -58,34 +58,37 @@ export default function CasesPage() {
 
 function CaseRow({ c, onDelete }: { c: CaseSummary; onDelete: () => void }) {
   return (
-    <div className="group flex items-center gap-4 rounded-2xl bg-white border border-black/5 shadow-card px-5 py-4">
-      <ScoreBadge score={c.score} label={c.scoreLabel} />
-      <Link href={`/analysis/${c.id}`} className="flex-1 min-w-0">
-        <div className="font-medium truncate">
-          {c.insurer || "Unknown insurer"} · {c.policyType || "Policy"}
-        </div>
-        <div className="text-xs text-ink-muted mt-0.5">
-          {new Date(c.createdAt).toLocaleString()} · case {c.id}
-        </div>
-      </Link>
-      <div className="text-right shrink-0">
-        <div className="text-sm font-semibold text-accent-dark">+{money(c.upside)}</div>
-        <div className="text-[11px] text-ink-muted">recoverable</div>
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-        <Link
-          href={`/analysis/${c.id}`}
-          className="rounded-full bg-shield-600 text-white text-xs font-medium px-3 py-1.5 hover:bg-shield-700"
-        >
-          Open
+    <div className="rounded-2xl bg-white border border-black/5 shadow-card px-4 py-4 sm:px-5">
+      <div className="flex items-start gap-4">
+        <ScoreBadge score={c.score} label={c.scoreLabel} />
+        <Link href={`/analysis/${c.id}`} className="flex-1 min-w-0">
+          <div className="font-medium truncate">
+            {c.insurer || "Unknown insurer"} · {c.policyType || "Policy"}
+          </div>
+          <div className="text-xs text-ink-muted mt-0.5 truncate">
+            {new Date(c.createdAt).toLocaleString()} · case {c.id}
+          </div>
         </Link>
+        <div className="text-right shrink-0">
+          <div className="text-sm font-semibold text-accent-dark whitespace-nowrap">
+            +{money(c.upside)}
+          </div>
+          <div className="text-[11px] text-ink-muted">recoverable</div>
+        </div>
+      </div>
+      <div className="mt-3 flex items-center justify-end gap-2">
         <button
           onClick={onDelete}
-          aria-label="Delete case"
-          className="rounded-full border border-black/10 text-ink-muted text-xs px-3 py-1.5 hover:border-danger hover:text-danger"
+          className="rounded-full border border-black/10 text-ink-muted text-xs px-3 py-2 hover:border-danger hover:text-danger"
         >
           Delete
         </button>
+        <Link
+          href={`/analysis/${c.id}`}
+          className="rounded-full bg-shield-600 text-white text-xs font-medium px-4 py-2 hover:bg-shield-700"
+        >
+          Open
+        </Link>
       </div>
     </div>
   );
