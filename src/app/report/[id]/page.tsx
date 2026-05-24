@@ -1,33 +1,98 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getReport, StoredReport, StructureMatrixRow, IrreversibilityItem, Lead } from "@/lib/reportStore";
 import { BlueprintMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
 
-function buildUpgradeMailto(lead?: Lead): string {
-  const subject = encodeURIComponent("Full Founder Tax Blueprint — request");
-  const greeting = lead?.firstName
-    ? `Hi, this is ${lead.firstName}${lead.lastName ? ` ${lead.lastName}` : ""} (${lead.email}).`
-    : "Hi,";
-  const body = encodeURIComponent(
-    `${greeting}\n\nI generated a free preview Blueprint and I'd like the full version — including the complete structure matrix, exit narrative, action checklist, international analysis, and accountant brief.\n\nThanks.`
-  );
-  return `mailto:info@milvotech.com?subject=${subject}&body=${body}`;
+const STORAGE_KEY = "ftb_reports";
+
+function markReportPaid(reportId: string): StoredReport | null {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+    if (all[reportId]) {
+      all[reportId].tier = "paid";
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+      return all[reportId];
+    }
+  } catch {}
+  return null;
 }
 
 export default function ReportPage() {
   const { id } = useParams<{ id: string }>();
   const [stored, setStored] = useState<StoredReport | null>(null);
   const [loading, setLoading] = useState(true);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [upgrading, setUpgrading] = useState(false);
+  const [upgradeError, setUpgradeError] = useState<string | null>(null);
+  const [justUpgraded, setJustUpgraded] = useState(false);
 
   useEffect(() => {
     const r = getReport(id);
     setStored(r);
     setLoading(false);
+
+    // Detect Stripe success redirect and verify the session
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const sessionId = params.get("session_id");
+      const cancelled = params.get("cancelled");
+      if (cancelled) {
+        setUpgradeError("Payment cancelled. You can try again any time.");
+        window.history.replaceState({}, "", `/report/${id}`);
+      } else if (sessionId && r) {
+        setVerifyingPayment(true);
+        fetch("/api/verify-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId, reportId: id }),
+        })
+          .then((res) => res.json())
+          .then(({ paid }) => {
+            if (paid) {
+              const updated = markReportPaid(id);
+              if (updated) setStored(updated);
+              setJustUpgraded(true);
+              window.history.replaceState({}, "", `/report/${id}`);
+            } else {
+              setUpgradeError("Payment couldn't be verified. If you completed checkout, please email info@milvotech.com.");
+            }
+          })
+          .catch(() => {
+            setUpgradeError("Couldn't verify payment. If you completed checkout, please email info@milvotech.com.");
+          })
+          .finally(() => setVerifyingPayment(false));
+      }
+    }
   }, [id]);
+
+  const handleUpgrade = useCallback(async () => {
+    if (!stored) return;
+    setUpgrading(true);
+    setUpgradeError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reportId: id,
+          email: stored.lead?.email,
+          firstName: stored.lead?.firstName,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.url) {
+        throw new Error(data?.error || "Couldn't start checkout");
+      }
+      window.location.href = data.url;
+    } catch (e) {
+      setUpgradeError(e instanceof Error ? e.message : "Couldn't start checkout");
+      setUpgrading(false);
+    }
+  }, [id, stored]);
 
   if (loading) {
     return (
@@ -49,10 +114,9 @@ export default function ReportPage() {
     );
   }
 
-  const { report, generatedAt, tier, lead } = stored;
+  const { report, generatedAt, tier } = stored;
   const isFree = tier !== "paid";
   const date = new Date(generatedAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
-  const upgradeMailto = buildUpgradeMailto(lead);
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
@@ -92,17 +156,46 @@ export default function ReportPage() {
               </p>
             </div>
           </div>
-          <a
-            href={upgradeMailto}
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gold-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-gold-700 transition"
+          <button
+            onClick={handleUpgrade}
+            disabled={upgrading}
+            className={cn(
+              "inline-flex shrink-0 items-center gap-2 rounded-full text-white text-sm font-medium px-4 py-2.5 transition",
+              upgrading ? "bg-gold-400 cursor-wait" : "bg-gold-600 hover:bg-gold-700"
+            )}
           >
-            Get the full Blueprint →
-          </a>
+            {upgrading && <Spinner />}
+            {upgrading ? "Redirecting to Stripe…" : "Get the full Blueprint — $99 →"}
+          </button>
+        </div>
+      )}
+
+      {/* Payment-state banners */}
+      {verifyingPayment && (
+        <div className="mb-6 rounded-2xl border border-blueprint-200 bg-blueprint-50 p-4 flex items-center gap-3">
+          <Spinner />
+          <div className="text-sm text-blueprint-800">Verifying your payment with Stripe…</div>
+        </div>
+      )}
+      {justUpgraded && (
+        <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+          <span className="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-green-500 text-white shrink-0">
+            <svg viewBox="0 0 20 20" className="h-3.5 w-3.5 fill-current"><path d="M7.6 13.2L4.4 10l-1.1 1.1 4.3 4.3 9.1-9.1-1.1-1.1z" /></svg>
+          </span>
+          <div>
+            <div className="font-semibold text-sm text-green-800">Payment confirmed — full Blueprint unlocked</div>
+            <div className="mt-0.5 text-xs text-green-700">Receipt sent to your email. All sections are now visible below.</div>
+          </div>
+        </div>
+      )}
+      {upgradeError && !verifyingPayment && (
+        <div className="mb-6 rounded-2xl border border-danger/20 bg-danger/5 p-4 text-sm text-danger">
+          {upgradeError}
         </div>
       )}
 
       {/* Quick nav */}
-      <div className="flex flex-wrap gap-2 mb-8 text-xs font-medium">
+      <div className="flex flex-wrap gap-2 mb-4 text-xs font-medium">
         {[
           { href: "#summary", label: "Situation Summary", locked: false },
           { href: "#structures", label: "Structure Matrix", locked: false },
@@ -140,7 +233,7 @@ export default function ReportPage() {
           {isFree && report.situationSummary && report.situationSummary.split("\n\n").length > 1 && (
             <InlineLockNote
               text={`${report.situationSummary.split("\n\n").length - 1} more paragraphs of personalised analysis covering tax position, capital raising constraints, IP strategy, and exit-stage implications`}
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           )}
         </div>
@@ -153,7 +246,7 @@ export default function ReportPage() {
             <LockedTeaser
               title={`${report.recommendedStructures.length} structures assessed for your circumstances`}
               detail="The full report names the primary recommendation, explains exactly why it fits your situation, and shows the secondary and 'avoid' scenarios with reasoning. Plus per-structure detailed notes."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           ) : (
             <div className="space-y-3 mb-6">
@@ -237,7 +330,7 @@ export default function ReportPage() {
           )}
           {isFree && (
             <div className="mt-4">
-              <UpgradeInline label="Unlock detailed notes for every structure" upgradeUrl={upgradeMailto} />
+              <UpgradeInline label="Unlock detailed notes for every structure" onUpgrade={handleUpgrade} />
             </div>
           )}
         </Section>
@@ -265,7 +358,7 @@ export default function ReportPage() {
             <LockedTeaser
               title="Detailed exit narrative + post-2027 impact"
               detail="The full report includes a 3–4 paragraph exit analysis covering CGT implications, Division 152 stacking, post-2027 indexation impact, and a list of key risks to your specific exit strategy."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           ) : (
             <>
@@ -341,7 +434,7 @@ export default function ReportPage() {
             {isFree && report.irreversibilityMap.length > 1 && (
               <InlineLockNote
                 text={`${report.irreversibilityMap.length - 1} more irreversible decisions mapped — including IP timing, HoldCo establishment, offshore structures, equity grants, ESS setup, and ABN registration`}
-                upgradeUrl={upgradeMailto}
+                onUpgrade={handleUpgrade}
               />
             )}
           </div>
@@ -355,7 +448,7 @@ export default function ReportPage() {
             <LockedTeaser
               title={`${report.budgetImpact.length} budget changes assessed for your specific situation`}
               detail="The full report breaks down each 2026–27 Budget change (CGT indexation, 30% minimum rate, individual tax cuts, start-up offset, loss carry-back, instant write-off) and explains the specific dollar impact on your scenarios."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           ) : (
             <div className="space-y-3">
@@ -387,7 +480,7 @@ export default function ReportPage() {
             <LockedTeaser
               title="Time-sequenced action checklist"
               detail="The full report gives you a complete checklist: actions to take before you register an ABN, within 30 days, within 90 days, and what can wait. Specific to your structure, your IP, and your capital raising plans."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           ) : (
             <div className="grid md:grid-cols-2 gap-4">
@@ -432,7 +525,7 @@ export default function ReportPage() {
             <LockedTeaser
               title="International holding structure analysis"
               detail="The full report covers the most relevant offshore options for your situation (Singapore, Delaware, UK, Hong Kong, NZ, Ireland) — CFC analysis, substance requirements, DTA implications, and the critical timing of each."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           ) : (
             <>
@@ -458,7 +551,7 @@ export default function ReportPage() {
             <LockedTeaser
               title={`${report.keyRisks.length} risks identified for your specific circumstances`}
               detail="The full report enumerates the specific risks your structure choice creates — Division 7A traps, transfer pricing exposure, Part IVA, substance failures, and more."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
             />
           ) : (
             <ul className="space-y-2">
@@ -480,7 +573,7 @@ export default function ReportPage() {
             <LockedTeaser
               title="One-page brief ready to hand to your registered tax agent"
               detail="The full report includes a professionally-formatted Accountant Brief: client overview, key inputs, structures to model, specific questions for the agent, and areas of uncertainty. Designed to save your accountant 60–90 minutes of intake and get you to the actual advice conversation faster."
-              upgradeUrl={upgradeMailto}
+              onUpgrade={handleUpgrade}
               accent="blueprint"
             />
           ) : (
@@ -650,12 +743,12 @@ function LockIcon({ className }: { className?: string }) {
 function LockedTeaser({
   title,
   detail,
-  upgradeUrl,
+  onUpgrade,
   accent,
 }: {
   title: string;
   detail: string;
-  upgradeUrl: string;
+  onUpgrade: () => void;
   accent?: "blueprint";
 }) {
   const isBlueprint = accent === "blueprint";
@@ -676,8 +769,8 @@ function LockedTeaser({
       </div>
       <div className="font-semibold text-base">{title}</div>
       <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-md mx-auto">{detail}</p>
-      <a
-        href={upgradeUrl}
+      <button
+        onClick={onUpgrade}
         className={cn(
           "mt-4 inline-flex items-center gap-2 rounded-full text-sm font-medium px-5 py-2.5 transition",
           isBlueprint
@@ -685,35 +778,35 @@ function LockedTeaser({
             : "bg-gold-600 text-white hover:bg-gold-700"
         )}
       >
-        Get the full Blueprint →
-      </a>
+        Get the full Blueprint — $99 →
+      </button>
     </div>
   );
 }
 
-function InlineLockNote({ text, upgradeUrl }: { text: string; upgradeUrl: string }) {
+function InlineLockNote({ text, onUpgrade }: { text: string; onUpgrade: () => void }) {
   return (
     <div className="rounded-xl border border-dashed border-gold-300 bg-gold-50/40 px-4 py-3 flex items-center gap-3">
       <LockIcon className="h-4 w-4 text-gold-600 shrink-0" />
       <div className="text-xs text-gold-800 flex-1">{text}</div>
-      <a
-        href={upgradeUrl}
+      <button
+        onClick={onUpgrade}
         className="shrink-0 rounded-full bg-gold-600 text-white text-[11px] font-medium px-3 py-1.5 hover:bg-gold-700 transition"
       >
         Unlock →
-      </a>
+      </button>
     </div>
   );
 }
 
-function UpgradeInline({ label, upgradeUrl }: { label: string; upgradeUrl: string }) {
+function UpgradeInline({ label, onUpgrade }: { label: string; onUpgrade: () => void }) {
   return (
-    <a
-      href={upgradeUrl}
-      className="block rounded-xl border border-dashed border-blueprint-200 bg-blueprint-50/40 px-4 py-3 text-center text-xs font-medium text-blueprint-700 hover:bg-blueprint-50 transition"
+    <button
+      onClick={onUpgrade}
+      className="block w-full rounded-xl border border-dashed border-blueprint-200 bg-blueprint-50/40 px-4 py-3 text-center text-xs font-medium text-blueprint-700 hover:bg-blueprint-50 transition"
     >
       <LockIcon className="inline h-3 w-3 mr-1.5" />
       {label} →
-    </a>
+    </button>
   );
 }
