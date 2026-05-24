@@ -11,6 +11,7 @@ export function SiteHeader() {
         <nav className="hidden md:flex items-center gap-7 text-sm text-ink-muted">
           <Link href="/#how" className="hover:text-ink transition-colors">How it works</Link>
           <Link href="/#report" className="hover:text-ink transition-colors">What&rsquo;s in the report</Link>
+          <Link href="/#pricing" className="hover:text-ink transition-colors">Pricing</Link>
           <Link href="/#faq" className="hover:text-ink transition-colors">FAQ</Link>
         </nav>
         <div className="flex items-center gap-2">
