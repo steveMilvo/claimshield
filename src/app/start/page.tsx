@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
@@ -162,55 +162,44 @@ export default function StartPage() {
 
         {step === 3 && (
           <StepShell
-            title="Ready to analyse"
-            sub="ClaimShield will parse your policy, audit the insurer's reasoning, value your loss against comparable claims, and draft your response."
+            title={analysing ? "Working on it" : "Ready to analyse"}
+            sub={
+              analysing
+                ? "Hang tight while ClaimShield reads your documents, cross-references the regulations, and drafts your response."
+                : "ClaimShield will parse your policy, audit the insurer's reasoning, value your loss against comparable claims, and draft your response."
+            }
           >
-            <Summary
-              items={[
-                ["Category", labelForCategory(category)],
-                ["Insurer", insurer || "—"],
-                ["Policy file", policyFile?.name || "—"],
-                ["Letter file", letterFile?.name || "—"],
-                ["Offered", offerAmount ? `$${offerAmount}` : "—"],
-                ["Your estimate", estimateAmount ? `$${estimateAmount}` : "—"],
-              ]}
-            />
-            <button
-              onClick={runAnalysis}
-              disabled={analysing}
-              className={cn(
-                "mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-medium transition",
-                analysing
-                  ? "bg-shield-300 text-white cursor-wait"
-                  : "bg-shield-600 text-white hover:bg-shield-700"
-              )}
-            >
-              {analysing ? (
-                <>
-                  <Spinner />
-                  Analysing your claim…
-                </>
-              ) : (
-                <>
+            {analysing ? (
+              <AnalysingCard />
+            ) : (
+              <>
+                <Summary
+                  items={[
+                    ["Category", labelForCategory(category)],
+                    ["Insurer", insurer || "—"],
+                    ["Policy file", policyFile?.name || "—"],
+                    ["Letter file", letterFile?.name || "—"],
+                    ["Offered", offerAmount ? `$${offerAmount}` : "—"],
+                    ["Your estimate", estimateAmount ? `$${estimateAmount}` : "—"],
+                  ]}
+                />
+                <button
+                  onClick={runAnalysis}
+                  className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 font-medium transition bg-shield-600 text-white hover:bg-shield-700"
+                >
                   <ShieldMark className="h-5 w-5" />
                   Run ClaimShield analysis
-                </>
-              )}
-            </button>
-            {error && (
-              <div className="mt-3 rounded-lg bg-danger/10 border border-danger/20 px-4 py-3 text-sm text-danger">
-                {error}
-              </div>
+                </button>
+                {error && (
+                  <div className="mt-3 rounded-lg bg-danger/10 border border-danger/20 px-4 py-3 text-sm text-danger">
+                    {error}
+                  </div>
+                )}
+                <p className="mt-3 text-xs text-ink-muted text-center">
+                  Free preview. You&apos;ll see the recoverable upside before any payment.
+                </p>
+              </>
             )}
-            {analysing && (
-              <p className="mt-3 text-xs text-ink-muted text-center">
-                Reading your documents and cross-referencing the regulations — this can take a minute.
-              </p>
-            )}
-            <p className="mt-3 text-xs text-ink-muted text-center">
-              Free preview. You&apos;ll see the recoverable upside before any
-              payment.
-            </p>
           </StepShell>
         )}
 
@@ -402,6 +391,52 @@ function Summary({ items }: { items: [string, string][] }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+const ANALYSING_STEPS = [
+  "Reading your policy document",
+  "Auditing the insurer's reasoning",
+  "Cross-referencing the regulations",
+  "Valuing the loss against comparables",
+  "Drafting your appeal, demand & complaint",
+];
+
+function AnalysingCard() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(
+      () => setIdx((i) => Math.min(ANALYSING_STEPS.length - 1, i + 1)),
+      4500,
+    );
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="rounded-2xl bg-canvas/60 border border-black/5 p-6 text-center">
+      <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-shield-600 text-white">
+        <Spinner />
+      </div>
+      <h3 className="mt-4 text-lg font-semibold tracking-tight">Analysing your claim</h3>
+      <p className="mt-1 text-sm text-ink-muted">This usually takes 30–90 seconds.</p>
+      <ul className="mt-5 mx-auto max-w-sm space-y-2 text-left text-sm">
+        {ANALYSING_STEPS.map((m, i) => (
+          <li key={m} className="flex items-center gap-3">
+            <span
+              className={cn(
+                "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold",
+                i < idx && "bg-accent text-white",
+                i === idx && "bg-shield-600 text-white",
+                i > idx && "bg-black/5 text-ink-muted",
+              )}
+              aria-hidden
+            >
+              {i < idx ? "✓" : i + 1}
+            </span>
+            <span className={i <= idx ? "text-ink" : "text-ink-muted"}>{m}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

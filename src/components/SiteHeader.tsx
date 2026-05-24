@@ -3,7 +3,7 @@ import { Logo } from "./Logo";
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 backdrop-blur bg-canvas/80 border-b border-black/5">
+    <header data-no-print="true" className="sticky top-0 z-30 backdrop-blur bg-canvas/80 border-b border-black/5">
       <div className="mx-auto max-w-6xl px-5 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center">
           <Logo />

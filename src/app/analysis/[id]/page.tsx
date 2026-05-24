@@ -140,7 +140,13 @@ function ResultHeader({ a, onSendAppeal }: { a: Analysis; onSendAppeal: () => vo
           Policy {a.policyNumber} · analysed {new Date().toLocaleDateString()}
         </p>
       </div>
-      <div className="flex gap-2">
+      <div data-no-print="true" className="flex flex-wrap gap-2">
+        <button
+          onClick={() => typeof window !== "undefined" && window.print()}
+          className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm hover:border-black/30"
+        >
+          Print / PDF
+        </button>
         <Link
           href="/cases"
           className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm hover:border-black/30"
@@ -354,7 +360,7 @@ function DocumentsCard({
                 <div className="text-xs text-ink-muted capitalize">{d.kind}</div>
               </div>
             </div>
-            <div className="flex shrink-0 items-center gap-2">
+            <div data-no-print="true" className="flex shrink-0 items-center gap-2">
               <button
                 onClick={() => onSend(d.kind)}
                 className="text-xs font-medium px-3 py-1.5 rounded-full bg-white border border-black/10 hover:border-black/30"
@@ -409,7 +415,7 @@ function AppealLetterCard({ letter, onSend }: { letter: string; onSend: () => vo
       <pre className="whitespace-pre-wrap text-[13px] leading-relaxed font-sans text-ink-soft bg-canvas/60 rounded-xl border border-black/5 p-4 max-h-80 overflow-auto">
         {letter}
       </pre>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div data-no-print="true" className="mt-3 flex flex-wrap gap-2">
         <button
           onClick={onSend}
           className="rounded-full bg-shield-600 text-white text-sm font-medium px-4 py-2 hover:bg-shield-700"

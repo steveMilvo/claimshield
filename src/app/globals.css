@@ -15,3 +15,19 @@ html, body {
   background-image: radial-gradient(rgba(11,27,43,0.08) 1px, transparent 1px);
   background-size: 18px 18px;
 }
+
+@media print {
+  html, body { background: white !important; }
+  [data-no-print] { display: none !important; }
+  .shield-gradient {
+    background: #0A3173 !important;
+    color: white !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .shadow-card { box-shadow: none !important; }
+  pre, .max-h-80 { max-height: none !important; overflow: visible !important; }
+  main { padding: 0 !important; }
+  section, .rounded-2xl, .rounded-3xl { break-inside: avoid; }
+  a[href]:after { content: ""; }
+}
