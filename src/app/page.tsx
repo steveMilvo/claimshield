@@ -53,13 +53,21 @@ function Hero() {
             >
               Start free Blueprint →
             </Link>
-            <Link
-              href="/#how"
-              className="inline-flex items-center rounded-full bg-white border border-black/10 font-medium px-5 py-3 hover:border-black/30 transition"
+            <a
+              href="/sample-blueprint.pdf"
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 rounded-full bg-white border border-black/10 font-medium px-5 py-3 hover:border-black/30 transition"
             >
-              See how it works
-            </Link>
+              <DownloadIcon />
+              Download sample report
+            </a>
           </div>
+          <p className="mt-3 text-xs text-ink-muted">
+            <Link href="/#how" className="hover:text-ink underline-offset-2 hover:underline">See how it works</Link>
+            <span className="mx-2 text-ink-muted/40">·</span>
+            <span>Sample is a real report — generated for a SaaS founder raising US VC</span>
+          </p>
           <p className="mt-5 text-xs text-ink-muted">
             Takes ~5 minutes · General information only · Designed to be reviewed with your accountant
           </p>
@@ -122,6 +130,14 @@ function HeroCard() {
         <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">18–28 pages</div>
       </div>
     </div>
+  );
+}
+
+function DownloadIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4 fill-current text-blueprint-600" aria-hidden>
+      <path d="M10 2a1 1 0 0 1 1 1v7.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42L9 10.6V3a1 1 0 0 1 1-1zm-6 13a1 1 0 0 1 1 1v1h10v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z" />
+    </svg>
   );
 }
 
@@ -263,6 +279,24 @@ function ReportSections() {
             <p className="mt-1.5 text-xs text-ink-muted leading-relaxed">{s.body}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-8 rounded-2xl border border-gold-200 bg-gold-50 px-6 py-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div className="font-semibold text-sm text-ink">See what a real Blueprint looks like</div>
+          <p className="mt-1 text-xs text-ink-muted">
+            8-page sample · SaaS founder, 2 co-founders, raising US VC, $10–$50M target exit.
+          </p>
+        </div>
+        <a
+          href="/sample-blueprint.pdf"
+          target="_blank"
+          rel="noopener"
+          className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white border border-black/10 px-4 py-2.5 text-sm font-medium hover:border-black/30 transition"
+        >
+          <DownloadIcon />
+          Download sample (PDF)
+        </a>
       </div>
     </section>
   );
