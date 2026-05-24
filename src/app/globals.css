@@ -8,18 +8,22 @@ html, body {
 }
 
 .blueprint-gradient {
-  background: linear-gradient(135deg, #041638 0%, #0A3173 50%, #1455BF 100%);
+  background: linear-gradient(135deg, #020C12 0%, #0A2540 50%, #1A3A5C 100%);
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, #8C6006 0%, #D4940A 60%, #FBBF24 100%);
+  background: linear-gradient(135deg, #947520 0%, #D4AF37 60%, #E5C24E 100%);
+}
+
+.teal-gradient {
+  background: linear-gradient(135deg, #007665 0%, #00BFA5 60%, #4DD3B8 100%);
 }
 
 .dotted-grid {
-  background-image: radial-gradient(rgba(11,27,43,0.08) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(10,37,64,0.08) 1px, transparent 1px);
   background-size: 18px 18px;
 }
 
 .shield-gradient {
-  background: linear-gradient(135deg, #041638 0%, #0A3173 50%, #1455BF 100%);
+  background: linear-gradient(135deg, #020C12 0%, #0A2540 50%, #1A3A5C 100%);
 }

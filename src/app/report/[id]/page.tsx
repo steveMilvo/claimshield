@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { getReport, StoredReport, StructureMatrixRow, IrreversibilityItem, Lead } from "@/lib/reportStore";
-import { BlueprintMark } from "@/components/Logo";
+import { BlueprintMark, LogoDark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
 
 const STORAGE_KEY = "ftb_reports";
@@ -124,12 +124,9 @@ export default function ReportPage() {
       <div className="rounded-3xl blueprint-gradient text-white p-8 md:p-12 mb-8 relative overflow-hidden">
         <div className="absolute -right-10 -top-10 h-60 w-60 rounded-full bg-white/10 blur-2xl" />
         <div className="relative">
-          <div className="flex items-center gap-3 mb-6">
-            <BlueprintMark className="h-8 w-8" />
-            <div>
-              <div className="text-sm font-semibold">Founder Tax Blueprint</div>
-              <div className="text-xs text-white/60">A SynthexIQ product · MilvoTech Pty Ltd</div>
-            </div>
+          <div className="mb-6">
+            <LogoDark className="h-9 w-auto" />
+            <div className="mt-1 text-[10px] text-white/50">MilvoTech Pty Ltd · A SynthexIQ product</div>
           </div>
           <h1 className="text-3xl md:text-4xl font-semibold tracking-tight leading-tight">
             Your Tax Structure Blueprint
