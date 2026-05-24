@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
 import { listCases, saveCase } from "@/lib/cases";
+import type { Analysis } from "@/lib/mockAnalysis";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -27,6 +28,8 @@ export default function StartPage() {
   const [offerAmount, setOfferAmount] = useState("");
   const [estimateAmount, setEstimateAmount] = useState("");
   const [analysing, setAnalysing] = useState(false);
+  const [phase, setPhase] = useState<"upload" | "analyse">("upload");
+  const [uploadPct, setUploadPct] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [savedCount, setSavedCount] = useState(0);
 
@@ -43,6 +46,8 @@ export default function StartPage() {
 
   async function runAnalysis() {
     setAnalysing(true);
+    setPhase("upload");
+    setUploadPct(0);
     setError(null);
     try {
       const fd = new FormData();
@@ -54,9 +59,13 @@ export default function StartPage() {
       fd.append("offerAmount", offerAmount);
       fd.append("estimateAmount", estimateAmount);
 
-      const res = await fetch("/api/analyze", { method: "POST", body: fd });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || `Request failed (${res.status}).`);
+      const data = await uploadAnalysis(fd, {
+        onProgress: (p) => setUploadPct(p),
+        onUploadComplete: () => {
+          setUploadPct(1);
+          setPhase("analyse");
+        },
+      });
 
       const id = saveCase(data.analysis);
       router.push(`/analysis/${id}`);
@@ -186,7 +195,11 @@ export default function StartPage() {
             }
           >
             {analysing ? (
-              <AnalysingCard />
+              phase === "upload" ? (
+                <UploadingCard pct={uploadPct} />
+              ) : (
+                <AnalysingCard />
+              )
             ) : (
               <>
                 <Summary
@@ -407,6 +420,61 @@ function Summary({ items }: { items: [string, string][] }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+function uploadAnalysis(
+  fd: FormData,
+  opts: { onProgress: (p: number) => void; onUploadComplete: () => void },
+): Promise<{ analysis: Analysis }> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/analyze");
+    xhr.responseType = "json";
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable && e.total > 0) opts.onProgress(e.loaded / e.total);
+    };
+    xhr.upload.onload = () => opts.onUploadComplete();
+    xhr.onload = () => {
+      const body = xhr.response as { analysis?: Analysis; error?: string } | null;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        if (body && body.analysis) resolve({ analysis: body.analysis });
+        else reject(new Error("Server returned no analysis."));
+      } else {
+        reject(new Error(body?.error || `Request failed (${xhr.status}).`));
+      }
+    };
+    xhr.onerror = () => reject(new Error("Network error during upload."));
+    xhr.send(fd);
+  });
+}
+
+function UploadingCard({ pct }: { pct: number }) {
+  const clamped = Math.max(0, Math.min(1, pct));
+  return (
+    <div className="rounded-2xl bg-canvas/60 border border-black/5 p-6 text-center">
+      <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-shield-600 text-white">
+        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+      </div>
+      <h3 className="mt-4 text-lg font-semibold tracking-tight">Uploading your documents</h3>
+      <p className="mt-1 text-sm text-ink-muted">
+        Sending {Math.round(clamped * 100)}% — analysis starts the moment it lands.
+      </p>
+      <div className="mt-5 mx-auto max-w-sm h-2 rounded-full bg-black/5 overflow-hidden">
+        <div
+          className="h-full bg-shield-600 transition-[width] duration-200 ease-out"
+          style={{ width: `${clamped * 100}%` }}
+          role="progressbar"
+          aria-valuenow={Math.round(clamped * 100)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+        />
+      </div>
+    </div>
   );
 }
 

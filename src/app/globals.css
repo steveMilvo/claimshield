@@ -48,17 +48,31 @@ footer[data-no-print] {
 }
 
 @media print {
-  html, body { background: white !important; }
+  @page { margin: 18mm; }
+  html, body {
+    background: white !important;
+    color: #000 !important;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
   [data-no-print] { display: none !important; }
+  .dotted-grid { background-image: none !important; }
   .shield-gradient {
     background: #0A3173 !important;
     color: white !important;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
-  .shadow-card { box-shadow: none !important; }
-  pre, .max-h-80 { max-height: none !important; overflow: visible !important; }
+  .shield-gradient * { color: white !important; }
+  .shadow-card, .backdrop-blur, .backdrop-blur-sm { box-shadow: none !important; backdrop-filter: none !important; }
+  pre, .max-h-80, .overflow-auto { max-height: none !important; overflow: visible !important; }
   main { padding: 0 !important; }
   section, .rounded-2xl, .rounded-3xl { break-inside: avoid; }
+  h1, h2, h3 { break-after: avoid; }
+  /* Print-only attribution under each card body */
+  .print-only { display: block !important; }
   a[href]:after { content: ""; }
+  /* Inputs and code blocks readable on paper */
+  pre { color: #111 !important; background: #f7f7f9 !important; border: 1px solid #ddd; padding: 12px; }
 }
+.print-only { display: none; }

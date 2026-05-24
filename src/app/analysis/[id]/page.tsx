@@ -95,7 +95,7 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 md:py-14">
       {demo && (
-        <div className="mb-6 rounded-xl bg-shield-50 border border-shield-100 px-4 py-3 text-sm text-shield-700">
+        <div data-no-print="true" className="mb-6 rounded-xl bg-shield-50 border border-shield-100 px-4 py-3 text-sm text-shield-700">
           This is a sample analysis. <Link href="/start" className="underline font-medium">Run your own</Link> to analyse a real policy and denial letter.
         </div>
       )}
@@ -122,6 +122,11 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
         onClose={() => setSend(null)}
         initial={send ?? { recipient: "", subject: "", body: "" }}
       />
+
+      <div className="print-only mt-8 text-[10pt] text-center text-ink-muted">
+        ClaimShield · MilvoTech Pty Ltd · printed {new Date().toLocaleString()} · {a.insurer} ·
+        policy {a.policyNumber}
+      </div>
     </div>
   );
 }
