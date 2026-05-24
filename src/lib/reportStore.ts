@@ -2,11 +2,21 @@
 
 import { Answers } from "./questions";
 
+export interface Lead {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export type Tier = "free" | "paid";
+
 export interface StoredReport {
   id: string;
   generatedAt: string;
   answers: Answers;
   report: GeneratedReport;
+  tier: Tier;
+  lead?: Lead;
 }
 
 export interface GeneratedReport {
@@ -71,13 +81,19 @@ export interface ActionChecklist {
 
 const STORAGE_KEY = "ftb_reports";
 
-export function saveReport(answers: Answers, report: GeneratedReport): string {
+export function saveReport(
+  answers: Answers,
+  report: GeneratedReport,
+  options?: { tier?: Tier; lead?: Lead }
+): string {
   const id = crypto.randomUUID();
   const stored: StoredReport = {
     id,
     generatedAt: new Date().toISOString(),
     answers,
     report,
+    tier: options?.tier ?? "free",
+    lead: options?.lead,
   };
 
   const existing = getAllReports();

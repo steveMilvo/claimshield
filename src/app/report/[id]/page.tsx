@@ -3,9 +3,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { getReport, StoredReport, StructureMatrixRow, IrreversibilityItem } from "@/lib/reportStore";
+import { getReport, StoredReport, StructureMatrixRow, IrreversibilityItem, Lead } from "@/lib/reportStore";
 import { BlueprintMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
+
+function buildUpgradeMailto(lead?: Lead): string {
+  const subject = encodeURIComponent("Full Founder Tax Blueprint — request");
+  const greeting = lead?.firstName
+    ? `Hi, this is ${lead.firstName}${lead.lastName ? ` ${lead.lastName}` : ""} (${lead.email}).`
+    : "Hi,";
+  const body = encodeURIComponent(
+    `${greeting}\n\nI generated a free preview Blueprint and I'd like the full version — including the complete structure matrix, exit narrative, action checklist, international analysis, and accountant brief.\n\nThanks.`
+  );
+  return `mailto:info@milvotech.com?subject=${subject}&body=${body}`;
+}
 
 export default function ReportPage() {
   const { id } = useParams<{ id: string }>();
@@ -38,8 +49,10 @@ export default function ReportPage() {
     );
   }
 
-  const { report, answers, generatedAt } = stored;
+  const { report, generatedAt, tier, lead } = stored;
+  const isFree = tier !== "paid";
   const date = new Date(generatedAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
+  const upgradeMailto = buildUpgradeMailto(lead);
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
@@ -64,23 +77,53 @@ export default function ReportPage() {
         </div>
       </div>
 
+      {/* Free preview banner */}
+      {isFree && (
+        <div className="mb-8 rounded-2xl border-2 border-dashed border-gold-300 bg-gold-50 p-5 flex flex-col md:flex-row md:items-center gap-4 md:justify-between">
+          <div className="flex items-start gap-3">
+            <LockIcon className="h-5 w-5 text-gold-600 mt-0.5 shrink-0" />
+            <div>
+              <div className="font-semibold text-sm text-gold-800">
+                You&rsquo;re viewing the free preview
+              </div>
+              <p className="mt-0.5 text-xs text-gold-700 leading-relaxed">
+                The full Blueprint includes the complete structure matrix, exit narrative,
+                irreversibility map, budget impact, action checklist, international analysis, and accountant brief.
+              </p>
+            </div>
+          </div>
+          <a
+            href={upgradeMailto}
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gold-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-gold-700 transition"
+          >
+            Get the full Blueprint →
+          </a>
+        </div>
+      )}
+
       {/* Quick nav */}
       <div className="flex flex-wrap gap-2 mb-8 text-xs font-medium">
         {[
-          ["#summary", "Situation Summary"],
-          ["#structures", "Structure Matrix"],
-          ["#exit", "Exit Analysis"],
-          ["#irreversibility", "Irreversibility Map"],
-          ["#budget", "Budget Impact"],
-          ["#checklist", "Action Checklist"],
-          ["#accountant", "Accountant Brief"],
-        ].map(([href, label]) => (
+          { href: "#summary", label: "Situation Summary", locked: false },
+          { href: "#structures", label: "Structure Matrix", locked: false },
+          { href: "#exit", label: "Exit Analysis", locked: false },
+          { href: "#irreversibility", label: "Irreversibility Map", locked: false },
+          { href: "#budget", label: "Budget Impact", locked: isFree },
+          { href: "#checklist", label: "Action Checklist", locked: isFree },
+          { href: "#accountant", label: "Accountant Brief", locked: isFree },
+        ].map((n) => (
           <a
-            key={href}
-            href={href}
-            className="rounded-full border border-black/10 bg-white px-3 py-1.5 text-ink-muted hover:border-blueprint-500 hover:text-blueprint-700 transition"
+            key={n.href}
+            href={n.href}
+            className={cn(
+              "rounded-full border px-3 py-1.5 transition inline-flex items-center gap-1.5",
+              n.locked
+                ? "border-gold-200 bg-gold-50/40 text-gold-700 hover:border-gold-400"
+                : "border-black/10 bg-white text-ink-muted hover:border-blueprint-500 hover:text-blueprint-700"
+            )}
           >
-            {label}
+            {n.locked && <LockIcon className="h-3 w-3" />}
+            {n.label}
           </a>
         ))}
       </div>
@@ -98,7 +141,10 @@ export default function ReportPage() {
       {report.recommendedStructures?.length > 0 && (
         <Section id="structures" number="02" title="Structure Scenarios Modelled">
           <div className="space-y-3 mb-6">
-            {report.recommendedStructures.map((s) => (
+            {(isFree
+              ? report.recommendedStructures.filter((s) => s.priority === "primary").slice(0, 1)
+              : report.recommendedStructures
+            ).map((s) => (
               <div
                 key={s.name}
                 className={cn(
@@ -116,6 +162,12 @@ export default function ReportPage() {
                 </div>
               </div>
             ))}
+            {isFree && report.recommendedStructures.length > 1 && (
+              <InlineLockNote
+                text={`${report.recommendedStructures.length - 1} more recommendations including secondary, consider, and avoid scenarios`}
+                upgradeUrl={upgradeMailto}
+              />
+            )}
           </div>
 
           {/* Matrix */}
@@ -134,7 +186,7 @@ export default function ReportPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {report.structureMatrix.map((row: StructureMatrixRow) => (
+                  {(isFree ? report.structureMatrix.slice(0, 2) : report.structureMatrix).map((row: StructureMatrixRow) => (
                     <tr key={row.structure} className="border-b border-black/5 hover:bg-canvas/60">
                       <td className="px-3 py-3 font-medium border border-black/8">{row.structure}</td>
                       <td className="px-3 py-3 text-center border border-black/8"><Dots score={row.taxEfficiency} /></td>
@@ -147,13 +199,23 @@ export default function ReportPage() {
                       </td>
                     </tr>
                   ))}
+                  {isFree && report.structureMatrix.length > 2 && (
+                    <tr>
+                      <td colSpan={7} className="px-3 py-3 border border-gold-200 bg-gold-50 text-center text-xs font-medium text-gold-700">
+                        <span className="inline-flex items-center gap-1.5">
+                          <LockIcon className="h-3 w-3" />
+                          {report.structureMatrix.length - 2} more structures scored in the full report
+                        </span>
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
           )}
 
-          {/* Structure notes */}
-          {report.structureMatrix?.length > 0 && (
+          {/* Structure notes (paid only) */}
+          {!isFree && report.structureMatrix?.length > 0 && (
             <div className="mt-4 space-y-2">
               {report.structureMatrix.map((row: StructureMatrixRow) => row.notes && (
                 <details key={row.structure} className="rounded-lg border border-black/8 bg-white">
@@ -163,6 +225,11 @@ export default function ReportPage() {
                   <div className="px-4 pb-3 text-xs text-ink-muted leading-relaxed">{row.notes}</div>
                 </details>
               ))}
+            </div>
+          )}
+          {isFree && (
+            <div className="mt-4">
+              <UpgradeInline label="Unlock detailed notes for every structure" upgradeUrl={upgradeMailto} />
             </div>
           )}
         </Section>
@@ -178,33 +245,43 @@ export default function ReportPage() {
             <InfoCard label="Est. after-tax proceeds" value={report.exitAnalysis.estimatedAfterTaxProceeds} highlight />
           </div>
 
-          {report.exitAnalysis.narrative && (
-            <div className="prose prose-sm max-w-none text-ink-muted leading-relaxed mb-4">
-              {report.exitAnalysis.narrative?.split("\n\n").map((p: string, i: number) => (
-                <p key={i} className="mb-4">{p}</p>
-              ))}
-            </div>
-          )}
+          {isFree ? (
+            <LockedTeaser
+              title="Detailed exit narrative + post-2027 impact"
+              detail="The full report includes a 3–4 paragraph exit analysis covering CGT implications, Division 152 stacking, post-2027 indexation impact, and a list of key risks to your specific exit strategy."
+              upgradeUrl={upgradeMailto}
+            />
+          ) : (
+            <>
+              {report.exitAnalysis.narrative && (
+                <div className="prose prose-sm max-w-none text-ink-muted leading-relaxed mb-4">
+                  {report.exitAnalysis.narrative?.split("\n\n").map((p: string, i: number) => (
+                    <p key={i} className="mb-4">{p}</p>
+                  ))}
+                </div>
+              )}
 
-          {report.exitAnalysis.postBudget2027Impact && (
-            <div className="rounded-xl border border-gold-200 bg-gold-50 p-4">
-              <div className="text-xs font-semibold text-gold-700 mb-1">2026–27 Budget Impact on Your Exit</div>
-              <p className="text-xs text-gold-800 leading-relaxed">{report.exitAnalysis.postBudget2027Impact}</p>
-            </div>
-          )}
+              {report.exitAnalysis.postBudget2027Impact && (
+                <div className="rounded-xl border border-gold-200 bg-gold-50 p-4">
+                  <div className="text-xs font-semibold text-gold-700 mb-1">2026–27 Budget Impact on Your Exit</div>
+                  <p className="text-xs text-gold-800 leading-relaxed">{report.exitAnalysis.postBudget2027Impact}</p>
+                </div>
+              )}
 
-          {report.exitAnalysis.keyRisks?.length > 0 && (
-            <div className="mt-4">
-              <div className="text-xs font-semibold text-ink-soft mb-2">Key risks to your exit strategy</div>
-              <ul className="space-y-1">
-                {report.exitAnalysis.keyRisks.map((risk: string, i: number) => (
-                  <li key={i} className="flex gap-2 text-xs text-ink-muted">
-                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-danger shrink-0" />
-                    {risk}
-                  </li>
-                ))}
-              </ul>
-            </div>
+              {report.exitAnalysis.keyRisks?.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-xs font-semibold text-ink-soft mb-2">Key risks to your exit strategy</div>
+                  <ul className="space-y-1">
+                    {report.exitAnalysis.keyRisks.map((risk: string, i: number) => (
+                      <li key={i} className="flex gap-2 text-xs text-ink-muted">
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full bg-danger shrink-0" />
+                        {risk}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
           )}
         </Section>
       )}
@@ -216,7 +293,7 @@ export default function ReportPage() {
             Colour-coded: <span className="text-green-700 font-medium">green</span> (easily changed), <span className="text-amber-700 font-medium">amber</span> (costly to change), <span className="text-danger font-medium">red</span> (effectively irreversible once acted on).
           </p>
           <div className="space-y-2">
-            {report.irreversibilityMap.map((item: IrreversibilityItem, i: number) => (
+            {(isFree ? report.irreversibilityMap.slice(0, 2) : report.irreversibilityMap).map((item: IrreversibilityItem, i: number) => (
               <div
                 key={i}
                 className={cn(
@@ -245,117 +322,166 @@ export default function ReportPage() {
                 </div>
               </div>
             ))}
+            {isFree && report.irreversibilityMap.length > 2 && (
+              <InlineLockNote
+                text={`${report.irreversibilityMap.length - 2} more irreversible decisions mapped — including IP timing, HoldCo establishment, offshore structures, and equity grants`}
+                upgradeUrl={upgradeMailto}
+              />
+            )}
           </div>
         </Section>
       )}
 
       {/* 5. Budget Impact */}
       {report.budgetImpact?.length > 0 && (
-        <Section id="budget" number="05" title="2026–27 Budget Impact Analysis">
-          <div className="space-y-3">
-            {report.budgetImpact.map((item: { change: string; impactOnYou: string; level: "high" | "medium" | "low" }, i: number) => (
-              <div key={i} className="rounded-xl border border-black/8 bg-white p-4 flex gap-4 items-start">
-                <span className={cn(
-                  "mt-0.5 text-[10px] font-bold rounded px-1.5 py-0.5 shrink-0",
-                  item.level === "high" && "bg-danger/10 text-danger",
-                  item.level === "medium" && "bg-gold-100 text-gold-700",
-                  item.level === "low" && "bg-canvas text-ink-muted",
-                )}>
-                  {item.level.toUpperCase()}
-                </span>
-                <div>
-                  <div className="text-sm font-semibold">{item.change}</div>
-                  <p className="mt-1 text-xs text-ink-muted leading-relaxed">{item.impactOnYou}</p>
+        <Section id="budget" number="05" title="2026–27 Budget Impact Analysis" locked={isFree}>
+          {isFree ? (
+            <LockedTeaser
+              title={`${report.budgetImpact.length} budget changes assessed for your specific situation`}
+              detail="The full report breaks down each 2026–27 Budget change (CGT indexation, 30% minimum rate, individual tax cuts, start-up offset, loss carry-back, instant write-off) and explains the specific dollar impact on your scenarios."
+              upgradeUrl={upgradeMailto}
+            />
+          ) : (
+            <div className="space-y-3">
+              {report.budgetImpact.map((item: { change: string; impactOnYou: string; level: "high" | "medium" | "low" }, i: number) => (
+                <div key={i} className="rounded-xl border border-black/8 bg-white p-4 flex gap-4 items-start">
+                  <span className={cn(
+                    "mt-0.5 text-[10px] font-bold rounded px-1.5 py-0.5 shrink-0",
+                    item.level === "high" && "bg-danger/10 text-danger",
+                    item.level === "medium" && "bg-gold-100 text-gold-700",
+                    item.level === "low" && "bg-canvas text-ink-muted",
+                  )}>
+                    {item.level.toUpperCase()}
+                  </span>
+                  <div>
+                    <div className="text-sm font-semibold">{item.change}</div>
+                    <p className="mt-1 text-xs text-ink-muted leading-relaxed">{item.impactOnYou}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </Section>
       )}
 
       {/* 6. Action Checklist */}
       {report.actionChecklist && (
-        <Section id="checklist" number="06" title="Action Checklist">
-          <div className="grid md:grid-cols-2 gap-4">
-            {[
-              { label: "Before you register", items: report.actionChecklist.beforeRegistration, urgent: true },
-              { label: "Within 30 days", items: report.actionChecklist.within30Days, urgent: true },
-              { label: "Within 90 days", items: report.actionChecklist.within90Days, urgent: false },
-              { label: "Can wait — but don't forget", items: report.actionChecklist.canWait, urgent: false },
-            ].map(({ label, items, urgent }) =>
-              items?.length > 0 ? (
-                <div
-                  key={label}
-                  className={cn(
-                    "rounded-xl border p-4",
-                    urgent ? "border-blueprint-200 bg-blueprint-50/60" : "border-black/8 bg-white"
-                  )}
-                >
-                  <div className="text-xs font-semibold text-ink-soft mb-2">{label}</div>
-                  <ul className="space-y-1.5">
-                    {items.map((action: string, i: number) => (
-                      <li key={i} className="flex gap-2 text-xs text-ink-muted">
-                        <span className={cn(
-                          "mt-1 h-1.5 w-1.5 rounded-full shrink-0",
-                          urgent ? "bg-blueprint-500" : "bg-black/20"
-                        )} />
-                        {action}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null
-            )}
-          </div>
+        <Section id="checklist" number="06" title="Action Checklist" locked={isFree}>
+          {isFree ? (
+            <LockedTeaser
+              title="Time-sequenced action checklist"
+              detail="The full report gives you a complete checklist: actions to take before you register an ABN, within 30 days, within 90 days, and what can wait. Specific to your structure, your IP, and your capital raising plans."
+              upgradeUrl={upgradeMailto}
+            />
+          ) : (
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { label: "Before you register", items: report.actionChecklist.beforeRegistration, urgent: true },
+                { label: "Within 30 days", items: report.actionChecklist.within30Days, urgent: true },
+                { label: "Within 90 days", items: report.actionChecklist.within90Days, urgent: false },
+                { label: "Can wait — but don't forget", items: report.actionChecklist.canWait, urgent: false },
+              ].map(({ label, items, urgent }) =>
+                items?.length > 0 ? (
+                  <div
+                    key={label}
+                    className={cn(
+                      "rounded-xl border p-4",
+                      urgent ? "border-blueprint-200 bg-blueprint-50/60" : "border-black/8 bg-white"
+                    )}
+                  >
+                    <div className="text-xs font-semibold text-ink-soft mb-2">{label}</div>
+                    <ul className="space-y-1.5">
+                      {items.map((action: string, i: number) => (
+                        <li key={i} className="flex gap-2 text-xs text-ink-muted">
+                          <span className={cn(
+                            "mt-1 h-1.5 w-1.5 rounded-full shrink-0",
+                            urgent ? "bg-blueprint-500" : "bg-black/20"
+                          )} />
+                          {action}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null
+              )}
+            </div>
+          )}
         </Section>
       )}
 
       {/* 7. International Analysis */}
       {report.internationalAnalysis && (
-        <Section id="international" number="07" title="International Structure Analysis">
-          <div className="rounded-xl border border-gold-200 bg-gold-50 p-4 mb-4">
-            <p className="text-xs text-gold-800 font-medium">
-              International structures require genuine commercial substance and specialist advice with international tax expertise. CFC rules, transfer pricing, and Part IVA apply. Never act on international structuring without specialist professional review.
-            </p>
-          </div>
-          <div className="prose prose-sm max-w-none text-ink-muted leading-relaxed">
-            {report.internationalAnalysis?.split("\n\n").map((p: string, i: number) => (
-              <p key={i} className="mb-4">{p}</p>
-            ))}
-          </div>
+        <Section id="international" number="07" title="International Structure Analysis" locked={isFree}>
+          {isFree ? (
+            <LockedTeaser
+              title="International holding structure analysis"
+              detail="The full report covers the most relevant offshore options for your situation (Singapore, Delaware, UK, Hong Kong, NZ, Ireland) — CFC analysis, substance requirements, DTA implications, and the critical timing of each."
+              upgradeUrl={upgradeMailto}
+            />
+          ) : (
+            <>
+              <div className="rounded-xl border border-gold-200 bg-gold-50 p-4 mb-4">
+                <p className="text-xs text-gold-800 font-medium">
+                  International structures require genuine commercial substance and specialist advice with international tax expertise. CFC rules, transfer pricing, and Part IVA apply. Never act on international structuring without specialist professional review.
+                </p>
+              </div>
+              <div className="prose prose-sm max-w-none text-ink-muted leading-relaxed">
+                {report.internationalAnalysis?.split("\n\n").map((p: string, i: number) => (
+                  <p key={i} className="mb-4">{p}</p>
+                ))}
+              </div>
+            </>
+          )}
         </Section>
       )}
 
       {/* 8. Key Risks */}
       {report.keyRisks?.length > 0 && (
-        <Section id="risks" number="08" title="Key Risks to Monitor">
-          <ul className="space-y-2">
-            {report.keyRisks.map((risk: string, i: number) => (
-              <li key={i} className="flex gap-3 items-start text-sm">
-                <span className="mt-1.5 h-2 w-2 rounded-full bg-danger shrink-0" />
-                <span className="text-ink-muted">{risk}</span>
-              </li>
-            ))}
-          </ul>
+        <Section id="risks" number="08" title="Key Risks to Monitor" locked={isFree}>
+          {isFree ? (
+            <LockedTeaser
+              title={`${report.keyRisks.length} risks identified for your specific circumstances`}
+              detail="The full report enumerates the specific risks your structure choice creates — Division 7A traps, transfer pricing exposure, Part IVA, substance failures, and more."
+              upgradeUrl={upgradeMailto}
+            />
+          ) : (
+            <ul className="space-y-2">
+              {report.keyRisks.map((risk: string, i: number) => (
+                <li key={i} className="flex gap-3 items-start text-sm">
+                  <span className="mt-1.5 h-2 w-2 rounded-full bg-danger shrink-0" />
+                  <span className="text-ink-muted">{risk}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </Section>
       )}
 
       {/* 9. Accountant Brief */}
       {report.accountantBrief && (
-        <Section id="accountant" number="09" title="Accountant Brief">
-          <div className="rounded-xl border-2 border-dashed border-blueprint-200 bg-blueprint-50/40 p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <BlueprintMark className="h-5 w-5" />
-              <span className="text-xs font-semibold text-blueprint-700">
-                DESIGNED TO BE HANDED DIRECTLY TO YOUR REGISTERED TAX AGENT
-              </span>
+        <Section id="accountant" number="09" title="Accountant Brief" locked={isFree}>
+          {isFree ? (
+            <LockedTeaser
+              title="One-page brief ready to hand to your registered tax agent"
+              detail="The full report includes a professionally-formatted Accountant Brief: client overview, key inputs, structures to model, specific questions for the agent, and areas of uncertainty. Designed to save your accountant 60–90 minutes of intake and get you to the actual advice conversation faster."
+              upgradeUrl={upgradeMailto}
+              accent="blueprint"
+            />
+          ) : (
+            <div className="rounded-xl border-2 border-dashed border-blueprint-200 bg-blueprint-50/40 p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <BlueprintMark className="h-5 w-5" />
+                <span className="text-xs font-semibold text-blueprint-700">
+                  DESIGNED TO BE HANDED DIRECTLY TO YOUR REGISTERED TAX AGENT
+                </span>
+              </div>
+              <div className="prose prose-sm max-w-none text-ink leading-relaxed">
+                {report.accountantBrief?.split("\n\n").map((p: string, i: number) => (
+                  <p key={i} className="mb-3 text-sm">{p}</p>
+                ))}
+              </div>
             </div>
-            <div className="prose prose-sm max-w-none text-ink leading-relaxed">
-              {report.accountantBrief?.split("\n\n").map((p: string, i: number) => (
-                <p key={i} className="mb-3 text-sm">{p}</p>
-              ))}
-            </div>
-          </div>
+          )}
         </Section>
       )}
 
@@ -393,12 +519,30 @@ export default function ReportPage() {
   );
 }
 
-function Section({ id, number, title, children }: { id: string; number: string; title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  number,
+  title,
+  children,
+  locked,
+}: {
+  id: string;
+  number: string;
+  title: string;
+  children: React.ReactNode;
+  locked?: boolean;
+}) {
   return (
     <section id={id} className="mb-8 rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden">
       <div className="flex items-center gap-3 px-6 py-4 border-b border-black/5">
         <span className="text-xs font-mono text-blueprint-600">{number}</span>
-        <h2 className="font-semibold">{title}</h2>
+        <h2 className="font-semibold flex-1">{title}</h2>
+        {locked && (
+          <span className="inline-flex items-center gap-1 rounded-full bg-gold-100 text-gold-700 text-[10px] font-bold px-2 py-1">
+            <LockIcon className="h-2.5 w-2.5" />
+            FULL REPORT
+          </span>
+        )}
       </div>
       <div className="p-6">{children}</div>
     </section>
@@ -469,5 +613,84 @@ function Spinner() {
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" fill="none" opacity="0.25" />
       <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" />
     </svg>
+  );
+}
+
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" className={cn("inline-block", className)} fill="currentColor" aria-hidden>
+      <path d="M10 2a4 4 0 0 0-4 4v2H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1V6a4 4 0 0 0-4-4zm-2 6V6a2 2 0 1 1 4 0v2H8z" />
+    </svg>
+  );
+}
+
+function LockedTeaser({
+  title,
+  detail,
+  upgradeUrl,
+  accent,
+}: {
+  title: string;
+  detail: string;
+  upgradeUrl: string;
+  accent?: "blueprint";
+}) {
+  const isBlueprint = accent === "blueprint";
+  return (
+    <div
+      className={cn(
+        "rounded-2xl border-2 border-dashed p-6 text-center",
+        isBlueprint ? "border-blueprint-200 bg-blueprint-50/40" : "border-gold-300 bg-gold-50/60"
+      )}
+    >
+      <div
+        className={cn(
+          "inline-flex items-center justify-center h-10 w-10 rounded-full mb-3",
+          isBlueprint ? "bg-blueprint-100 text-blueprint-700" : "bg-gold-100 text-gold-700"
+        )}
+      >
+        <LockIcon className="h-5 w-5" />
+      </div>
+      <div className="font-semibold text-base">{title}</div>
+      <p className="mt-2 text-sm text-ink-muted leading-relaxed max-w-md mx-auto">{detail}</p>
+      <a
+        href={upgradeUrl}
+        className={cn(
+          "mt-4 inline-flex items-center gap-2 rounded-full text-sm font-medium px-5 py-2.5 transition",
+          isBlueprint
+            ? "bg-blueprint-600 text-white hover:bg-blueprint-700"
+            : "bg-gold-600 text-white hover:bg-gold-700"
+        )}
+      >
+        Get the full Blueprint →
+      </a>
+    </div>
+  );
+}
+
+function InlineLockNote({ text, upgradeUrl }: { text: string; upgradeUrl: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-gold-300 bg-gold-50/40 px-4 py-3 flex items-center gap-3">
+      <LockIcon className="h-4 w-4 text-gold-600 shrink-0" />
+      <div className="text-xs text-gold-800 flex-1">{text}</div>
+      <a
+        href={upgradeUrl}
+        className="shrink-0 rounded-full bg-gold-600 text-white text-[11px] font-medium px-3 py-1.5 hover:bg-gold-700 transition"
+      >
+        Unlock →
+      </a>
+    </div>
+  );
+}
+
+function UpgradeInline({ label, upgradeUrl }: { label: string; upgradeUrl: string }) {
+  return (
+    <a
+      href={upgradeUrl}
+      className="block rounded-xl border border-dashed border-blueprint-200 bg-blueprint-50/40 px-4 py-3 text-center text-xs font-medium text-blueprint-700 hover:bg-blueprint-50 transition"
+    >
+      <LockIcon className="inline h-3 w-3 mr-1.5" />
+      {label} →
+    </a>
   );
 }

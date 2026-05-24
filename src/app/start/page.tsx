@@ -2,21 +2,144 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { SECTIONS, EMPTY_ANSWERS, Answers, Question } from "@/lib/questions";
-import { saveReport, GeneratedReport } from "@/lib/reportStore";
+import { saveReport, GeneratedReport, Lead } from "@/lib/reportStore";
 import { BlueprintMark } from "@/components/Logo";
+
+type Phase = "lead" | "questionnaire";
 
 export default function StartPage() {
   const router = useRouter();
+  const [phase, setPhase] = useState<Phase>("lead");
+  const [lead, setLead] = useState<Lead>({ firstName: "", lastName: "", email: "" });
   const [sectionIndex, setSectionIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({ ...EMPTY_ANSWERS });
   const [generating, setGenerating] = useState(false);
+  const [submittingLead, setSubmittingLead] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const section = SECTIONS[sectionIndex];
   const isLast = sectionIndex === SECTIONS.length - 1;
   const isFirst = sectionIndex === 0;
+
+  async function submitLead(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setSubmittingLead(true);
+    try {
+      const res = await fetch("/api/lead-capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(lead),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || `Submission failed (${res.status})`);
+      setPhase("questionnaire");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Couldn't submit. Try again.");
+    } finally {
+      setSubmittingLead(false);
+    }
+  }
+
+  if (phase === "lead") {
+    return (
+      <div className="mx-auto max-w-xl px-5 py-12 md:py-16">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full bg-blueprint-50 text-blueprint-700 text-xs font-medium px-3 py-1 mb-4">
+            <span className="h-1.5 w-1.5 rounded-full bg-blueprint-500" />
+            Free preview · No payment required
+          </div>
+          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+            Get your free Blueprint preview
+          </h1>
+          <p className="mt-3 text-ink-muted text-sm md:text-base max-w-md mx-auto">
+            Answer 6 quick sections and we&rsquo;ll generate a personalised tax structure preview — covering your situation, top recommendation, and the critical decisions you need to make first.
+          </p>
+        </div>
+
+        <form
+          onSubmit={submitLead}
+          className="rounded-2xl bg-white border border-black/5 shadow-card p-6 md:p-8 space-y-5"
+        >
+          <div className="grid sm:grid-cols-2 gap-4">
+            <label className="block">
+              <span className="text-xs font-medium text-ink-soft">First name *</span>
+              <input
+                required
+                value={lead.firstName}
+                onChange={(e) => setLead((l) => ({ ...l, firstName: e.target.value }))}
+                placeholder="Alex"
+                className="mt-1.5 w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm outline-none focus:border-blueprint-500 focus:ring-4 focus:ring-blueprint-500/10"
+              />
+            </label>
+            <label className="block">
+              <span className="text-xs font-medium text-ink-soft">Last name</span>
+              <input
+                value={lead.lastName}
+                onChange={(e) => setLead((l) => ({ ...l, lastName: e.target.value }))}
+                placeholder="Chen"
+                className="mt-1.5 w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm outline-none focus:border-blueprint-500 focus:ring-4 focus:ring-blueprint-500/10"
+              />
+            </label>
+          </div>
+          <label className="block">
+            <span className="text-xs font-medium text-ink-soft">Email *</span>
+            <input
+              required
+              type="email"
+              value={lead.email}
+              onChange={(e) => setLead((l) => ({ ...l, email: e.target.value }))}
+              placeholder="alex@yourdomain.com"
+              className="mt-1.5 w-full rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm outline-none focus:border-blueprint-500 focus:ring-4 focus:ring-blueprint-500/10"
+            />
+            <span className="mt-1.5 block text-[11px] text-ink-muted">
+              We&rsquo;ll email your preview so you can return to it any time.
+            </span>
+          </label>
+
+          {error && (
+            <div className="rounded-lg bg-danger/10 border border-danger/20 px-4 py-3 text-sm text-danger">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={submittingLead || !lead.firstName.trim() || !lead.email.trim()}
+            className={cn(
+              "w-full inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium px-5 py-3 transition",
+              submittingLead || !lead.firstName.trim() || !lead.email.trim()
+                ? "bg-blueprint-300 text-white cursor-not-allowed"
+                : "bg-blueprint-600 text-white hover:bg-blueprint-700"
+            )}
+          >
+            {submittingLead ? (
+              <>
+                <Spinner /> Continuing…
+              </>
+            ) : (
+              <>Start questionnaire →</>
+            )}
+          </button>
+
+          <p className="text-[11px] text-ink-muted text-center leading-relaxed">
+            By continuing you agree your information may be used to send your preview and product updates.
+            See <Link href="/legal" className="underline">legal &amp; disclaimers</Link>.
+          </p>
+        </form>
+
+        <div className="mt-6 text-center text-xs text-ink-muted">
+          Want to see what a full Blueprint looks like first?{" "}
+          <a href="/sample-blueprint.pdf" target="_blank" rel="noopener" className="text-blueprint-600 font-medium hover:underline">
+            Download a sample report (PDF)
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   function setAnswer(id: string, value: string | string[]) {
     setAnswers((prev) => ({ ...prev, [id]: value }));
@@ -56,7 +179,7 @@ export default function StartPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `Request failed (${res.status})`);
-      const id = saveReport(answers, data.report as GeneratedReport);
+      const id = saveReport(answers, data.report as GeneratedReport, { tier: "free", lead });
       router.push(`/report/${id}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong. Please try again.");
