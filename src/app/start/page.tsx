@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
-import { saveCase } from "@/lib/cases";
+import { listCases, saveCase } from "@/lib/cases";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -27,6 +28,11 @@ export default function StartPage() {
   const [estimateAmount, setEstimateAmount] = useState("");
   const [analysing, setAnalysing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savedCount, setSavedCount] = useState(0);
+
+  useEffect(() => {
+    setSavedCount(listCases().length);
+  }, []);
 
   function next() {
     setStep((s) => (Math.min(3, s + 1) as Step));
@@ -62,6 +68,16 @@ export default function StartPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-10 md:py-14">
+      {step === 0 && savedCount > 0 && (
+        <div className="mb-5 rounded-xl bg-shield-50 border border-shield-100 px-4 py-2.5 text-sm text-shield-700 flex items-center justify-between gap-3">
+          <span>
+            You have {savedCount} saved {savedCount === 1 ? "case" : "cases"} on this device.
+          </span>
+          <Link href="/cases" className="font-medium hover:underline shrink-0">
+            View →
+          </Link>
+        </div>
+      )}
       <Stepper current={step} />
 
       <div className="mt-8 rounded-2xl bg-white border border-black/5 shadow-card p-6 md:p-8">

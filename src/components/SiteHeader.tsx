@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { MobileNav } from "./MobileNav";
 
 export function SiteHeader() {
   return (
@@ -21,6 +22,7 @@ export function SiteHeader() {
           >
             Fight my claim
           </Link>
+          <MobileNav />
         </div>
       </div>
     </header>
