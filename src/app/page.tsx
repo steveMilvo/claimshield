@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BlueprintMark } from "@/components/Logo";
 
 export default function HomePage({
   searchParams,
@@ -83,60 +82,23 @@ function Hero() {
         </div>
 
         <div className="md:col-span-5">
-          <HeroCard />
+          <HeroLogo />
         </div>
       </div>
     </section>
   );
 }
 
-function HeroCard() {
+function HeroLogo() {
   return (
-    <div className="relative rounded-2xl bg-white shadow-card border border-black/5 p-5 space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-medium text-ink-muted">
-          <BlueprintMark className="h-5 w-5" />
-          Blueprint Analysis
-        </div>
-        <span className="text-xs rounded-full bg-blueprint-50 text-blueprint-700 px-2 py-0.5 font-medium">
-          HoldCo/OpCo recommended
-        </span>
-      </div>
-
-      <div className="rounded-xl blueprint-gradient text-white p-4">
-        <div className="text-xs/5 opacity-80">Estimated CGT saving at exit</div>
-        <div className="mt-1 text-3xl font-semibold tracking-tight">$280K+</div>
-        <div className="text-xs opacity-80">
-          $10M exit · wrong structure vs right structure
-        </div>
-      </div>
-
-      <ul className="space-y-2 text-sm">
-        <li className="flex gap-2">
-          <GoldCheck />
-          <span>
-            IP assigned to <span className="font-medium">HoldCo before OpCo has value</span> —
-            protected from trading liabilities.
-          </span>
-        </li>
-        <li className="flex gap-2">
-          <GoldCheck />
-          <span>
-            <span className="font-medium">Division 152</span> small business concessions: eligible — up to $500K retirement exemption.
-          </span>
-        </li>
-        <li className="flex gap-2">
-          <GoldCheck />
-          <span>
-            <span className="font-medium">Singapore holding structure</span> viable if raising international VC — modelled in report.
-          </span>
-        </li>
-      </ul>
-
-      <div className="grid grid-cols-3 gap-2 text-xs font-medium text-center">
-        <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">8 structures</div>
-        <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">3 exit scenarios</div>
-        <div className="rounded-lg bg-canvas text-ink-soft px-2 py-2">18–28 pages</div>
+    <div className="relative">
+      <div className="absolute -inset-6 rounded-3xl bg-gradient-to-br from-gold-100 via-transparent to-blueprint-100 blur-2xl opacity-60" aria-hidden />
+      <div className="relative rounded-3xl overflow-hidden shadow-card border border-blueprint-100 bg-blueprint-700">
+        <img
+          src="/branding/logo-primary.png"
+          alt="Founder Tax Blueprint — a SynthexIQ product"
+          className="w-full h-auto block"
+        />
       </div>
     </div>
   );
