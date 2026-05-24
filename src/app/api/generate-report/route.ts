@@ -168,6 +168,8 @@ Generate a JSON report with this exact structure. All string fields should be de
     }
   ],
 
+  IMPORTANT: All five score fields in structureMatrix MUST be integers between 1 and 5 (no nulls, no strings, no zeros). 5 = excellent for this dimension, 1 = poor.
+
   "exitAnalysis": {
     "primaryExitType": "name of their primary exit path",
     "preConcessionsTax": "estimated tax before Division 152 — use the pre-computed exitValue and structure",

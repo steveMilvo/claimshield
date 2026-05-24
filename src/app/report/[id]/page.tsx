@@ -561,15 +561,22 @@ function InfoCard({ label, value, highlight }: { label: string; value: string; h
   );
 }
 
-function Dots({ score }: { score: number }) {
+function Dots({ score }: { score: number | string | null | undefined }) {
+  const raw = typeof score === "number" ? score : typeof score === "string" ? parseInt(score, 10) : NaN;
+  const valid = Number.isFinite(raw) && raw >= 1 && raw <= 5;
+
+  if (!valid) {
+    return <span className="text-ink-muted/60 text-xs">—</span>;
+  }
+
   return (
-    <div className="flex gap-0.5 justify-center">
+    <div className="flex gap-0.5 justify-center items-center">
       {[1, 2, 3, 4, 5].map((i) => (
         <span
           key={i}
           className={cn(
             "h-2 w-2 rounded-full",
-            i <= score ? "bg-blueprint-500" : "bg-black/10"
+            i <= raw ? "bg-blueprint-500" : "bg-black/20"
           )}
         />
       ))}
