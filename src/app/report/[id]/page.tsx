@@ -165,7 +165,7 @@ export default function ReportPage() {
             )}
           >
             {upgrading && <Spinner />}
-            {upgrading ? "Redirecting to Stripe…" : "Get the full Blueprint — $99 →"}
+            {upgrading ? "Redirecting to Stripe…" : "Get the full Blueprint — $249 →"}
           </button>
         </div>
       )}
@@ -778,7 +778,7 @@ function LockedTeaser({
             : "bg-gold-600 text-white hover:bg-gold-700"
         )}
       >
-        Get the full Blueprint — $99 →
+        Get the full Blueprint — $249 →
       </button>
     </div>
   );

@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const unitAmount = parseInt(process.env.STRIPE_PRICE_AUD_CENTS ?? "9900", 10);
+  const unitAmount = parseInt(process.env.STRIPE_PRICE_AUD_CENTS ?? "24900", 10);
   const origin = process.env.NEXT_PUBLIC_APP_URL || new URL(req.url).origin;
 
   try {
