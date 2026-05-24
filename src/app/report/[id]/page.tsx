@@ -131,46 +131,54 @@ export default function ReportPage() {
       {/* 1. Situation Summary */}
       <Section id="summary" number="01" title="Your Situation Summary">
         <div className="prose prose-sm max-w-none text-ink-muted leading-relaxed">
-          {report.situationSummary?.split("\n\n").map((p, i) => (
+          {(isFree
+            ? report.situationSummary?.split("\n\n").slice(0, 1)
+            : report.situationSummary?.split("\n\n")
+          )?.map((p, i) => (
             <p key={i} className="mb-4">{p}</p>
           ))}
+          {isFree && report.situationSummary && report.situationSummary.split("\n\n").length > 1 && (
+            <InlineLockNote
+              text={`${report.situationSummary.split("\n\n").length - 1} more paragraphs of personalised analysis covering tax position, capital raising constraints, IP strategy, and exit-stage implications`}
+              upgradeUrl={upgradeMailto}
+            />
+          )}
         </div>
       </Section>
 
       {/* 2. Recommended Structures */}
       {report.recommendedStructures?.length > 0 && (
-        <Section id="structures" number="02" title="Structure Scenarios Modelled">
-          <div className="space-y-3 mb-6">
-            {(isFree
-              ? report.recommendedStructures.filter((s) => s.priority === "primary").slice(0, 1)
-              : report.recommendedStructures
-            ).map((s) => (
-              <div
-                key={s.name}
-                className={cn(
-                  "rounded-xl border p-4 flex gap-3 items-start",
-                  s.priority === "primary" && "border-blueprint-300 bg-blueprint-50",
-                  s.priority === "secondary" && "border-black/10 bg-white",
-                  s.priority === "consider" && "border-black/8 bg-canvas",
-                  s.priority === "avoid" && "border-danger/20 bg-danger/5",
-                )}
-              >
-                <PriorityBadge priority={s.priority} />
-                <div>
-                  <div className="font-semibold text-sm">{s.name}</div>
-                  <p className="mt-1 text-xs text-ink-muted leading-relaxed">{s.reason}</p>
+        <Section id="structures" number="02" title="Structure Scenarios Modelled" locked={isFree}>
+          {isFree ? (
+            <LockedTeaser
+              title={`${report.recommendedStructures.length} structures assessed for your circumstances`}
+              detail="The full report names the primary recommendation, explains exactly why it fits your situation, and shows the secondary and 'avoid' scenarios with reasoning. Plus per-structure detailed notes."
+              upgradeUrl={upgradeMailto}
+            />
+          ) : (
+            <div className="space-y-3 mb-6">
+              {report.recommendedStructures.map((s) => (
+                <div
+                  key={s.name}
+                  className={cn(
+                    "rounded-xl border p-4 flex gap-3 items-start",
+                    s.priority === "primary" && "border-blueprint-300 bg-blueprint-50",
+                    s.priority === "secondary" && "border-black/10 bg-white",
+                    s.priority === "consider" && "border-black/8 bg-canvas",
+                    s.priority === "avoid" && "border-danger/20 bg-danger/5",
+                  )}
+                >
+                  <PriorityBadge priority={s.priority} />
+                  <div>
+                    <div className="font-semibold text-sm">{s.name}</div>
+                    <p className="mt-1 text-xs text-ink-muted leading-relaxed">{s.reason}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-            {isFree && report.recommendedStructures.length > 1 && (
-              <InlineLockNote
-                text={`${report.recommendedStructures.length - 1} more recommendations including secondary, consider, and avoid scenarios`}
-                upgradeUrl={upgradeMailto}
-              />
-            )}
-          </div>
+              ))}
+            </div>
+          )}
 
-          {/* Matrix */}
+          {/* Matrix — sliced for free tier */}
           {report.structureMatrix?.length > 0 && (
             <div className="overflow-x-auto">
               <table className="w-full text-xs border-collapse">
@@ -238,11 +246,19 @@ export default function ReportPage() {
       {/* 3. Exit Analysis */}
       {report.exitAnalysis && (
         <Section id="exit" number="03" title="Exit Strategy Tax Modelling">
-          <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className={cn("grid gap-4 mb-6", isFree ? "md:grid-cols-2" : "md:grid-cols-2")}>
             <InfoCard label="Primary exit type" value={report.exitAnalysis.primaryExitType} />
-            <InfoCard label="Division 152 eligibility" value={report.exitAnalysis.div152Eligible} highlight={report.exitAnalysis.div152Eligible?.startsWith("eligible")} />
-            <InfoCard label="Est. tax before concessions" value={report.exitAnalysis.preConcessionsTax} />
-            <InfoCard label="Est. after-tax proceeds" value={report.exitAnalysis.estimatedAfterTaxProceeds} highlight />
+            <InfoCard
+              label="Division 152 eligibility"
+              value={isFree ? "Assessed — verdict in full report" : report.exitAnalysis.div152Eligible}
+              highlight={!isFree && report.exitAnalysis.div152Eligible?.toLowerCase().startsWith("eligible")}
+            />
+            {!isFree && (
+              <>
+                <InfoCard label="Est. tax before concessions" value={report.exitAnalysis.preConcessionsTax} />
+                <InfoCard label="Est. after-tax proceeds" value={report.exitAnalysis.estimatedAfterTaxProceeds} highlight />
+              </>
+            )}
           </div>
 
           {isFree ? (
@@ -293,7 +309,7 @@ export default function ReportPage() {
             Colour-coded: <span className="text-green-700 font-medium">green</span> (easily changed), <span className="text-amber-700 font-medium">amber</span> (costly to change), <span className="text-danger font-medium">red</span> (effectively irreversible once acted on).
           </p>
           <div className="space-y-2">
-            {(isFree ? report.irreversibilityMap.slice(0, 2) : report.irreversibilityMap).map((item: IrreversibilityItem, i: number) => (
+            {(isFree ? report.irreversibilityMap.slice(0, 1) : report.irreversibilityMap).map((item: IrreversibilityItem, i: number) => (
               <div
                 key={i}
                 className={cn(
@@ -322,9 +338,9 @@ export default function ReportPage() {
                 </div>
               </div>
             ))}
-            {isFree && report.irreversibilityMap.length > 2 && (
+            {isFree && report.irreversibilityMap.length > 1 && (
               <InlineLockNote
-                text={`${report.irreversibilityMap.length - 2} more irreversible decisions mapped — including IP timing, HoldCo establishment, offshore structures, and equity grants`}
+                text={`${report.irreversibilityMap.length - 1} more irreversible decisions mapped — including IP timing, HoldCo establishment, offshore structures, equity grants, ESS setup, and ABN registration`}
                 upgradeUrl={upgradeMailto}
               />
             )}
