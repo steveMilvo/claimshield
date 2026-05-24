@@ -153,7 +153,7 @@ export default function StartPage() {
 
         {generating && (
           <p className="mt-3 text-xs text-ink-muted text-center">
-            Modelling your structures and running tax calculations — this takes 30–60 seconds.
+            Modelling your structures and running tax calculations — this takes 2–4 minutes. Keep this tab open.
           </p>
         )}
       </div>

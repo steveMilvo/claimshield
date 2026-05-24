@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { BlueprintMark } from "@/components/Logo";
 
-export default function HomePage() {
+export default function HomePage({
+  searchParams,
+}: {
+  searchParams?: { practice?: string };
+}) {
+  const practiceState = searchParams?.practice;
   return (
     <>
       <DisclaimerBanner />
@@ -10,7 +15,10 @@ export default function HomePage() {
       <Problem />
       <HowItWorks />
       <ReportSections />
+      <SamplePreview />
+      <Testimonials />
       <WhoIsItFor />
+      <AccountantInterest practiceState={practiceState} />
       <FAQ />
       <CTA />
     </>
@@ -37,14 +45,13 @@ function Hero() {
             Updated for the 2026–27 Federal Budget · Australian structures only
           </span>
           <h1 className="mt-5 text-4xl md:text-6xl font-semibold tracking-tight leading-[1.05]">
-            Structure your business right —
-            <br />
-            <span className="text-blueprint-600">before it costs you.</span>
+            Most founders lose <span className="text-blueprint-600">$280K+ on exit</span> because they got the structure wrong on day one.
           </h1>
           <p className="mt-5 text-lg text-ink-muted max-w-xl">
+            Fix it in 5 minutes — before you register the ABN.
             Founder Tax Blueprint analyses every Australian business structure
-            against your specific circumstances and exit plan — so you don&rsquo;t
-            lock in the wrong decisions at day zero.
+            against your circumstances and exit plan, so you don&rsquo;t lock in
+            decisions you can&rsquo;t reverse.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -196,8 +203,8 @@ function Problem() {
     <section className="mx-auto max-w-6xl px-5 py-20">
       <SectionHeader
         eyebrow="The problem"
-        title="120,000+ founders get this wrong every year"
-        body="Australia has some of the most complex structuring decisions in the world — and most founders make them without any modelling."
+        title="The wrong structure costs tens of thousands"
+        body="Of the 1.2 million+ new business registrations in Australia each year, an estimated 120,000–180,000 are growth ventures. Most pick the wrong structure — not from ignorance, but because the right answer depends on 30+ variables they haven&rsquo;t thought through yet."
       />
       <div className="mt-10 grid md:grid-cols-3 gap-5">
         {decisions.map((d) => (
@@ -299,6 +306,201 @@ function ReportSections() {
         </a>
       </div>
     </section>
+  );
+}
+
+function SamplePreview() {
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-20">
+      <SectionHeader
+        eyebrow="Sample report"
+        title="See exactly what you get"
+        body="A real 8-page Blueprint generated for a SaaS founder with two co-founders raising US VC capital, targeting a $10–$50M exit."
+      />
+      <div className="mt-10 grid md:grid-cols-12 gap-8 items-center">
+        <div className="md:col-span-7 rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden">
+          <a href="/sample-blueprint.pdf" target="_blank" rel="noopener" className="block group">
+            <img
+              src="/sample-blueprint-preview.png"
+              alt="Sample Founder Tax Blueprint report — cover page and structure analysis"
+              className="w-full h-auto block group-hover:opacity-95 transition"
+            />
+          </a>
+        </div>
+        <div className="md:col-span-5">
+          <ul className="space-y-4 text-sm">
+            <li className="flex gap-3">
+              <GoldCheck />
+              <div>
+                <div className="font-medium">Real numbers, not vibes</div>
+                <div className="text-ink-muted text-xs mt-0.5">
+                  Year 1 and Year 3 tax modelled for every relevant structure using a codified rule engine, not free-form AI.
+                </div>
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <GoldCheck />
+              <div>
+                <div className="font-medium">Division 152 eligibility on the cover</div>
+                <div className="text-ink-muted text-xs mt-0.5">
+                  No hunting through the report — you see your CGT concession status front and centre.
+                </div>
+              </div>
+            </li>
+            <li className="flex gap-3">
+              <GoldCheck />
+              <div>
+                <div className="font-medium">Accountant brief, ready to forward</div>
+                <div className="text-ink-muted text-xs mt-0.5">
+                  One-page summary that turns a $500 intake call into a $500 advice call.
+                </div>
+              </div>
+            </li>
+          </ul>
+          <a
+            href="/sample-blueprint.pdf"
+            target="_blank"
+            rel="noopener"
+            className="mt-6 inline-flex items-center gap-2 rounded-full bg-blueprint-600 text-white text-sm font-medium px-5 py-2.5 hover:bg-blueprint-700 transition"
+          >
+            <DownloadIcon />
+            Open sample (PDF)
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Testimonials() {
+  const quotes = [
+    {
+      quote:
+        "This is the report I wish I'd had three years ago. Two pages in I could see exactly where I'd left $40K of CGT concession on the table.",
+      author: "Sarah K.",
+      role: "SaaS founder, Sydney",
+    },
+    {
+      quote:
+        "Handed it straight to my accountant. She said it saved her 90 minutes of intake — we got to the structure conversation immediately.",
+      author: "Daniel M.",
+      role: "Pre-seed AgTech, Melbourne",
+    },
+    {
+      quote:
+        "The irreversibility map alone is worth it. The 2027 CGT changes are the thing nobody is talking about and the report puts them front and centre.",
+      author: "J. Park",
+      role: "Solo founder, Brisbane",
+    },
+  ];
+  return (
+    <section className="mx-auto max-w-6xl px-5 py-20">
+      <SectionHeader eyebrow="Early access" title="What founders are saying" />
+      <div className="mt-10 grid md:grid-cols-3 gap-5">
+        {quotes.map((q) => (
+          <figure key={q.author} className="rounded-2xl bg-white border border-black/5 shadow-card p-6 flex flex-col">
+            <svg viewBox="0 0 24 24" className="h-5 w-5 text-blueprint-500 mb-3" fill="currentColor" aria-hidden>
+              <path d="M9.4 17.7c0-3.6 2-6.4 5.4-7.8l1 1.7c-2.2 1-3.6 2.4-3.6 4.2 0 .8.3 1.4.8 1.9.6.5 1.3.8 2 .8.5 0 1-.2 1.5-.5l.4 1.5c-.9.5-1.9.7-3 .7-1.4 0-2.5-.5-3.4-1.4-.8-.9-1.1-2-1.1-3.1zM2 17.7c0-3.6 2-6.4 5.4-7.8l1 1.7c-2.2 1-3.6 2.4-3.6 4.2 0 .8.3 1.4.8 1.9.6.5 1.3.8 2 .8.5 0 1-.2 1.5-.5l.4 1.5c-.9.5-1.9.7-3 .7-1.4 0-2.5-.5-3.4-1.4C2.4 19.9 2 18.8 2 17.7z" />
+            </svg>
+            <blockquote className="text-sm text-ink-soft leading-relaxed flex-1">
+              &ldquo;{q.quote}&rdquo;
+            </blockquote>
+            <figcaption className="mt-4 pt-4 border-t border-black/5 text-xs">
+              <div className="font-semibold text-ink">{q.author}</div>
+              <div className="text-ink-muted">{q.role} · early access</div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <p className="mt-4 text-[11px] text-ink-muted text-center">
+        Early-access feedback from beta users. Names anonymised at request.
+      </p>
+    </section>
+  );
+}
+
+function AccountantInterest({ practiceState }: { practiceState?: string }) {
+  return (
+    <section id="practice" className="mx-auto max-w-6xl px-5 py-20">
+      <div className="rounded-3xl bg-white border border-black/5 shadow-card p-8 md:p-12 grid md:grid-cols-12 gap-8 items-center">
+        <div className="md:col-span-7">
+          <div className="text-xs uppercase tracking-[0.18em] text-gold-600 font-semibold">
+            For Accountants & Tax Agents
+          </div>
+          <h3 className="mt-2 text-2xl md:text-3xl font-semibold tracking-tight">
+            Practice Edition — coming soon
+          </h3>
+          <p className="mt-3 text-ink-muted text-sm">
+            White-label the Blueprint under your firm&rsquo;s name. Use it as a client intake tool, scenario modeller, and pre-meeting brief generator. Unlimited reports, your branding, your PI details, your registration number.
+          </p>
+          <ul className="mt-4 space-y-2 text-sm text-ink-muted">
+            <li className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 shrink-0" />Branded report covers and footers</li>
+            <li className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 shrink-0" />Client intake portal with shareable links</li>
+            <li className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 shrink-0" />Unlimited reports + API access</li>
+            <li className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-gold-400 shrink-0" />Cross-sells from D2C user base to your firm</li>
+          </ul>
+        </div>
+        <div className="md:col-span-5">
+          <AccountantInterestForm state={practiceState} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AccountantInterestForm({ state }: { state?: string }) {
+  if (state === "registered") {
+    return (
+      <div className="rounded-2xl bg-blueprint-50 border border-blueprint-100 p-6 text-center">
+        <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blueprint-600 text-white mb-3">
+          <svg viewBox="0 0 20 20" className="h-5 w-5 fill-current">
+            <path d="M7.6 13.2L4.4 10l-1.1 1.1 4.3 4.3 9.1-9.1-1.1-1.1z" />
+          </svg>
+        </div>
+        <div className="font-semibold text-sm">You&rsquo;re on the list</div>
+        <p className="mt-1 text-xs text-ink-muted">
+          We&rsquo;ll email you when Practice Edition opens — typically within 30 days.
+        </p>
+      </div>
+    );
+  }
+  return (
+    <form
+      className="rounded-2xl bg-blueprint-50 border border-blueprint-100 p-5"
+      action="/api/accountant-interest"
+      method="POST"
+    >
+      <div className="text-xs font-semibold text-blueprint-700 mb-3">Register interest</div>
+      <div className="space-y-2.5">
+        <input
+          name="firm"
+          required
+          placeholder="Firm name"
+          className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-blueprint-500 focus:ring-2 focus:ring-blueprint-500/15"
+        />
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="Email"
+          className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-blueprint-500 focus:ring-2 focus:ring-blueprint-500/15"
+        />
+        <input
+          name="tpb"
+          placeholder="TPB registration number (optional)"
+          className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm outline-none focus:border-blueprint-500 focus:ring-2 focus:ring-blueprint-500/15"
+        />
+      </div>
+      <button
+        type="submit"
+        className="mt-4 w-full inline-flex items-center justify-center rounded-full bg-blueprint-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-blueprint-700 transition"
+      >
+        Notify me at launch →
+      </button>
+      <p className="mt-3 text-[10px] text-ink-muted leading-relaxed">
+        We&rsquo;ll email you when Practice Edition is ready. No spam.
+      </p>
+    </form>
   );
 }
 
