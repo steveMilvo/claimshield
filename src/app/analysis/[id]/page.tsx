@@ -7,6 +7,7 @@ import { mockAnalysis, type Analysis } from "@/lib/mockAnalysis";
 import { getCase } from "@/lib/cases";
 import { downloadDocx } from "@/lib/downloadDocx";
 import { ShieldMark } from "@/components/Logo";
+import { SendEmailDialog, type SendDraft } from "@/components/SendEmailDialog";
 
 type LoadState =
   | { status: "loading" }
@@ -66,6 +67,31 @@ export default function AnalysisPage() {
 }
 
 function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
+  const [send, setSend] = useState<SendDraft | null>(null);
+
+  function draftFor(kind: "appeal" | "demand" | "complaint"): SendDraft {
+    const claimRef = a.policyNumber ? ` — claim ${a.policyNumber}` : "";
+    if (kind === "demand") {
+      return {
+        recipient: "",
+        subject: `Settlement demand${claimRef}`,
+        body: a.demandLetter,
+      };
+    }
+    if (kind === "complaint") {
+      return {
+        recipient: "complaints@afca.org.au",
+        subject: `AFCA complaint — ${a.insurer || "insurer"}${claimRef}`,
+        body: a.complaintText,
+      };
+    }
+    return {
+      recipient: "",
+      subject: `Appeal${claimRef}`,
+      body: a.appealLetter,
+    };
+  }
+
   return (
     <div className="mx-auto max-w-6xl px-5 py-10 md:py-14">
       {demo && (
@@ -73,7 +99,7 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
           This is a sample analysis. <Link href="/start" className="underline font-medium">Run your own</Link> to analyse a real policy and denial letter.
         </div>
       )}
-      <ResultHeader a={a} />
+      <ResultHeader a={a} onSendAppeal={() => setSend(draftFor("appeal"))} />
 
       <div className="mt-8 grid lg:grid-cols-12 gap-6">
         <section className="lg:col-span-7 space-y-6">
@@ -85,16 +111,22 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
 
         <aside className="lg:col-span-5 space-y-6">
           <ScoreCard score={a.score} label={a.scoreLabel} />
-          <DocumentsCard a={a} />
-          <AppealLetterCard letter={a.appealLetter} />
+          <DocumentsCard a={a} onSend={(kind) => setSend(draftFor(kind))} />
+          <AppealLetterCard letter={a.appealLetter} onSend={() => setSend(draftFor("appeal"))} />
           <DisclaimerCard />
         </aside>
       </div>
+
+      <SendEmailDialog
+        open={send !== null}
+        onClose={() => setSend(null)}
+        initial={send ?? { recipient: "", subject: "", body: "" }}
+      />
     </div>
   );
 }
 
-function ResultHeader({ a }: { a: Analysis }) {
+function ResultHeader({ a, onSendAppeal }: { a: Analysis; onSendAppeal: () => void }) {
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div>
@@ -121,7 +153,10 @@ function ResultHeader({ a }: { a: Analysis }) {
         >
           New analysis
         </Link>
-        <button className="rounded-full bg-shield-600 text-white px-4 py-2 text-sm font-medium hover:bg-shield-700">
+        <button
+          onClick={onSendAppeal}
+          className="rounded-full bg-shield-600 text-white px-4 py-2 text-sm font-medium hover:bg-shield-700"
+        >
           Send appeal →
         </button>
       </div>
@@ -284,7 +319,13 @@ function bodyForKind(a: Analysis, kind: string): string {
   return a.appealLetter;
 }
 
-function DocumentsCard({ a }: { a: Analysis }) {
+function DocumentsCard({
+  a,
+  onSend,
+}: {
+  a: Analysis;
+  onSend: (kind: "appeal" | "demand" | "complaint") => void;
+}) {
   const icons: Record<string, string> = { appeal: "📩", demand: "💰", complaint: "🏛️" };
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -313,13 +354,21 @@ function DocumentsCard({ a }: { a: Analysis }) {
                 <div className="text-xs text-ink-muted capitalize">{d.kind}</div>
               </div>
             </div>
-            <button
-              onClick={() => download(d.name, bodyForKind(a, d.kind), d.kind)}
-              disabled={busy === d.name}
-              className="shrink-0 text-xs font-medium px-3 py-1.5 rounded-full bg-shield-600 text-white hover:bg-shield-700 disabled:opacity-60"
-            >
-              {busy === d.name ? "Preparing…" : "Download .docx"}
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                onClick={() => onSend(d.kind)}
+                className="text-xs font-medium px-3 py-1.5 rounded-full bg-white border border-black/10 hover:border-black/30"
+              >
+                Send
+              </button>
+              <button
+                onClick={() => download(d.name, bodyForKind(a, d.kind), d.kind)}
+                disabled={busy === d.name}
+                className="text-xs font-medium px-3 py-1.5 rounded-full bg-shield-600 text-white hover:bg-shield-700 disabled:opacity-60"
+              >
+                {busy === d.name ? "Preparing…" : "Download .docx"}
+              </button>
+            </div>
           </li>
         ))}
       </ul>
@@ -328,7 +377,7 @@ function DocumentsCard({ a }: { a: Analysis }) {
   );
 }
 
-function AppealLetterCard({ letter }: { letter: string }) {
+function AppealLetterCard({ letter, onSend }: { letter: string; onSend: () => void }) {
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -361,7 +410,12 @@ function AppealLetterCard({ letter }: { letter: string }) {
         {letter}
       </pre>
       <div className="mt-3 flex flex-wrap gap-2">
-        <button className="rounded-full bg-shield-600 text-white text-sm font-medium px-4 py-2 hover:bg-shield-700">Send via ClaimShield</button>
+        <button
+          onClick={onSend}
+          className="rounded-full bg-shield-600 text-white text-sm font-medium px-4 py-2 hover:bg-shield-700"
+        >
+          Send via email
+        </button>
         <button
           className="rounded-full bg-white border border-black/10 text-sm font-medium px-4 py-2 hover:border-black/30"
           onClick={copy}
