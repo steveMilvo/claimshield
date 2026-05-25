@@ -1,5 +1,5 @@
 # AI Launchpad — Learning Module Content (LMC) v3
-## Modules 05–23 (Microenterprise, Affiliate, Compliance Agent Libraries)
+## Modules 05–24 (Microenterprise, Affiliate, Compliance Agent Libraries)
 
 **Platform:** MilvoTech AI Launchpad
 **Audience:** NDIS participants with low literacy / low numeracy, varying ability levels
@@ -1916,13 +1916,1123 @@ In your content calendar, replace the 3 weakest planned posts with 3 new posts u
 
 ---
 
-# Part 3 — Compliance Agent Library
+# Part 3 — Mastery & Life Library
 
-Modules 18–23 train learners as paid compliance agents for NDIS service providers, using the AI Launchpad platform's audit and reporting tools. Real client work begins in Module 22.
+Modules 18–24 deepen the participant's business AND open AI as a daily-life superpower. These modules are where AI stops being a business tool and becomes a self-advocacy, accessibility, and independence layer that was not possible before.
+
+Every module in this Part includes an **"AI Superpower" sidebar** — one paragraph naming the specific outcome AI now makes possible for a participant with a disability.
 
 ---
 
-## Module 18 — Understanding NDIS Compliance
+## Module 18 — Customer Care with AI
+
+**Goal:** Handle every customer message (good, bad, hard) with confidence using AI-drafted scripts you can adapt and reuse.
+
+**Intro Video (Seedance Prompt):**
+> A small business owner sits at a kitchen table. A phone buzzes with a difficult message. They breathe, open Claude on their laptop, paste the message in, and within 10 seconds a calm, professional reply appears. They smile and send it. 15 seconds.
+
+**What to Do:**
+1. Collect 3 real customer messages you have received (or imagine).
+2. Use Claude to draft 5 reply templates (thank-you, apology, refund, polite no, follow-up).
+3. Personalise each template in your own words.
+4. Build a "Customer Care Playbook" file.
+5. Save it where you can grab it from your phone in 30 seconds.
+
+**What You Will Make:** A 5-template Customer Care Playbook in plain language, saved as a Google Doc or in Telegram saved messages.
+
+> **🟢 AI Superpower:** A solo business owner with low literacy can now reply to a difficult customer email in under 2 minutes with a calm, professional message. Before AI, one bad reply could end a small business. Now every message is a chance to keep the customer.
+
+---
+
+### Open Activity — Build Your Customer Care Playbook
+
+This activity will take about 60–75 minutes.
+
+**Step 1 — Collect Real Customer Messages (10 min)**
+
+On paper, write down 3 messages you have received or expect to receive. Examples:
+- "Hi, do you have this in blue?"
+- "I'm not happy with what I got."
+- "Can I get a refund?"
+
+**Step 2 — Draft 5 Templates with Claude (25 min)**
+
+Open Claude (claude.ai) and paste:
+
+```
+I run a small business in Australia. My customer is [YOUR CUSTOMER from Module 03].
+My business is [YOUR BUSINESS NAME].
+
+Please write 5 short reply templates I can copy and paste:
+
+1. THANK-YOU: when a customer says they love what I made.
+2. APOLOGY: when something goes wrong (item arrived broken, mistake made).
+3. REFUND: when a customer asks for their money back politely.
+4. POLITE NO: when a customer asks for something I can't do (e.g. a colour I don't make, a price I can't drop to).
+5. FOLLOW-UP: a friendly check-in 1 week after a sale.
+
+Rules:
+- Each template under 5 sentences.
+- Year 6 reading level.
+- Warm and human, never robotic.
+- Australian English. No fake American phrases.
+- Leave [BRACKET] fields for the customer's name and the specific thing.
+```
+
+**Step 3 — Personalise Each Template (15 min)**
+
+Read each template out loud. Change any word that doesn't sound like you. Save the 5 templates in a Google Doc called "Customer Care Playbook" or in your Telegram saved messages.
+
+**Step 4 — Rehearse the Hard One (10 min)**
+
+Pick the template you find scariest (usually the refund or the apology). Paste it back into Claude with:
+
+```
+Pretend you are an upset customer. Send me 3 different angry messages.
+I will reply using my apology template. Tell me how to improve.
+```
+
+> **Why this matters:** Customer service used to be the hardest part of running a small business — one bad message could lose a customer. AI gives you a calm, professional first draft every time, so you stay in control even on a bad day.
+
+---
+
+### Billable Touchpoint A — Playbook Plan Review (10 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod18_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 1, send the 3 customer messages to your support worker.
+2. *"These are the kinds of messages I get. Are there any I've missed?"*
+3. Support worker adds 1–2 likely messages from their experience.
+
+---
+
+### Billable Touchpoint B — Template Critique (15 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod18_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 2, screenshot all 5 Claude-drafted templates.
+2. *"Here are my 5 templates. Do any sound wrong or too pushy?"*
+3. Support worker flags any template that's off-tone and suggests a fix.
+
+---
+
+### Billable Touchpoint C — Playbook Sign-Off (10 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod18_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. Send the finished Playbook (5 personalised templates) to the support worker.
+2. *"My Playbook is finished. Where should I save it for fastest access?"*
+3. Support worker confirms storage location and logs milestone.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod18_a` — submits Touchpoint A
+- `/submit_mod18_b` — submits Touchpoint B
+- `/submit_mod18_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- Ask "draft a reply" — bot will rewrite a tough message for you on the spot
+- Ask "soften this" — bot makes any message friendlier
+- Ask "is this too harsh?" — bot gives quick yes/no
+
+**Check-In Question:** Do you have all 5 templates saved where you can find them on your phone?
+
+**Quiz Question:**
+> Why is it useful to have customer reply templates ready before you need them?
+> - A) So AI does your job for you
+> - B) So you can reply calmly even on a bad day, without freezing ✓
+> - C) So you don't have to talk to customers at all
+> - D) Because the templates are funny
+
+---
+
+## Module 19 — AI Reading Buddy
+
+**Goal:** Turn any scary letter (Centrelink, NDIS, landlord, doctor, bill, contract) into plain Year-3 English in under a minute — and know what to do next.
+
+**Intro Video (Seedance Prompt):**
+> A person opens a mailbox and pulls out a thick official letter with a government logo. Their shoulders tense. They take a photo with their phone, open Claude on their tablet, and the letter is instantly retyped in big, simple words with a clear checklist of actions. Their shoulders drop. They smile. 15 seconds.
+
+**What to Do:**
+1. Find 1 real letter or email that has been sitting on your bench.
+2. Take a clear photo of it (or save it as a PDF).
+3. Upload it to Claude with the Reading Buddy prompt below.
+4. Read the plain-English version out loud.
+5. Decide your one next action.
+
+**What You Will Make:** A saved "Reading Buddy" workflow you can use forever, plus the first real letter decoded and acted on.
+
+> **🟢 AI Superpower:** A participant with dyslexia, low literacy, or English as a second language can now read and act on every official letter that lands in their mailbox. Independence. Wasn't possible 3 years ago — these letters used to require a support worker, a family member, or sit unopened for months.
+
+---
+
+### Open Activity — Become Your Own Letter Translator
+
+This activity will take about 45–60 minutes.
+
+**Step 1 — Pick Your Scariest Letter (5 min)**
+
+Find a letter or email that has been making you anxious. Common ones:
+- A Centrelink letter about your payment
+- An NDIS plan review document
+- A bill that looks confusing
+- A landlord letter about rent or a lease
+- A doctor's letter or test result
+- A government form you don't understand
+
+**Step 2 — Photo or PDF (5 min)**
+
+Take a clear, flat photo of every page. Make sure the writing is readable. If it's already on your computer, save it as a PDF.
+
+**Step 3 — Upload to Claude and Use the Reading Buddy Prompt (15 min)**
+
+Open Claude (claude.ai), click the attach icon (📎), upload the photo or PDF, and paste this prompt:
+
+```
+You are my Reading Buddy. I find official letters hard to read.
+
+Please:
+1. Tell me in 1 sentence what this letter is about (Year 3 reading level).
+2. List the 3 most important things the letter says, as bullet points,
+   in plain English (no jargon).
+3. Tell me what — if anything — I need to DO, as a numbered checklist.
+4. Tell me the deadline (date) for each action, in big numbers.
+5. Tell me what happens if I do nothing.
+6. Tell me who to call for help, with the actual phone number from the letter.
+
+Do not change any names, dates, amounts, or phone numbers from the letter.
+If you are unsure about any number, write "CHECK WITH SUPPORT WORKER" next to it.
+```
+
+> **Honesty rule:** Claude is not a lawyer or a Centrelink officer. For any letter about money owed, court, or legal threats, ALWAYS confirm with your support worker before acting.
+
+**Step 4 — Read It Out Loud (5 min)**
+
+Read Claude's plain-English version out loud. If anything still feels confusing, paste it back and say *"Explain this part more simply."*
+
+**Step 5 — Take Your One Next Action (15 min)**
+
+From the checklist, pick the ONE thing you need to do today. Do it. (Examples: call a number, book an appointment, sign a form, write a date in your calendar.)
+
+> **Why this matters:** Letters used to be a major source of anxiety, missed appointments, and missed deadlines for many participants. Now you can decode any letter in 1 minute and know exactly what to do next.
+
+---
+
+### Billable Touchpoint A — First Decode Review (15 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod19_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 3, send the support worker BOTH the original letter photo AND Claude's plain-English version.
+2. *"Did Claude get this right? Anything wrong?"*
+3. Support worker fact-checks dates, amounts, and instructions. Critical for high-stakes letters.
+
+---
+
+### Billable Touchpoint B — Action Plan Coaching (10 min, async or voice call)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod19_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 4, send the support worker your one chosen next action.
+2. *"This is what I'm going to do. Is that the right first step?"*
+3. Support worker confirms, suggests a better first step, or walks you through it.
+
+---
+
+### Billable Touchpoint C — Action Complete & Skill Sign-Off (15 min, async + voice note)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod19_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After taking the action, send a voice note describing what happened (Year 3 reading level — just say what you did).
+2. *"I did the thing. Here is what happened."*
+3. Support worker celebrates the milestone and logs you as "Reading Buddy certified" — meaning you can now decode letters on your own.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod19_a` — submits Touchpoint A
+- `/submit_mod19_b` — submits Touchpoint B
+- `/submit_mod19_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- Send any photo of a letter with the caption "decode this" — bot runs the Reading Buddy prompt automatically
+- Ask "what does [word] mean?" — bot defines official jargon in plain English
+- Ask "is this a scam?" — bot checks the message and warns you if it looks dodgy
+
+**Check-In Question:** Have you decoded at least 1 real letter and taken 1 real action?
+
+**Quiz Question:**
+> When using AI as your Reading Buddy, what MUST you always do for letters about money, court, or legal threats?
+> - A) Just trust the AI
+> - B) Confirm with your support worker before acting ✓
+> - C) Ignore the letter
+> - D) Reply to the letter using AI
+
+---
+
+## Module 20 — Your Online Home
+
+**Goal:** Build a real, live, one-page website for your business using AI-powered website builders — your business's permanent address on the internet.
+
+**Intro Video (Seedance Prompt):**
+> A laptop screen showing a blank page. AI types out a clean, professional one-page website: a hero photo, a clear business name, a "Contact me" button. The cursor moves to a green "Publish" button. The page goes live, and a phone notification chimes with the new web address. 15 seconds.
+
+**What to Do:**
+1. Choose a free AI website builder (Carrd, Wix AI, or Framer).
+2. Pick a simple template.
+3. Drop in your photos from Module 06 and copy from Modules 04, 05, 07.
+4. Use AI to write any words still missing.
+5. Hit "Publish".
+
+**What You Will Make:** A live one-page website at a real web address (e.g. yourbusinessname.carrd.co) — your business's permanent home.
+
+> **🟢 AI Superpower:** A solo trader from a kitchen table can have a professional website for $0–$19/year that rivals what agencies charge $5000 for. A participant with no coding skills, no design background, and no budget can publish a real business website in 90 minutes. Wasn't possible 3 years ago.
+
+---
+
+### Open Activity — Build Your One-Page Website
+
+This activity will take about 75–90 minutes.
+
+**Step 1 — Choose Your Tool (10 min)**
+
+Three good free options:
+
+| Tool | Best For | Cost |
+|---|---|---|
+| **Carrd** (carrd.co) | Super simple one-pagers | Free for 3 sites |
+| **Wix AI** (wix.com/ai) | More fancy with AI design | Free with ads |
+| **Framer** (framer.com) | Modern, looks designer-made | Free starter |
+
+If unsure, ask Claude:
+
+```
+I sell [WHAT YOU SELL] to [YOUR CUSTOMER]. I have no coding skills.
+I want one simple webpage with: my logo, 3 photos, my prices, a "Contact me"
+button, and my phone number.
+
+Which is easier for a beginner — Carrd, Wix AI, or Framer? Pick ONE and tell
+me why in 4 sentences.
+```
+
+**Step 2 — Pick a Template (15 min)**
+
+Sign up (free). Browse templates. Pick the one that:
+- Has space for a big photo at the top
+- Has 3 photo spots in the middle
+- Has a "Contact me" button at the bottom
+- Looks clean (not busy)
+
+**Step 3 — Fill in the Words with AI (20 min)**
+
+You already have most of the words from earlier modules. For anything missing, paste this into Claude:
+
+```
+I am building a one-page website for my business.
+Business name: [FROM MODULE 03]
+What I sell: [PRODUCT/SERVICE]
+My promise to customers: [FROM MODULE 04 BRAND WORK]
+My prices: [FROM MODULE 07]
+
+Please write:
+1. A 7-word headline for the top of my page (warm and clear).
+2. A 3-sentence "About Me" paragraph (Year 6 reading, friendly).
+3. A 1-line call to action above the "Contact me" button.
+4. A short, honest disclaimer if needed (e.g. "Sydney only" or "Made fresh on order").
+
+Australian English. No fake American phrases. No exclamation marks.
+```
+
+**Step 4 — Drop in Your Photos (15 min)**
+
+Use the 3 cleaned-up photos from Module 06. Upload them. Place them in the photo spots.
+
+**Step 5 — Set Up "Contact Me" (10 min)**
+
+Wire the button to:
+- Your business email, OR
+- Your phone number (text only — never the home address), OR
+- A Telegram link to your bot for quotes.
+
+Do NOT put your home address on the website. Use your suburb only.
+
+**Step 6 — Hit Publish (5 min)**
+
+Read the whole page out loud one last time. If anything sounds wrong, fix it. Then click Publish. Save the live web address.
+
+> **Why this matters:** Until very recently, a small business needed to pay a designer $2000–$5000 for a website. Now you can have a real, professional, mobile-friendly one-pager in 90 minutes for free.
+
+---
+
+### Billable Touchpoint A — Tool & Template Choice Review (10 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod20_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 2, screenshot the template you've picked.
+2. *"This is the template I want to use. Is it the right fit for my business?"*
+3. Support worker checks: photo space, mobile-friendly, simple enough for the learner to edit. Approves or suggests a different template.
+
+---
+
+### Billable Touchpoint B — Draft Page Critique (15 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod20_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 4, send the support worker the **preview link** of your draft page (every builder has one).
+2. *"This is my draft. Anything I should fix before publishing?"*
+3. Support worker checks: spelling, photo quality, mobile preview, contact safety (no home address).
+
+---
+
+### Billable Touchpoint C — Launch Day & First Share (15 min, async + voice note)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod20_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After publishing, send the live URL + a voice note: *"My website is live! Here it is."*
+2. Support worker celebrates, adds the URL to your alumni file, and helps you plan: where to share it (Module 08 social channels, business card, email signature).
+3. Milestone logged: First Website Live.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod20_a` — submits Touchpoint A
+- `/submit_mod20_b` — submits Touchpoint B
+- `/submit_mod20_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- Ask "how do I add a photo to Carrd?" — bot sends a screenshot tutorial
+- Ask "preview my page" — bot reminds you how to share the draft link
+- Ask "is my web address safe?" — bot checks URL for typos before publishing
+
+**Check-In Question:** Is your website live and shareable?
+
+**Quiz Question:**
+> What should you NEVER put on your business website?
+> - A) Your business name
+> - B) Your home address ✓
+> - C) Your phone number (text only)
+> - D) Your suburb
+
+---
+
+## Module 21 — Hard Conversations & Self-Advocacy
+
+**Goal:** Use AI to rehearse, draft, and survive any hard conversation — landlord, GP, NDIS planner, family, government — so you walk in prepared and walk out heard.
+
+**Intro Video (Seedance Prompt):**
+> A person sits at a kitchen table looking nervous, phone in hand. They open Claude on a tablet and type a few words. Claude pretends to be the landlord, asking tough questions. The person practises answering. They breathe out. They walk into the real meeting calm. 15 seconds.
+
+**What to Do:**
+1. Choose one real hard conversation coming up in your life.
+2. Use Claude to rehearse it (role-play mode).
+3. Use Claude to draft a formal email or letter if writing is easier than talking.
+4. Print or screenshot your key points.
+5. Have the conversation or send the email.
+
+**What You Will Make:** A folder with: 1 rehearsed conversation script + 3 templated emails for life's hard moments (complaint, request, follow-up).
+
+> **🟢 AI Superpower:** A participant who freezes in confrontation, has social anxiety, or struggles with formal language can now rehearse a hard conversation 10 times before having it — or skip the call entirely and send a polished email that gets the same outcome. Wasn't possible before; either you had a paid coach or you avoided the conversation.
+
+---
+
+### Open Activity — Rehearse and Win the Hard Conversation
+
+This activity will take about 60–90 minutes.
+
+**Step 1 — Pick the Hard Conversation (10 min)**
+
+Write down on paper one conversation you've been avoiding. Examples:
+- Asking the landlord to fix the heater
+- Telling the GP about a side effect
+- Asking for a different support worker
+- Pushing back on a family member who is taking your money
+- Asking the NDIS planner for more funding
+- Telling a customer "no"
+
+**Step 2 — Rehearse with Claude (25 min)**
+
+Open Claude and paste:
+
+```
+I need to practise a hard conversation. Please role-play with me.
+
+Who you will pretend to be: [LANDLORD / GP / NDIS PLANNER / etc.]
+What I need to say: [WRITE IT IN SIMPLE WORDS — e.g. "I need the heater fixed
+                     and it has been 3 weeks"]
+What I'm scared of: [e.g. "They will say it's not their job"]
+My communication style: I am [calm / direct / nervous]. I prefer [face-to-face /
+                       phone / email]. I have [a learning disability / anxiety /
+                       low literacy] — please go slow and use plain words.
+
+Please:
+1. Pretend to be [WHO] and start the conversation.
+2. After my reply, tell me what worked and what to change.
+3. We do 3 rounds. By the end, I should feel ready.
+
+Year 6 reading level. Be warm but realistic.
+```
+
+**Step 3 — Draft the Email Option (15 min)**
+
+Even if you plan to have the conversation face-to-face, draft an email version as backup. Paste:
+
+```
+Please draft a formal but warm email from me to [PERSON].
+
+Subject: [WHAT IT'S ABOUT]
+Background: [1-2 sentences]
+What I want: [1 SENTENCE — what action do I need from them]
+Deadline (if any): [DATE]
+
+Rules:
+- Year 8 reading level for the recipient (slightly more formal).
+- 4 short paragraphs max.
+- Polite but firm.
+- Australian English.
+- End with my full name as [NAME].
+```
+
+**Step 4 — Print or Screenshot Your Key Points (5 min)**
+
+From the rehearsal, write down on paper the 3 key sentences you want to say no matter what. Carry the paper in your pocket for the real conversation.
+
+**Step 5 — Have the Conversation (varies)**
+
+Take the action — either the conversation or the email.
+
+> **Why this matters:** Most hard conversations go badly because we go in unprepared. AI gives you unlimited free rehearsal time. It's like having a coach in your pocket.
+
+---
+
+### Billable Touchpoint A — Conversation Plan Review (15 min, async + optional voice call)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod21_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 1, send the support worker the conversation you've chosen.
+2. *"This is what I want to say. Is this the right person to say it to?"*
+3. Support worker checks: is this conversation safe to have alone? Does it need an advocate, a witness, or a formal complaint process instead?
+
+> **Safety check:** If the conversation involves abuse, threats, or financial harm, the SW MUST escalate to a formal advocacy process. Do NOT do this conversation alone.
+
+---
+
+### Billable Touchpoint B — Rehearsal Review (15 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod21_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 2, screenshot your 3-round Claude rehearsal.
+2. *"This is how I practised. Did I miss anything important?"*
+3. Support worker reads the rehearsal, suggests 1 better line or 1 thing to avoid.
+
+---
+
+### Billable Touchpoint C — Post-Conversation Debrief (15 min, async + voice note)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod21_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After the conversation (or sending the email), send a voice note: *"This is what happened."*
+2. Support worker debriefs: what worked, what to do differently next time. If outcome was bad, plan the next step.
+3. Milestone logged: First Self-Advocacy Win.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod21_a` — submits Touchpoint A
+- `/submit_mod21_b` — submits Touchpoint B
+- `/submit_mod21_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- Ask "rehearse with me" — bot starts an instant role-play
+- Ask "draft an email to [person] about [issue]" — bot writes one in 30 seconds
+- Ask "calm me down before this meeting" — bot offers a 2-minute breathing script
+
+**Check-In Question:** Did you have the conversation (or send the email)?
+
+**Quiz Question:**
+> What is the best thing to do when a hard conversation feels too scary?
+> - A) Avoid it forever
+> - B) Rehearse it with AI 3+ times, then have it ✓
+> - C) Send an angry email
+> - D) Ask family to do it for you
+
+---
+
+## Module 22 — AI for Health & Wellbeing
+
+**Goal:** Use AI as your pre-doctor visit prep buddy, your medication explainer, and your plain-English health-info translator — without ever letting AI replace your doctor.
+
+**Intro Video (Seedance Prompt):**
+> A person walking into a GP clinic with their phone open. The phone screen shows a clean checklist: "Questions to ask, Symptoms to mention, Medicines I take." They sit down across from the GP and refer to the list. The GP smiles and writes notes. 15 seconds.
+
+**What to Do:**
+1. Pick your next GP, specialist, or NDIS health visit.
+2. Use Claude to build a pre-visit checklist (what to ask, what to mention).
+3. Use Claude to translate any health information into plain English.
+4. Set up Telegram bot reminders for medications (if you take them).
+5. Take the checklist to the appointment.
+
+**What You Will Make:** A pre-visit health checklist + a personal "Health Words" glossary + (optional) a daily medication reminder.
+
+> **🟢 AI Superpower:** A participant who used to leave GP visits confused, forget half their questions, and not understand the prescription label, can now walk in prepared and walk out with a plan they understand. Doctors give 15-minute visits; AI gives you 60 minutes of free prep beforehand.
+>
+> **⚠️ Critical limit:** AI is NOT a doctor. It does not diagnose. It does not prescribe. It does not replace your GP, psychologist, or therapist. AI is the bridge between you and your doctor, never a replacement.
+
+---
+
+### Open Activity — Become Your Own Health Prep Buddy
+
+This activity will take about 60–75 minutes.
+
+**Step 1 — Pick the Next Visit (5 min)**
+
+Write down:
+- Who you are seeing: [GP / specialist / dentist / psychologist / NDIS health review]
+- Date: [DATE]
+- What it's about: [reason in 1 sentence]
+
+**Step 2 — Build the Pre-Visit Checklist with Claude (20 min)**
+
+Paste into Claude:
+
+```
+I have a [GP / SPECIALIST / etc.] visit coming up.
+
+Reason for visit: [WHAT'S GOING ON — be honest, plain words]
+How long it's been: [TIME]
+What I've already tried: [REST / PARACETAMOL / NOTHING / etc.]
+Medicines I am already on: [LIST OR "NONE"]
+What I want from the visit: [DIAGNOSIS / REFERRAL / PRESCRIPTION / PLAN]
+
+Please write me a pre-visit checklist:
+1. The 5 most important things to mention to the doctor (symptoms, history).
+2. The 4 best questions to ask the doctor.
+3. 3 questions I should ask BEFORE I leave the room (about medicines,
+   side effects, what to do if it gets worse).
+4. What information to bring (Medicare card, any past test results, etc.).
+
+Plain Year 5 reading level. Numbered. I will print this.
+
+Do NOT diagnose me. Do NOT tell me what is wrong. Only prep me for
+the doctor's questions.
+```
+
+**Step 3 — Translate Any Health Words You Don't Know (15 min)**
+
+If you have a letter, prescription, test result, or website with hard words, paste:
+
+```
+Please explain these health words to me in plain Year 4 reading English.
+One sentence each. No scary detail. Just what it means.
+
+Words: [PASTE THE WORDS OR THE WHOLE TEXT]
+```
+
+Add these to a "Health Words" file on your phone.
+
+**Step 4 — Set Up Medication Reminders (Optional, 15 min)**
+
+If you take medicine daily, ask the SynthexIQ bot in Telegram:
+
+```
+/set_medication_reminder
+```
+
+The bot will ask:
+- What medication? (just the name on the box)
+- What time(s) of day?
+- How many days a week?
+
+The bot will send a "💊 Time for your [name]" message at those times. Reply ✅ when you've taken it. The bot tracks weekly compliance — useful for showing your GP.
+
+> **Honesty rule:** The bot tracks WHEN you took the medicine. It does NOT tell you the dose, change the dose, or advise stopping. That is your doctor's job only.
+
+**Step 5 — Take the Checklist to the Visit (5 min)**
+
+Print or screenshot the checklist. Take it in. Refer to it. Tick things off as you cover them.
+
+> **Why this matters:** Most participants leave GP visits forgetting the question that mattered most. AI prep means you walk in confident and walk out with a clear plan.
+
+---
+
+### Billable Touchpoint A — Visit Plan Review (15 min, async + voice call optional)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod22_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 2, send the support worker the Claude-generated checklist.
+2. *"This is what I want to cover at the appointment. Did I miss anything important?"*
+3. Support worker reviews and adds any missing item (especially for NDIS plan visits or specialist referrals).
+
+---
+
+### Billable Touchpoint B — Health Words Glossary Review (10 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod22_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 3, send your Health Words file.
+2. *"Did Claude explain these right? Anything still confusing?"*
+3. Support worker verifies the plain-English version is correct (not oversimplified or misleading).
+
+---
+
+### Billable Touchpoint C — Post-Visit Debrief (15 min, sync voice call)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod22_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After the appointment, voice call the support worker.
+2. *"This is what the doctor said. This is the plan. Did I understand it right?"*
+3. Support worker confirms the plan, adds any actions to the learner's calendar, and flags anything that needs follow-up.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod22_a` — submits Touchpoint A
+- `/submit_mod22_b` — submits Touchpoint B
+- `/submit_mod22_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- Send a photo of any prescription, test result, or doctor's letter → bot translates to plain English
+- Ask "what is [health word]?" — bot defines in Year 4 language
+- Ask "/set_medication_reminder" — bot sets up daily reminder
+- Ask "I feel unwell — what do I do?" — bot gives the correct triage path (000, Healthdirect 1800 022 222, GP, or rest) — NEVER diagnoses
+
+**Check-In Question:** Did you take a prep checklist to your last health visit?
+
+**Quiz Question:**
+> What is AI NEVER allowed to do for your health?
+> - A) Help you write down questions for the doctor
+> - B) Translate hard health words into plain English
+> - C) Diagnose you or tell you what medicine to take ✓
+> - D) Remind you when to take medicine
+
+---
+
+## Module 23 — Telling Your Story
+
+**Goal:** Use AI to write your business story AND your lived-experience story — turning what you've been through into a published asset that builds your business and (optionally) opens a paid peer-support career path.
+
+**Intro Video (Seedance Prompt):**
+> A person sits with a cup of tea, talking into their phone. The words appear on screen as Claude rewrites them into a clean, moving "About Me" page. The final page goes live on their website. A notification: "5 people read your story today." They smile. 15 seconds.
+
+**What to Do:**
+1. Voice-record yourself answering 5 questions about your life and business.
+2. Use Claude to turn the recording into a written story.
+3. Edit the story until it sounds like you.
+4. Publish it (on your website, social, or business card).
+5. Decide if you want to explore the paid peer-support pathway (signposted, not pushed).
+
+**What You Will Make:** A 300-word "About Me" page + (optionally) a longer lived-experience story for peer-support work.
+
+> **🟢 AI Superpower:** A participant who could never afford a copywriter can now publish a story about their life and business at a quality that would have cost $1500–$3000 to ghost-write. And — for participants who want it — their lived experience becomes a paid career as an NDIS peer-support worker. Wasn't possible before at this quality.
+
+---
+
+### Open Activity — Write Your Story With Your Own Voice
+
+This activity will take about 75–90 minutes.
+
+**Step 1 — Voice-Record the 5 Story Questions (15 min)**
+
+Open the Telegram bot and type:
+
+```
+/start_story
+```
+
+The bot will ask you (one at a time, by voice if you prefer):
+
+1. What is your business and why did you start it?
+2. What's something you've been through that made you who you are today?
+3. What's something you're proud of?
+4. Who do you help, and how does your business help them?
+5. If a customer reads this, what do you want them to feel?
+
+Just talk. Don't write. The bot transcribes your voice into text.
+
+**Step 2 — Turn It Into a Story With Claude (25 min)**
+
+Copy the bot's transcript and paste into Claude:
+
+```
+Please turn my voice transcript into a 300-word "About Me" page for my
+business website.
+
+Rules:
+- Use only my own words. Do NOT add things I did not say.
+- Year 8 reading level (the customer will read this).
+- Warm, honest, not boastful.
+- Keep my voice — don't make it sound corporate or fake.
+- End with a 1-sentence invitation to the reader (e.g. "Come say hi at the market on Saturday").
+- Australian English. No fake American phrases.
+
+If anything in my story is too private or risky to publish (financial details,
+abuse details, identifying others), flag it for me to decide.
+
+Transcript: [PASTE YOUR TRANSCRIPT]
+```
+
+**Step 3 — Read Out Loud and Edit (15 min)**
+
+Read the story out loud. Does it sound like you? Change any line that doesn't. Add anything Claude missed. Take out anything that feels too private.
+
+**Step 4 — Publish It (10 min)**
+
+Choose where to publish:
+- On your website (Module 20)
+- On your social media (Module 08 / 15)
+- As a printed leaflet at your market stall
+- All of the above
+
+**Step 5 — Optional: Explore Paid Peer Support Pathway (15 min, optional)**
+
+Some participants want to take their story further and become a paid **NDIS peer support worker** — being paid to use lived experience to help others on similar journeys.
+
+The bot can give you the official pathway map:
+
+```
+/peer_support_info
+```
+
+This is NOT part of the course. It's a signposted next step you can take if and when you're ready, with no pressure. Many peer-support workers earn $35–$60/hr.
+
+> **Why this matters:** Your story is unique. AI doesn't make it up — it just helps you put it on paper at a quality you can be proud of.
+
+---
+
+### Billable Touchpoint A — Story Topic Review (10 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod23_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 1, send the support worker the voice transcript.
+2. *"This is what I want to share. Am I oversharing? Or holding back too much?"*
+3. Support worker reviews for safety (no identifying info that could harm the learner) and richness (gently nudges toward more detail if too thin).
+
+> **Safety check:** Stories that mention abuse, current legal situations, ongoing court matters, or third parties (children, ex-partners) MUST be reviewed extra carefully. The SW may suggest a redacted version.
+
+---
+
+### Billable Touchpoint B — Draft Story Critique (15 min, async + voice note)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod23_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 2, send the Claude-rewritten draft.
+2. *"Does this sound like me? Anything I should change?"*
+3. Support worker reads, sends a voice note with 2 things to keep and 1 thing to change.
+
+---
+
+### Billable Touchpoint C — Publication Sign-Off (15 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod23_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After publishing, send the live link or photo of the printed version.
+2. *"My story is live!"*
+3. Support worker celebrates, adds to alumni file, and asks if the learner wants the `/peer_support_info` pathway map.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod23_a` — submits Touchpoint A
+- `/submit_mod23_b` — submits Touchpoint B
+- `/submit_mod23_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- `/start_story` — begins the 5-question voice story
+- `/peer_support_info` — sends the paid peer-support pathway info
+- Ask "is this too personal to publish?" — bot offers honest feedback
+
+**Check-In Question:** Is your story published somewhere a customer can read it?
+
+**Quiz Question:**
+> What is the most important rule when AI helps write your story?
+> - A) Use only your own words — AI must not invent things you didn't say ✓
+> - B) Make it as long as possible
+> - C) Add fancy words to sound smart
+> - D) Hide the hard parts of your life
+
+---
+
+## Module 24 — Graduation: Your Next 12 Months
+
+**Goal:** Use AI to build a personal 12-month plan covering your business goals AND your life goals — and choose your pathway forward (deeper business, paid peer-support, or optional affiliate).
+
+**Intro Video (Seedance Prompt):**
+> A person looks at a wall calendar covering 12 months. A laptop next to it shows an AI-generated plan with monthly milestones, each ticking off in turn. The final frame shows the person holding a printed graduation certificate from AI Launchpad. They smile. 15 seconds.
+
+**What to Do:**
+1. Reflect on what you've made in modules 05–23.
+2. Use Claude to build your personal 12-month plan.
+3. Pick your pathway forward (3 options).
+4. Connect to the alumni network.
+5. Receive your graduation certificate.
+
+**What You Will Make:** A printed 12-month plan + chosen pathway + alumni network access + graduation certificate.
+
+> **🟢 AI Superpower:** A coherent, written, achievable 12-month plan, custom-fit to the participant's specific abilities, interests, and current business — generated in 90 minutes. This used to require an expensive business coach. Now every graduate leaves with one.
+
+---
+
+### Open Activity — Build Your 12-Month Plan and Choose Your Path
+
+This activity will take about 90 minutes.
+
+**Step 1 — Reflect on What You've Made (15 min)**
+
+Open the Telegram bot:
+
+```
+/my_journey
+```
+
+The bot pulls your milestones from all 19 prior modules and shows you:
+- Your business name (Module 03) and logo (Module 04)
+- Your website (Module 20)
+- Your first sale date (Module 09)
+- Your customer-care playbook (Module 18)
+- Your story (Module 23)
+- Total billable touchpoints completed
+- Total weeks in the program
+
+Read it out loud. This is what you've built.
+
+**Step 2 — Build the 12-Month Plan with Claude (35 min)**
+
+Paste into Claude:
+
+```
+I am graduating from AI Launchpad — an Australian NDIS-funded program that
+taught me to start a small business and use AI tools.
+
+About me:
+Business: [BUSINESS NAME]
+What I sell: [PRODUCT/SERVICE]
+Current customers per week: [NUMBER OR "0–2"]
+Current weekly income from business: $[AMOUNT]
+What I'm best at: [1–2 things]
+What I find hard: [1–2 things]
+Tools I now use well: [ChatGPT / Claude / Gemini / website builder / etc.]
+
+Life goals (next 12 months):
+1. [ONE LIFE GOAL — e.g. "feel less lonely", "get fitter", "save $2000"]
+2. [ONE LIFE GOAL]
+3. [ONE LIFE GOAL]
+
+Business goals (next 12 months):
+1. [ONE BUSINESS GOAL — e.g. "5 customers a week", "first $500 month"]
+2. [ONE BUSINESS GOAL]
+3. [ONE BUSINESS GOAL]
+
+Please build me a 12-month plan with:
+- One clear "main goal" for each month (12 total).
+- 2–3 small steps under each month, written in plain Year 5 English.
+- Honest about my pace — I have a disability, I cannot do too much.
+- An AI tool to use each month (one per month is enough).
+- A "celebrate this" line at the end of each month.
+
+Layout: a clean table I can print out and stick on the fridge.
+```
+
+**Step 3 — Pick Your Pathway Forward (15 min)**
+
+Three pathways are open to every graduate:
+
+| Pathway | What it is | Time per week | Income potential |
+|---|---|---|---|
+| **A — Deeper Business** | Stay focused on growing your microenterprise. Monthly check-ins with your SW, group workshops, optional advanced modules (markets, wholesale, online ads). | 8–15 hrs | Your own business income |
+| **B — Paid Peer Support** | Train as an NDIS peer-support worker. Use your lived experience to help others in the program. Paid hourly. Separate certification required. | 5–20 hrs | $35–$60/hr (Australian rates) |
+| **C — Optional Affiliate Pathway** | Promote MilvoTech apps for monthly recurring commission. **Disclosure: this earns the program operator commission. Choose only if it genuinely interests you.** Separate opt-in modules CA-01 to CA-06. | Variable | Variable, commission-based |
+
+You can also pick **NONE OF THE ABOVE** and just keep running your business. That is also a valid graduation outcome.
+
+Ask Claude to help you decide:
+
+```
+I am choosing a pathway after AI Launchpad graduation.
+
+My situation: [STATE THE 3 LIFE GOALS AND 3 BUSINESS GOALS FROM STEP 2]
+My energy / capacity per week: [LOW / MEDIUM / HIGH]
+What I love most about what I've built: [1 SENTENCE]
+
+The 3 pathways are: A (deeper business), B (paid peer support), or C (optional
+affiliate — paid commission but earns the program operator money too).
+
+Please:
+1. Reflect back to me which pathway might fit best, and why, in 4 sentences.
+2. Name one risk of that pathway for me specifically.
+3. Suggest one tiny first step I can take this week.
+
+You do not decide — I do. Just help me think.
+```
+
+**Step 4 — Join the Alumni Network (10 min)**
+
+Open the Telegram bot:
+
+```
+/join_alumni
+```
+
+You'll be added to:
+- The alumni Telegram channel (peer support, monthly Q&A, group calls)
+- The graduate directory (other businesses can find yours)
+- The alumni newsletter (monthly tips, new AI tools, success stories)
+
+**Step 5 — Receive Your Graduation Certificate (5 min)**
+
+The bot generates your certificate with your business name, your graduation date, and your chosen pathway. Print it. Frame it.
+
+> **Why this matters:** Most courses end with nothing. Graduation here means a real 12-month plan, a real pathway, a real alumni network, and a real certificate of what you can now do.
+
+---
+
+### Billable Touchpoint A — Plan Review Call (30 min, sync video call)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod24_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 2, book a 30-minute video call with the support worker.
+2. Walk through the 12-month plan together, month by month.
+3. Support worker challenges anything unrealistic, celebrates anything ambitious-but-doable, and adjusts the pace if needed.
+
+---
+
+### Billable Touchpoint B — Pathway Choice Conversation (20 min, sync voice call)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod24_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 3, voice call the support worker.
+2. *"I'm thinking of going with Pathway [A/B/C/None]. What do you think?"*
+3. Support worker probes for fit, **explicitly discloses any conflict of interest** if learner is leaning toward Pathway C, and confirms the choice or suggests a delay.
+
+> **Conflict-of-interest disclosure rule:** Because the program operator earns commission when learners pick Pathway C, the SW MUST tell the learner this out loud and confirm Pathway C is the learner's free choice, not pressure. Logged for audit.
+
+---
+
+### Billable Touchpoint C — Graduation Day (20 min, sync — in-person or video)
+
+**NDIS Line Item:** Capacity Building — Skill Development
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod24_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. Book the graduation event (group or 1:1).
+2. Receive your certificate. Hear your milestones read aloud. Take a photo for the alumni wall.
+3. **Milestone logged: Graduated.** Your status changes from "Participant" to "Alumni" in the system.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod24_a` — submits Touchpoint A
+- `/submit_mod24_b` — submits Touchpoint B
+- `/submit_mod24_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- `/my_journey` — shows everything you've built across the program
+- `/join_alumni` — joins the alumni network
+- `/12_month_check` — every month after graduation, the bot will check in on your plan and help you adjust
+- Ask "what's next for me?" — bot summarises your pathway and next step
+
+**Check-In Question:** Do you have your 12-month plan printed and your pathway chosen?
+
+**Quiz Question:**
+> What is the most important thing about graduation?
+> - A) Getting the certificate
+> - B) Having a real, written 12-month plan and a clear next pathway ✓
+> - C) Joining the Telegram group
+> - D) Saying goodbye to your support worker
+
+---
+
+# Part 4 — Optional Pathway: Compliance Agent (Affiliate)
+
+> **⚠️ CONFLICT-OF-INTEREST DISCLOSURE**
+>
+> This pathway is an **affiliate program**. It trains graduates to become paid promoters of the MilvoTech Compliance Audit app to NDIS service providers. The program operator (MilvoTech) earns commission on every Compliance Audit subscription a graduate sells.
+>
+> **This is NOT part of the official AI Launchpad curriculum.** Modules 05–24 cover the official course. The pathway below is opt-in only, available to graduates who choose Pathway C in Module 24, and who clearly understand the financial relationship.
+>
+> No NDIS funding is used for this pathway. Sessions in this pathway are run **outside billable time** unless they specifically build a graduate's compliance-audit skills as a stand-alone vocational outcome. Any billing must be reviewed with the participant's plan manager.
+>
+> If you are reading this and you are unsure why you would do this pathway, the answer is: don't, until you have run your own business successfully for at least 3 months after graduation.
+
+The 6 sub-modules below were previously listed as official Modules 18–23 in earlier drafts of v3. They have been relocated here so that NDIS-funded training time is not used to grow the program operator's commercial product.
+
+For reference inside this Pathway, the modules are numbered **CA-01 to CA-06**. Trigger phrases use the `/submit_capath_` prefix.
+
+---
+
+## Compliance Agent Pathway — Sub-Modules CA-01 to CA-06
+
+Originally drafted as Modules 18–23. Relocated here as an opt-in affiliate pathway.
+
+---
+
+## Sub-Module CA-01 — Understanding NDIS Compliance
 
 **Goal:** Learn the 3 main NDIS Code of Conduct rules and what happens when providers fail them — using AI to translate official documents into plain English.
 
@@ -1988,10 +3098,10 @@ Make a wall poster (same as v2) but use the AI translation as your structure.
 ### Billable Touchpoint A — AI Translation Review (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod18_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_01_a` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send the Claude translation.
 2. Support worker verifies accuracy against the official NDIS Code of Conduct. This is critical — AI can hallucinate rules.
@@ -2001,10 +3111,10 @@ Make a wall poster (same as v2) but use the AI translation as your structure.
 ### Billable Touchpoint B — Practice Provider Choice Review (10 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod18_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_01_b` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send your chosen practice provider.
 2. Support worker confirms it's a reasonable practice target.
@@ -2014,10 +3124,10 @@ Make a wall poster (same as v2) but use the AI translation as your structure.
 ### Billable Touchpoint C — Rules Poster Sign-Off (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod18_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_01_c` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send poster photo.
 2. Support worker checks rules are stated correctly. Milestone logged: **Compliance Foundations Complete**.
@@ -2025,9 +3135,9 @@ Make a wall poster (same as v2) but use the AI translation as your structure.
 ---
 
 **Trigger phrases for this module (type exactly as shown — starts billable clock):**
-- `/submit_mod18_a` — submits Touchpoint A
-- `/submit_mod18_b` — submits Touchpoint B
-- `/submit_mod18_c` — submits Touchpoint C
+- `/submit_capath_01_a` — submits Touchpoint A
+- `/submit_capath_01_b` — submits Touchpoint B
+- `/submit_capath_01_c` — submits Touchpoint C
 - Free chat with the bot is always unbillable and always available.
 
 **Telegram Bot Help:**
@@ -2046,7 +3156,7 @@ Make a wall poster (same as v2) but use the AI translation as your structure.
 
 ---
 
-## Module 19 — Running an AI Audit Scan
+## Sub-Module CA-02 — Running an AI Audit Scan
 
 **Goal:** Run your first Gap Analysis scan on the AI Launchpad platform and produce a real audit report.
 
@@ -2115,10 +3225,10 @@ This is what you'll show the real client when you get there.
 ### Billable Touchpoint A — Scan Setup Help (10 min, async or screen-share)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod19_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_02_a` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Before scanning, send the support worker your provider details.
 2. Confirms inputs. If you're stuck, support worker does a 10-min screen-share to walk you through.
@@ -2128,10 +3238,10 @@ This is what you'll show the real client when you get there.
 ### Billable Touchpoint B — Red Item Translation Review (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod19_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_02_b` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send 2 or 3 of your AI translations.
 2. Support worker confirms they're accurate. Critical because AI can simplify too much and lose legal meaning.
@@ -2141,10 +3251,10 @@ This is what you'll show the real client when you get there.
 ### Billable Touchpoint C — Action List Sign-Off (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod19_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_02_c` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send finished Action List.
 2. Support worker reviews and prepares you for client conversations. Milestone logged: **First Audit Complete**.
@@ -2152,9 +3262,9 @@ This is what you'll show the real client when you get there.
 ---
 
 **Trigger phrases for this module (type exactly as shown — starts billable clock):**
-- `/submit_mod19_a` — submits Touchpoint A
-- `/submit_mod19_b` — submits Touchpoint B
-- `/submit_mod19_c` — submits Touchpoint C
+- `/submit_capath_02_a` — submits Touchpoint A
+- `/submit_capath_02_b` — submits Touchpoint B
+- `/submit_capath_02_c` — submits Touchpoint C
 - Free chat with the bot is always unbillable and always available.
 
 **Telegram Bot Help:**
@@ -2173,7 +3283,7 @@ This is what you'll show the real client when you get there.
 
 ---
 
-## Module 20 — Pricing & Closing the Deal
+## Sub-Module CA-03 — Pricing & Closing the Deal
 
 **Goal:** Confidently present your compliance services to a real or practice client, agree a price, and get it in writing.
 
@@ -2276,10 +3386,10 @@ Pick one real prospect (your practice provider). Fill in their details. Save it.
 ### Billable Touchpoint A — Pricing Review (15 min, async + voice note)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod20_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_03_a` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send the AI price range + your chosen prices.
 2. Support worker sends a voice note: are these realistic? Sustainable?
@@ -2289,10 +3399,10 @@ Pick one real prospect (your practice provider). Fill in their details. Save it.
 ### Billable Touchpoint B — Live Role-Play (20 min, sync voice call)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod20_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_03_b` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Book a 20-minute voice call.
 2. Support worker plays the prospect. You deliver your pitch.
@@ -2303,10 +3413,10 @@ Pick one real prospect (your practice provider). Fill in their details. Save it.
 ### Billable Touchpoint C — Proposal Sign-Off (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod20_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_03_c` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send the completed proposal for your first prospect.
 2. Support worker checks accuracy and approves sending. Milestone logged: **First Proposal Ready**.
@@ -2314,9 +3424,9 @@ Pick one real prospect (your practice provider). Fill in their details. Save it.
 ---
 
 **Trigger phrases for this module (type exactly as shown — starts billable clock):**
-- `/submit_mod20_a` — submits Touchpoint A
-- `/submit_mod20_b` — submits Touchpoint B
-- `/submit_mod20_c` — submits Touchpoint C
+- `/submit_capath_03_a` — submits Touchpoint A
+- `/submit_capath_03_b` — submits Touchpoint B
+- `/submit_capath_03_c` — submits Touchpoint C
 - Free chat with the bot is always unbillable and always available.
 
 **Telegram Bot Help:**
@@ -2335,7 +3445,7 @@ Pick one real prospect (your practice provider). Fill in their details. Save it.
 
 ---
 
-## Module 21 — Managing Compliance Clients
+## Sub-Module CA-04 — Managing Compliance Clients
 
 **Goal:** Set up a real client management system so every client interaction is recorded, billable, and professional.
 
@@ -2408,10 +3518,10 @@ If you have a real prospect, add them now. If not, add your practice provider as
 ### Billable Touchpoint A — System Setup Review (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod21_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_04_a` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send screenshots of the platform Client Records + photo of the paper file.
 2. Support worker confirms structure is complete.
@@ -2421,10 +3531,10 @@ If you have a real prospect, add them now. If not, add your practice provider as
 ### Billable Touchpoint B — Email Templates Review (10 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod21_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_04_b` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send the 4 templates.
 2. Support worker checks tone, accuracy, and friendliness. Approves.
@@ -2434,10 +3544,10 @@ If you have a real prospect, add them now. If not, add your practice provider as
 ### Billable Touchpoint C — First Client Added (15 min, async)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod21_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_04_c` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send screenshot of first client added.
 2. Support worker walks through what happens next. Milestone logged: **Client System Active**.
@@ -2445,9 +3555,9 @@ If you have a real prospect, add them now. If not, add your practice provider as
 ---
 
 **Trigger phrases for this module (type exactly as shown — starts billable clock):**
-- `/submit_mod21_a` — submits Touchpoint A
-- `/submit_mod21_b` — submits Touchpoint B
-- `/submit_mod21_c` — submits Touchpoint C
+- `/submit_capath_04_a` — submits Touchpoint A
+- `/submit_capath_04_b` — submits Touchpoint B
+- `/submit_capath_04_c` — submits Touchpoint C
 - Free chat with the bot is always unbillable and always available.
 
 **Telegram Bot Help:**
@@ -2466,7 +3576,7 @@ If you have a real prospect, add them now. If not, add your practice provider as
 
 ---
 
-## Module 22 — Field Compliance Tools
+## Sub-Module CA-05 — Field Compliance Tools
 
 **Goal:** Visit a real NDIS provider's site (with a local support worker), complete an on-site audit, and submit your findings — your first real paid job.
 
@@ -2552,10 +3662,10 @@ Email the report to the client using Template 2 from Module 21.
 ### Billable Touchpoint A — Pre-Visit Briefing (15 min, sync voice call)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod22_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_05_a` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Day before, voice call with support worker.
 2. Walk through the checklist, anticipated issues, and how to handle difficult questions.
@@ -2565,10 +3675,10 @@ Email the report to the client using Template 2 from Module 21.
 ### Billable Touchpoint B — Local Field Visit (60–90 min, sync in-person — Local SW)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod22_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_05_b` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Local SW meets you at the provider's site.
 2. They observe and support — they don't do your job.
@@ -2581,10 +3691,10 @@ For learners who are confident, this can be downgraded to remote standby (SW ava
 ### Billable Touchpoint C — Report Review Before Sending (20 min, sync voice call)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod22_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_05_c` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. After drafting, voice call with support worker.
 2. They read your report on screen-share.
@@ -2594,9 +3704,9 @@ For learners who are confident, this can be downgraded to remote standby (SW ava
 ---
 
 **Trigger phrases for this module (type exactly as shown — starts billable clock):**
-- `/submit_mod22_a` — submits Touchpoint A
-- `/submit_mod22_b` — submits Touchpoint B
-- `/submit_mod22_c` — submits Touchpoint C
+- `/submit_capath_05_a` — submits Touchpoint A
+- `/submit_capath_05_b` — submits Touchpoint B
+- `/submit_capath_05_c` — submits Touchpoint C
 - Free chat with the bot is always unbillable and always available.
 
 **Telegram Bot Help:**
@@ -2615,7 +3725,7 @@ For learners who are confident, this can be downgraded to remote standby (SW ava
 
 ---
 
-## Module 23 — Selling the Full Stack
+## Sub-Module CA-06 — Selling the Full Stack
 
 **Goal:** Confidently sell the full compliance package (Gap Analysis + Client Records + Reports + ongoing support) to a new client and close your first multi-tier deal.
 
@@ -2684,10 +3794,10 @@ End with: *"Would Tier 2 or Tier 3 work better for you?"* (This is the closing q
 ### Billable Touchpoint A — Pitch Deck Review (20 min, async + voice note)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod23_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_06_a` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Send the 5-page pitch.
 2. Support worker sends a voice note: what flows, what doesn't, what to cut.
@@ -2697,10 +3807,10 @@ End with: *"Would Tier 2 or Tier 3 work better for you?"* (This is the closing q
 ### Billable Touchpoint B — Live Role-Play Pitch (30 min, sync video call)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod23_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_06_b` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. Book a 30-min video call.
 2. You deliver the full pitch on screen-share.
@@ -2712,10 +3822,10 @@ End with: *"Would Tier 2 or Tier 3 work better for you?"* (This is the closing q
 ### Billable Touchpoint C — Deal Close Debrief (15 min, async + voice note)
 
 
-**NDIS Line Item:** Capacity Building — Skill Development  
-**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+**Billing Status:** ⚠️ NOT NDIS-billable by default — Affiliate Pathway is opt-in and earns the program operator commission. Any NDIS billing must be reviewed and approved by the participant's plan manager and documented as a vocational skill outcome.  
+**Trigger:** Learner submits via Telegram trigger phrase (see below)
 
-**To log this billable event:** Type `/submit_mod23_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+**To log this billable event:** Type `/submit_capath_06_c` in your Telegram group chat before you send your work. The bot records the start time and end time for internal pathway tracking (NOT NDIS audit unless plan manager approved).
 
 1. After the real pitch, send what happened.
 2. Support worker debriefs. If deal closed: **Milestone — First Full-Stack Deal Closed**. If not: identify why and adjust.
@@ -2723,9 +3833,9 @@ End with: *"Would Tier 2 or Tier 3 work better for you?"* (This is the closing q
 ---
 
 **Trigger phrases for this module (type exactly as shown — starts billable clock):**
-- `/submit_mod23_a` — submits Touchpoint A
-- `/submit_mod23_b` — submits Touchpoint B
-- `/submit_mod23_c` — submits Touchpoint C
+- `/submit_capath_06_a` — submits Touchpoint A
+- `/submit_capath_06_b` — submits Touchpoint B
+- `/submit_capath_06_c` — submits Touchpoint C
 - Free chat with the bot is always unbillable and always available.
 
 **Telegram Bot Help:**
@@ -2804,7 +3914,9 @@ Every module produces **3 billable touchpoints**. At 2–3 modules per month (on
 
 ## SynthexIQ Trigger Phrase Master Reference
 
-All 57 billable trigger phrases for Modules 05–23. Programme these into the SynthexIQ bot command registry.
+All billable trigger phrases. Programme these into the SynthexIQ bot command registry.
+
+### Official Course (Modules 05–24)
 
 | Module | Touchpoint A | Touchpoint B | Touchpoint C |
 |---|---|---|---|
@@ -2821,17 +3933,31 @@ All 57 billable trigger phrases for Modules 05–23. Programme these into the Sy
 | 15 — Social Media for Affiliates | `/submit_mod15_a` | `/submit_mod15_b` | `/submit_mod15_c` |
 | 16 — Community Networking | `/submit_mod16_a` | `/submit_mod16_b` | `/submit_mod16_c` |
 | 17 — Track and Grow | `/submit_mod17_a` | `/submit_mod17_b` | `/submit_mod17_c` |
-| 18 — NDIS Compliance | `/submit_mod18_a` | `/submit_mod18_b` | `/submit_mod18_c` |
-| 19 — AI Audit Scan | `/submit_mod19_a` | `/submit_mod19_b` | `/submit_mod19_c` |
-| 20 — Pricing & Closing | `/submit_mod20_a` | `/submit_mod20_b` | `/submit_mod20_c` |
-| 21 — Managing Compliance Clients | `/submit_mod21_a` | `/submit_mod21_b` | `/submit_mod21_c` |
-| 22 — Field Compliance Tools | `/submit_mod22_a` | `/submit_mod22_b` | `/submit_mod22_c` |
-| 23 — Selling the Full Stack | `/submit_mod23_a` | `/submit_mod23_b` | `/submit_mod23_c` |
+| 18 — Customer Care with AI | `/submit_mod18_a` | `/submit_mod18_b` | `/submit_mod18_c` |
+| 19 — AI Reading Buddy | `/submit_mod19_a` | `/submit_mod19_b` | `/submit_mod19_c` |
+| 20 — Your Online Home | `/submit_mod20_a` | `/submit_mod20_b` | `/submit_mod20_c` |
+| 21 — Hard Conversations & Self-Advocacy | `/submit_mod21_a` | `/submit_mod21_b` | `/submit_mod21_c` |
+| 22 — AI for Health & Wellbeing | `/submit_mod22_a` | `/submit_mod22_b` | `/submit_mod22_c` |
+| 23 — Telling Your Story | `/submit_mod23_a` | `/submit_mod23_b` | `/submit_mod23_c` |
+| 24 — Graduation: Your Next 12 Months | `/submit_mod24_a` | `/submit_mod24_b` | `/submit_mod24_c` |
+
+### Optional Affiliate Pathway (CA-01 to CA-06 — Opt-in only)
+
+| Sub-Module | Touchpoint A | Touchpoint B | Touchpoint C |
+|---|---|---|---|
+| CA-01 — NDIS Compliance | `/submit_capath_01_a` | `/submit_capath_01_b` | `/submit_capath_01_c` |
+| CA-02 — AI Audit Scan | `/submit_capath_02_a` | `/submit_capath_02_b` | `/submit_capath_02_c` |
+| CA-03 — Pricing & Closing | `/submit_capath_03_a` | `/submit_capath_03_b` | `/submit_capath_03_c` |
+| CA-04 — Managing Clients | `/submit_capath_04_a` | `/submit_capath_04_b` | `/submit_capath_04_c` |
+| CA-05 — Field Compliance Tools | `/submit_capath_05_a` | `/submit_capath_05_b` | `/submit_capath_05_c` |
+| CA-06 — Selling the Full Stack | `/submit_capath_06_a` | `/submit_capath_06_b` | `/submit_capath_06_c` |
 
 **Bot response on trigger phrase receipt:**
 > "Got it! I've started the clock on your Touchpoint [A/B/C] for Module [NN]. Now send your work (screenshot, photo, or message) and your support worker will reply soon. Free chat is always open — just don't use a trigger phrase unless you're starting a touchpoint."
 
-**NDIS line item for all 57 commands:** Capacity Building — Skill Development
+**NDIS line item for all official course commands:** Capacity Building — Skill Development.
+**Affiliate Pathway commands:** NOT NDIS-billable by default. Subject to plan-manager review on a case-by-case basis.
+
 
 ---
 
@@ -2860,10 +3986,10 @@ For the Replit team building the platform:
 
 8. **Group workshops** (Module 02B carry-forward + Module 12 quarterly): scheduling UI with 4-learner cap, 15-min billable per learner.
 
-9. **Trigger phrase registry**: the SynthexIQ bot must recognise all 57 `/submit_modNN_[a|b|c]` commands listed in the master reference above. Each command fires: (a) timestamp log, (b) SW push notification, (c) audit record creation.
+9. **Trigger phrase registry**: the SynthexIQ bot must recognise all 60 official course commands (`/submit_modNN_[a|b|c]` for modules 05–24) plus 18 opt-in pathway commands (`/submit_capath_NN_[a|b|c]` for CA-01 to CA-06). Each command fires: (a) timestamp log, (b) SW push notification, (c) audit record creation.
 
 10. **Free-text firewall**: any message that does NOT start with `/submit_` is treated as unbillable. The bot answers freely. The billing log is never touched.
 
 ---
 
-*End of v3 Modules 05–23. Add to LMC v2 Modules 01–04 to form the complete program.*
+*End of v3 Modules 05–24 (official course) + CA-01 to CA-06 (opt-in affiliate pathway). Add to LMC v2 Modules 01–04 to form the complete program.*
