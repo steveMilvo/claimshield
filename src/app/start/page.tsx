@@ -8,6 +8,7 @@ import { cn } from "@/lib/cn";
 import { listCases, saveCase } from "@/lib/cases";
 import type { Analysis } from "@/lib/mockAnalysis";
 import { JURISDICTIONS, US_STATES, type Jurisdiction, type UsState } from "@/lib/jurisdiction";
+import { CATEGORIES, categoryLabel } from "@/lib/categories";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -145,11 +146,20 @@ export default function StartPage() {
                   onChange={(e) => setCategory(e.target.value)}
                   className="input"
                 >
-                  <option value="auto">Auto / Motor</option>
-                  <option value="home">Home / Property</option>
-                  <option value="renters">Renters</option>
-                  <option value="travel">Travel</option>
-                  <option value="health">Health / Medical</option>
+                  <optgroup label="Personal">
+                    {Object.entries(CATEGORIES)
+                      .filter(([, v]) => v.group === "personal")
+                      .map(([k, v]) => (
+                        <option key={k} value={k}>{v.label}</option>
+                      ))}
+                  </optgroup>
+                  <optgroup label="Business / Commercial">
+                    {Object.entries(CATEGORIES)
+                      .filter(([, v]) => v.group === "commercial")
+                      .map(([k, v]) => (
+                        <option key={k} value={k}>{v.label}</option>
+                      ))}
+                  </optgroup>
                 </select>
               </Field>
               <Field label="Insurer">
@@ -316,17 +326,7 @@ export default function StartPage() {
   );
 }
 
-function labelForCategory(c: string) {
-  return (
-    {
-      auto: "Auto / Motor",
-      home: "Home / Property",
-      renters: "Renters",
-      travel: "Travel",
-      health: "Health / Medical",
-    }[c] || c
-  );
-}
+const labelForCategory = categoryLabel;
 
 function StepShell({
   title,

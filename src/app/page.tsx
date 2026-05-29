@@ -146,6 +146,7 @@ function Check() {
 
 function TrustBar() {
   const items = [
+    "Personal & business cover",
     "AU, US & UK supported",
     "Regulator-ready complaint",
     "No lawyer required",
@@ -246,59 +247,73 @@ function MagicMoment() {
 }
 
 function Categories() {
-  const rows = [
-    { name: "Auto / Motor", value: "$1,500 – $8,000", status: "Live" },
-    { name: "Home / Property", value: "$3,000 – $25,000", status: "Phase 2" },
-    { name: "Renters", value: "$500 – $5,000", status: "Phase 2" },
-    { name: "Travel", value: "$200 – $3,000", status: "Phase 2" },
-    { name: "Health / Medical", value: "$500 – $15,000", status: "Phase 3" },
-    { name: "Pet", value: "$500 – $5,000", status: "Phase 3" },
+  const personal = [
+    { name: "Auto / Motor", value: "$1,500 – $8,000" },
+    { name: "Home / Property", value: "$3,000 – $25,000" },
+    { name: "Renters", value: "$500 – $5,000" },
+    { name: "Travel", value: "$200 – $3,000" },
+    { name: "Health / Medical", value: "$500 – $15,000" },
+    { name: "Pet", value: "$500 – $5,000" },
+  ];
+  const commercial = [
+    { name: "Business / Commercial", value: "$5,000 – $100,000+" },
+    { name: "Restaurant / hospitality", value: "$5,000 – $250,000" },
+    { name: "Food truck / food business", value: "$2,000 – $50,000" },
+    { name: "Builder / Construction", value: "$10,000 – $500,000" },
+    { name: "Tradies / contractors", value: "$2,000 – $80,000" },
+    { name: "Public liability", value: "$5,000 – $1,000,000" },
+    { name: "Professional indemnity", value: "$5,000 – $500,000" },
+    { name: "Workers compensation", value: "$5,000 – $250,000" },
+    { name: "Commercial property", value: "$10,000 – $1,000,000" },
+    { name: "Commercial motor / fleet", value: "$3,000 – $150,000" },
+    { name: "Business interruption", value: "$10,000 – $500,000" },
+    { name: "Cyber liability", value: "$10,000 – $1,000,000" },
+    { name: "Farm / agricultural", value: "$5,000 – $500,000" },
+    { name: "Marine / cargo", value: "$5,000 – $250,000" },
   ];
   return (
     <section className="mx-auto max-w-6xl px-5 py-20">
       <SectionHeader
         eyebrow="Coverage"
         title="The categories where most dollars get lost"
-        body="Covered today across AU, US and UK — pick your jurisdiction when you start. We&rsquo;re expanding fast."
+        body="Personal and business / commercial cover, across AU, US and UK — pick your jurisdiction when you start."
       />
-      <div className="mt-8 rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-canvas text-ink-muted">
-            <tr>
-              <th className="text-left font-medium px-5 py-3">Category</th>
-              <th className="text-left font-medium px-5 py-3">Typical dispute value</th>
-              <th className="text-left font-medium px-5 py-3">Availability</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.name} className="border-t border-black/5">
-                <td className="px-5 py-3 font-medium">{r.name}</td>
-                <td className="px-5 py-3 text-ink-muted">{r.value}</td>
-                <td className="px-5 py-3">
-                  <span
-                    className={
-                      r.status === "Live"
-                        ? "inline-flex items-center gap-1.5 rounded-full bg-accent/10 text-accent-dark px-2 py-0.5 text-xs"
-                        : "inline-flex items-center gap-1.5 rounded-full bg-shield-50 text-shield-700 px-2 py-0.5 text-xs"
-                    }
-                  >
-                    <span
-                      className={
-                        r.status === "Live"
-                          ? "h-1.5 w-1.5 rounded-full bg-accent"
-                          : "h-1.5 w-1.5 rounded-full bg-shield-500"
-                      }
-                    />
-                    {r.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="mt-8 grid md:grid-cols-2 gap-6">
+        <CoverageList title="Personal lines" rows={personal} />
+        <CoverageList title="Business / Commercial" rows={commercial} />
       </div>
     </section>
+  );
+}
+
+function CoverageList({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: { name: string; value: string }[];
+}) {
+  return (
+    <div className="rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden">
+      <div className="bg-canvas px-5 py-3 flex items-center justify-between">
+        <div className="text-sm font-medium">{title}</div>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 text-accent-dark px-2 py-0.5 text-xs">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          Live
+        </span>
+      </div>
+      <table className="w-full text-sm">
+        <tbody>
+          {rows.map((r) => (
+            <tr key={r.name} className="border-t border-black/5">
+              <td className="px-5 py-2.5 font-medium">{r.name}</td>
+              <td className="px-5 py-2.5 text-ink-muted text-right whitespace-nowrap">{r.value}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
@@ -427,6 +442,10 @@ function FAQ() {
     {
       q: "Which countries do you cover?",
       a: "Australia (AFCA), the United States (state Departments of Insurance) and the United Kingdom (Financial Ombudsman Service) — pick the jurisdiction when you start a claim. We're adding more.",
+    },
+    {
+      q: "Do you cover business / commercial policies?",
+      a: "Yes — ClaimShield works for business and commercial claims as well as personal lines. That includes hospitality, restaurants and food trucks, builders and tradies, public liability, professional indemnity, workers compensation, commercial property and motor, business interruption, cyber, farm and marine. Pick the category that fits when you start your claim.",
     },
     {
       q: "What's the ClaimShield Score?",

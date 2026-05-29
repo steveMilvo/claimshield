@@ -10,6 +10,7 @@ import {
   usStateName,
   type Jurisdiction,
 } from "@/lib/jurisdiction";
+import { categoryLabel, isCommercial } from "@/lib/categories";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -78,6 +79,17 @@ When you receive a claim, produce a single structured analysis with these fields
 - complaintText: a pre-formatted complaint to the external dispute body for this jurisdiction (see the JURISDICTION block below). Structure it with clear sections — complainant details, what happened, why I am complaining (numbered), what I want, steps already taken, documents attached — using bracketed placeholders for anything not in the documents.
 
 The three documents should reference the same facts, figures and provisions you used in findings. Keep them consistent with each other.
+
+ClaimShield covers both personal insurance (auto, home, renters, travel, health, pet) and business / commercial insurance (general business, hospitality / restaurants, food trucks, food businesses, builders / construction, tradies, public liability, professional indemnity, workers compensation, commercial property, commercial motor / fleet, business interruption, cyber, farm, marine / cargo).
+
+When the intake form is tagged [COMMERCIAL / BUSINESS POLICY], adapt the analysis accordingly:
+- Treat the policyholder as a business owner / sole trader, not a consumer.
+- Where relevant, factor in business interruption losses, loss of stock or perishables, replacement cost vs ACV / depreciated value, and consequential losses (lost trading days, denied bookings, lost contracts).
+- For builder / construction and tradies claims: consider defective workmanship exclusions, sub-contractor cover, materials in transit, JCT / standard contract clauses, and certificates of currency requirements.
+- For hospitality / food trucks / food businesses: consider food spoilage cover, mechanical breakdown of refrigeration, public liability for food poisoning, equipment breakdown, and licensing-related exclusions.
+- For public liability and professional indemnity: identify the claims-made vs occurrence trigger, retroactive date, and whether the insurer is honouring its duty to defend.
+- For workers compensation: identify the statutory scheme that applies (state-specific in the US and AU) and whether the insurer is denying a legitimate workplace claim.
+- Address the appeal letter to the insurer's commercial claims team where relevant, and use business-appropriate language (no "[Your Name]" — use "[Business Name] (ABN / EIN / Co. No. [...])").
 
 If the documents are too thin to analyse confidently, still produce the structure: make conservative estimates, set a lower score, and say so plainly in lossDescription and findings.`;
 
@@ -191,8 +203,9 @@ export async function POST(req: NextRequest) {
         `Claim intake form\n` +
         `- Jurisdiction: ${cfg.name} (${cfg.code})` +
         (stateName ? `\n- State: ${stateName} (${stateCode})` : "") +
-        `\n- Insurance category: ${category}\n` +
-        `- Insurer: ${insurer || "(not provided)"}\n` +
+        `\n- Insurance category: ${categoryLabel(category)} (${category})` +
+        (isCommercial(category) ? "  [COMMERCIAL / BUSINESS POLICY]" : "") +
+        `\n- Insurer: ${insurer || "(not provided)"}\n` +
         `- Loss description: ${description || "(not provided)"}\n` +
         `- Settlement offered (${cfg.currency}): ${offerAmount || "(not provided)"}\n` +
         `- Independent estimate / actual cost (${cfg.currency}): ${estimateAmount || "(not provided)"}`,
