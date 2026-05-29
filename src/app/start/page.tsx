@@ -24,6 +24,7 @@ export default function StartPage() {
   const [step, setStep] = useState<Step>(0);
   const [policyFile, setPolicyFile] = useState<File | null>(null);
   const [letterFile, setLetterFile] = useState<File | null>(null);
+  const [supportingFiles, setSupportingFiles] = useState<File[]>([]);
   const [jurisdiction, setJurisdiction] = useState<Jurisdiction>("AU");
   const [state, setState] = useState<UsState | "">("");
   const [category, setCategory] = useState("auto");
@@ -57,6 +58,7 @@ export default function StartPage() {
       const fd = new FormData();
       if (policyFile) fd.append("policy", policyFile);
       if (letterFile) fd.append("letter", letterFile);
+      for (const f of supportingFiles) fd.append("support", f);
       fd.append("jurisdiction", jurisdiction);
       if (jurisdiction === "US" && state) fd.append("state", state);
       fd.append("category", category);
@@ -199,10 +201,9 @@ export default function StartPage() {
                 />
               </Field>
               <Field label="Supporting docs (optional)">
-                <FileDrop
-                  compact
-                  hint="Add photos, quotes, receipts"
-                  accept="image/*,.pdf"
+                <SupportingFilesPicker
+                  files={supportingFiles}
+                  onChange={setSupportingFiles}
                 />
               </Field>
             </div>
@@ -260,6 +261,12 @@ export default function StartPage() {
                     ["Insurer", insurer || "—"],
                     ["Policy file", policyFile?.name || "—"],
                     ["Letter file", letterFile?.name || "—"],
+                    [
+                      "Supporting docs",
+                      supportingFiles.length === 0
+                        ? "—"
+                        : `${supportingFiles.length} file${supportingFiles.length === 1 ? "" : "s"}`,
+                    ],
                     [
                       "Offered",
                       offerAmount
@@ -411,6 +418,73 @@ function Field({
         }
       `}</style>
     </label>
+  );
+}
+
+function SupportingFilesPicker({
+  files,
+  onChange,
+}: {
+  files: File[];
+  onChange: (next: File[]) => void;
+}) {
+  function addFiles(list: FileList | null) {
+    if (!list || list.length === 0) return;
+    const next = [...files];
+    for (const f of Array.from(list)) {
+      if (!next.find((x) => x.name === f.name && x.size === f.size)) {
+        next.push(f);
+      }
+    }
+    onChange(next);
+  }
+  function removeAt(i: number) {
+    onChange(files.filter((_, idx) => idx !== i));
+  }
+  return (
+    <div>
+      <label className="block cursor-pointer rounded-xl border-2 border-dashed border-black/15 hover:border-shield-500 hover:bg-shield-50/40 transition p-4">
+        <input
+          type="file"
+          multiple
+          accept=".pdf,image/*,.txt,.eml,.docx"
+          className="hidden"
+          onChange={(e) => addFiles(e.target.files)}
+        />
+        <div className="flex items-center gap-3">
+          <CloudUpIcon />
+          <div className="text-sm text-ink-muted">
+            Add photos, quotes, receipts, broker letters, premium funding agreements,
+            police / incident reports — multiple files OK
+          </div>
+        </div>
+      </label>
+      {files.length > 0 && (
+        <ul className="mt-2 space-y-1">
+          {files.map((f, i) => (
+            <li
+              key={`${f.name}-${f.size}-${i}`}
+              className="flex items-center justify-between rounded-lg bg-canvas px-3 py-2 text-sm"
+            >
+              <div className="min-w-0 flex-1 truncate">
+                <span className="font-medium">{f.name}</span>{" "}
+                <span className="text-ink-muted text-xs">
+                  ({(f.size / 1024).toFixed(0)} KB)
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeAt(i)}
+                aria-label={`Remove ${f.name}`}
+                className="text-ink-muted text-xs px-2 py-1 rounded-full hover:bg-white"
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 

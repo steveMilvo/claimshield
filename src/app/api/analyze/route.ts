@@ -95,6 +95,12 @@ Uploaded documents will be a mix. Recognise and use each correctly — do NOT tr
 
 If the upload includes only ancillary documents (e.g. only an FSG and a funding agreement, with no policy wording and no denial letter), say so plainly in lossDescription and set a low score — you cannot meaningfully audit the insurer's reasoning without the policy and the denial.
 
+== POLICY SCHEDULE vs POLICY WORDING ==
+Commercial policies typically come as two documents that MUST be read together: the standard Policy Wording / PDS, AND a Policy Schedule (sometimes called Renewal Tax Invoice, Certificate of Insurance, or Cover Schedule). The schedule lists the cover selected, sums insured, excesses, AND "Imposed Conditions" / "Endorsements" (often identified by short codes like PC17, PC18, EBE2, NMA2914) that OVERRIDE the standard wording. Examples seen in the field:
+- EBE2 raising the Equipment Breakdown excess from the schedule value to $1,000 (except for spoilage of stock under clause 8.13).
+- PC18 raising the "any one unspecified item" cap from $2,500 in the wording to $3,000 per the schedule.
+When you find a finding that turns on a clause, ALWAYS check the schedule for an imposed condition / endorsement that alters that clause — and surface mismatches as a finding (kind "exclusion" if the insurer applied wording terms that the schedule has overridden, or kind "valuation" if a sum-insured or excess has been misapplied).
+
 When the intake form is tagged [COMMERCIAL / BUSINESS POLICY], adapt the analysis accordingly:
 - Treat the policyholder as a business owner / sole trader, not a consumer.
 - Where relevant, factor in business interruption losses, loss of stock or perishables, replacement cost vs ACV / depreciated value, and consequential losses (lost trading days, denied bookings, lost contracts).
@@ -185,6 +191,7 @@ export async function POST(req: NextRequest) {
 
   const policy = form.get("policy");
   const letter = form.get("letter");
+  const supportEntries = form.getAll("support");
   const category = String(form.get("category") ?? "auto");
   const insurer = String(form.get("insurer") ?? "").trim();
   const description = String(form.get("description") ?? "").trim();
@@ -201,10 +208,13 @@ export async function POST(req: NextRequest) {
 
   const policyFile = policy instanceof File && policy.size > 0 ? policy : null;
   const letterFile = letter instanceof File && letter.size > 0 ? letter : null;
+  const supportFiles = supportEntries.filter(
+    (e): e is File => e instanceof File && e.size > 0,
+  );
 
-  if (!policyFile && !letterFile && !description) {
+  if (!policyFile && !letterFile && supportFiles.length === 0 && !description) {
     return NextResponse.json(
-      { error: "Provide at least a policy document, an insurer letter, or a description of the loss." },
+      { error: "Provide at least a policy document, an insurer letter, supporting documents, or a description of the loss." },
       { status: 400 },
     );
   }
@@ -227,6 +237,9 @@ export async function POST(req: NextRequest) {
 
   if (policyFile) content.push(...(await fileToBlocks(policyFile, "INSURANCE POLICY")));
   if (letterFile) content.push(...(await fileToBlocks(letterFile, "INSURER DENIAL / SETTLEMENT LETTER")));
+  for (const f of supportFiles) {
+    content.push(...(await fileToBlocks(f, "SUPPORTING DOCUMENT")));
+  }
 
   content.push({
     type: "text",
