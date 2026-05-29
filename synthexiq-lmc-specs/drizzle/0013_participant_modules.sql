@@ -3,7 +3,7 @@
 -- A module row is created when the module unlocks.
 -- touchpoint_*_closed_at is stamped when billing_events for that touchpoint close.
 -- completed_at is stamped when all three touchpoints have been closed.
--- The Replit front-end reads this table to lock/unlock module pages.
+-- The web client reads this table to lock/unlock module pages.
 
 CREATE TABLE participant_modules (
   id              INT UNSIGNED  NOT NULL AUTO_INCREMENT,

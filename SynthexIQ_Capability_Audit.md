@@ -1,6 +1,6 @@
 # SynthexIQ Capability Audit — AI Launchpad LMS
 
-**Purpose:** Confirm what SynthexIQ can and cannot do before the Replit team builds modules 05–23 around it.
+**Purpose:** Confirm what SynthexIQ can and cannot do before the engineering team builds modules 05–23 around it.
 **How to use:** Hand to whoever owns SynthexIQ. Ask them to fill the **Can SynthexIQ Do This?** column with **YES / NO / PARTIAL / NEEDS BUILD**. Anything not YES becomes a design problem to solve before launch.
 **Prepared:** May 2026 — Steve Milverton
 
@@ -22,7 +22,7 @@
 | A1 | Run a Telegram bot account 24/7 in production | All | 🟢 | | Build separate bot using python-telegram-bot |
 | A2 | Parse exact-match slash commands (`/submit_modNN_[a\|b\|c]`) | All 19 modules × 3 = 57 commands | 🟢 | | — |
 | A3 | Differentiate free-text messages from slash commands | All | 🟢 | | — |
-| A4 | Store events in a persistent database (not in-memory) | All | 🟢 | | Replit Postgres |
+| A4 | Store events in a persistent database (not in-memory) | All | 🟢 | | App's primary DB |
 | A5 | Send pre-written text + media to a user on demand | All | 🟢 | | — |
 | A6 | Push notifications to a specific support worker's Telegram | All | 🟢 | | — |
 | A7 | Handle 50+ concurrent active learners per support worker | All | 🟡 | | Rate-limiting + queue |
@@ -50,7 +50,7 @@
 
 | # | Capability | Used in Modules | Difficulty | Can SynthexIQ Do This? | Fallback if NO |
 |---|---|---|---|---|---|
-| C1 | Caseload view: all 50 participants and their state | All | 🟡 | | Replit-built dashboard |
+| C1 | Caseload view: all 50 participants and their state | All | 🟡 | | Front-end dashboard build |
 | C2 | Queue of pending touchpoints awaiting SW reply, sorted by age | All | 🟡 | | — |
 | C3 | Templated reply library (one click → send) | All | 🟢 | | — |
 | C4 | SLA timer: alert if SW hasn't replied within X hours | All | 🟡 | | — |
@@ -158,7 +158,7 @@
 |---|---|---|---|---|---|
 | L1 | "Send to Support Worker" button in module page pre-fills trigger phrase in Telegram compose box | All | 🟡 | | **Test on iOS, Android, desktop separately — Telegram deep-linking behaves differently per platform.** |
 | L2 | Copy-to-clipboard button on every AI prompt block | All | 🟢 | | — |
-| L3 | Module page reflects live touchpoint state (tick when SW replies) | All | 🟡 | | Webhook from bot to Replit |
+| L3 | Module page reflects live touchpoint state (tick when SW replies) | All | 🟡 | | Webhook from bot to web client |
 | L4 | Voice-input button for low-literacy learners on every text field | All (accessibility) | 🟡 | | Browser native Web Speech API |
 
 ---
@@ -183,7 +183,7 @@ If the answer to any of these is unclear, do not build the modules yet:
 2. **Triage:** sort capabilities into:
    - ✅ SynthexIQ does it → build per module spec
    - 🔧 SynthexIQ can build it → scope and price
-   - 🟥 Cannot do, must replace → either build in Replit, use a different tool, or remove from modules
+   - 🟥 Cannot do, must replace → either build in the app, use a different tool, or remove from modules
 3. **Build a thin slice first.** Wire up Module 05's three touchpoints end-to-end (trigger phrase → log → SW notify → reply → log close → unlock Module 06). Test with one real SW and one real participant. Validate the billing log is acceptable. **Only then** roll out modules 06–23.
 4. **Get legal sign-off** on Section J (data residency, privacy, consent) before any real participant data hits Telegram.
 5. **Get duty-of-care sign-off** on Section I before launch — this is the section that will be examined if something goes wrong.

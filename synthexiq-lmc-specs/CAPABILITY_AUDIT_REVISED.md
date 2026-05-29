@@ -161,10 +161,10 @@
 
 | # | Capability | Status | Notes |
 |---|---|---|---|
-| L1 | "Send to SW" button pre-fills trigger phrase in Telegram | 🔴 NOT YET | Replit-side work; needs tested on iOS/Android |
-| L2 | Copy-to-clipboard on AI prompt blocks | 🔴 NOT YET | Replit-side work |
+| L1 | "Send to SW" button pre-fills trigger phrase in Telegram | 🔴 NOT YET | Web-client work; needs testing on iOS/Android |
+| L2 | Copy-to-clipboard on AI prompt blocks | 🔴 NOT YET | Web-client work |
 | L3 | Module page reflects live touchpoint state | 🔴 NOT YET | Needs tRPC endpoint over `billing_events` + `participant_modules` |
-| L4 | Voice-input on text fields | 🔴 NOT YET | Browser Web Speech API — Replit-side |
+| L4 | Voice-input on text fields | 🔴 NOT YET | Browser Web Speech API — web-client work |
 
 ---
 

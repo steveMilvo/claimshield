@@ -4145,9 +4145,9 @@ All billable trigger phrases. Programme these into the SynthexIQ bot command reg
 
 ---
 
-# Implementation Notes for the Replit Build
+# Implementation Notes for the Front-End Build
 
-For the Replit team building the platform:
+For the team building the AI Launchpad web client:
 
 1. **Each module page** should render the 8 sections in this order: Goal · Intro Video · What to Do · What You Will Make · Open Activity · 3 Billable Touchpoints · Bot Help · Check-In · Quiz.
 

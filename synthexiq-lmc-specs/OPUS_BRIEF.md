@@ -174,11 +174,11 @@ It is called from `handleSwReplyIfBillingOpen` in `triggerRouter.ts`. Verify the
 chain: SW reply → `closeMostRecentOpenBillingEvent` → `checkAndAdvanceModule` →
 `upsertParticipantModule(nextModule, { unlockedAt: now })` → Telegram notification.
 
-### 3d. Add Replit-facing tRPC endpoint
+### 3d. Add web-client-facing tRPC endpoint
 Add to the NDIS router (or a new `lmc` router):
 
 ```typescript
-// trpc.lmc.moduleState — called by Replit front-end to lock/unlock module pages
+// trpc.lmc.moduleState — called by the AI Launchpad web client to lock/unlock module pages
 moduleState: protectedProcedure
   .input(z.object({ participantEmail: z.string().email(), moduleNum: z.number() }))
   .query(async ({ input, ctx }) => {
