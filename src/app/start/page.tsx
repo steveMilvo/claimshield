@@ -7,7 +7,7 @@ import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
 import { listCases, saveCase } from "@/lib/cases";
 import type { Analysis } from "@/lib/mockAnalysis";
-import { JURISDICTIONS, type Jurisdiction } from "@/lib/jurisdiction";
+import { JURISDICTIONS, US_STATES, type Jurisdiction, type UsState } from "@/lib/jurisdiction";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -24,6 +24,7 @@ export default function StartPage() {
   const [policyFile, setPolicyFile] = useState<File | null>(null);
   const [letterFile, setLetterFile] = useState<File | null>(null);
   const [jurisdiction, setJurisdiction] = useState<Jurisdiction>("AU");
+  const [state, setState] = useState<UsState | "">("");
   const [category, setCategory] = useState("auto");
   const [insurer, setInsurer] = useState("");
   const [description, setDescription] = useState("");
@@ -56,6 +57,7 @@ export default function StartPage() {
       if (policyFile) fd.append("policy", policyFile);
       if (letterFile) fd.append("letter", letterFile);
       fd.append("jurisdiction", jurisdiction);
+      if (jurisdiction === "US" && state) fd.append("state", state);
       fd.append("category", category);
       fd.append("insurer", insurer);
       fd.append("description", description);
@@ -108,7 +110,10 @@ export default function StartPage() {
               <Field label="Jurisdiction">
                 <select
                   value={jurisdiction}
-                  onChange={(e) => setJurisdiction(e.target.value as Jurisdiction)}
+                  onChange={(e) => {
+                    setJurisdiction(e.target.value as Jurisdiction);
+                    setState("");
+                  }}
                   className="input"
                 >
                   {(Object.keys(JURISDICTIONS) as Jurisdiction[]).map((j) => (
@@ -118,6 +123,22 @@ export default function StartPage() {
                   ))}
                 </select>
               </Field>
+              {jurisdiction === "US" && (
+                <Field label="State">
+                  <select
+                    value={state}
+                    onChange={(e) => setState(e.target.value as UsState | "")}
+                    className="input"
+                  >
+                    <option value="">Select a state…</option>
+                    {(Object.keys(US_STATES) as UsState[]).map((s) => (
+                      <option key={s} value={s}>
+                        {US_STATES[s]}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
+              )}
               <Field label="Insurance category">
                 <select
                   value={category}
@@ -220,7 +241,11 @@ export default function StartPage() {
               <>
                 <Summary
                   items={[
-                    ["Jurisdiction", `${JURISDICTIONS[jurisdiction].name} (${JURISDICTIONS[jurisdiction].currency})`],
+                    [
+                      "Jurisdiction",
+                      `${JURISDICTIONS[jurisdiction].name} (${JURISDICTIONS[jurisdiction].currency})` +
+                        (jurisdiction === "US" && state ? ` · ${US_STATES[state]}` : ""),
+                    ],
                     ["Category", labelForCategory(category)],
                     ["Insurer", insurer || "—"],
                     ["Policy file", policyFile?.name || "—"],

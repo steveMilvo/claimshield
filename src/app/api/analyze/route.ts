@@ -5,7 +5,9 @@ import { z } from "zod";
 import {
   ALL_JURISDICTIONS,
   isJurisdiction,
+  isUsState,
   jurisdictionConfig,
+  usStateName,
   type Jurisdiction,
 } from "@/lib/jurisdiction";
 
@@ -21,6 +23,7 @@ const FindingSchema = z.object({
 
 const AnalysisSchema = z.object({
   jurisdiction: z.enum(ALL_JURISDICTIONS as [Jurisdiction, ...Jurisdiction[]]),
+  state: z.string().nullable(),
   insurer: z.string(),
   policyType: z.string(),
   policyNumber: z.string(),
@@ -78,14 +81,28 @@ The three documents should reference the same facts, figures and provisions you 
 
 If the documents are too thin to analyse confidently, still produce the structure: make conservative estimates, set a lower score, and say so plainly in lossDescription and findings.`;
 
-function jurisdictionPromptFor(j: Jurisdiction): string {
+function jurisdictionPromptFor(
+  j: Jurisdiction,
+  stateName: string | null,
+  stateCode: string | null,
+): string {
   const cfg = jurisdictionConfig(j);
-  return (
+  const baseBlock =
     `=== JURISDICTION ===\n` +
     `Set analysis.jurisdiction to "${cfg.code}" (${cfg.name}).\n` +
     `External dispute body for the complaint: ${cfg.complaintBody}.\n` +
-    `Regulatory guidance: ${cfg.promptNotes}`
-  );
+    `Regulatory guidance: ${cfg.promptNotes}`;
+  if (j === "US" && stateName && stateCode) {
+    return (
+      baseBlock +
+      `\nState: ${stateName} (${stateCode}). Set analysis.state to "${stateCode}". ` +
+      `Cite ${stateName}'s Unfair Insurance / Unfair Claims Settlement Practices Act provisions ` +
+      `and the ${stateName} Department of Insurance consumer complaint process by name. ` +
+      `Note any ${stateName}-specific timing requirements (acknowledgement, decision, payment) that apply.`
+    );
+  }
+  // Non-US, or US without a state given: ensure analysis.state is null.
+  return baseBlock + `\nSet analysis.state to null.`;
 }
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
@@ -153,6 +170,9 @@ export async function POST(req: NextRequest) {
     ? rawJurisdiction
     : "AU";
   const cfg = jurisdictionConfig(jurisdiction);
+  const rawState = String(form.get("state") ?? "");
+  const stateCode = jurisdiction === "US" && isUsState(rawState) ? rawState : null;
+  const stateName = stateCode ? usStateName(stateCode) : null;
 
   const policyFile = policy instanceof File && policy.size > 0 ? policy : null;
   const letterFile = letter instanceof File && letter.size > 0 ? letter : null;
@@ -169,8 +189,9 @@ export async function POST(req: NextRequest) {
       type: "text",
       text:
         `Claim intake form\n` +
-        `- Jurisdiction: ${cfg.name} (${cfg.code})\n` +
-        `- Insurance category: ${category}\n` +
+        `- Jurisdiction: ${cfg.name} (${cfg.code})` +
+        (stateName ? `\n- State: ${stateName} (${stateCode})` : "") +
+        `\n- Insurance category: ${category}\n` +
         `- Insurer: ${insurer || "(not provided)"}\n` +
         `- Loss description: ${description || "(not provided)"}\n` +
         `- Settlement offered (${cfg.currency}): ${offerAmount || "(not provided)"}\n` +
@@ -200,7 +221,7 @@ export async function POST(req: NextRequest) {
       },
       system: [
         { type: "text", text: SYSTEM_PROMPT_BASE, cache_control: { type: "ephemeral" } },
-        { type: "text", text: jurisdictionPromptFor(jurisdiction) },
+        { type: "text", text: jurisdictionPromptFor(jurisdiction, stateName, stateCode) },
       ],
       messages: [{ role: "user", content }],
     });

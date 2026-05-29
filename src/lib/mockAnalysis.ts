@@ -16,6 +16,7 @@ import type { Jurisdiction } from "./jurisdiction";
 
 export type Analysis = {
   jurisdiction: Jurisdiction;
+  state?: string | null;
   insurer: string;
   policyType: string;
   policyNumber: string;
@@ -36,6 +37,7 @@ export type Analysis = {
 
 export const mockAnalysis: Analysis = {
   jurisdiction: "AU",
+  state: null,
   insurer: "Auric Mutual Insurance",
   policyType: "Comprehensive Motor",
   policyNumber: "AM-9842-0411",

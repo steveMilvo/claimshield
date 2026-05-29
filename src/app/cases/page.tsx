@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { listCases, deleteCase, type CaseSummary } from "@/lib/cases";
-import { formatMoney } from "@/lib/jurisdiction";
+import { formatMoney, jurisdictionConfig } from "@/lib/jurisdiction";
 import { ShieldMark } from "@/components/Logo";
 
 export default function CasesPage() {
@@ -67,7 +67,7 @@ function CaseRow({ c, onDelete }: { c: CaseSummary; onDelete: () => void }) {
             {c.insurer || "Unknown insurer"} · {c.policyType || "Policy"}
           </div>
           <div className="text-xs text-ink-muted mt-0.5 truncate">
-            {new Date(c.createdAt).toLocaleString()} · case {c.id}
+            {new Date(c.createdAt).toLocaleString(jurisdictionConfig(c.jurisdiction).locale)} · case {c.id}
           </div>
         </Link>
         <div className="text-right shrink-0">

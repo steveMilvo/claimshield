@@ -9,6 +9,7 @@ import { downloadDocx } from "@/lib/downloadDocx";
 import {
   formatMoney,
   jurisdictionConfig,
+  usStateName,
   type Jurisdiction,
 } from "@/lib/jurisdiction";
 import { ShieldMark } from "@/components/Logo";
@@ -132,7 +133,7 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
       />
 
       <div className="print-only mt-8 text-[10pt] text-center text-ink-muted">
-        ClaimShield · MilvoTech Pty Ltd · printed {new Date().toLocaleString()} · {a.insurer} ·
+        ClaimShield · MilvoTech Pty Ltd · printed {new Date().toLocaleString(cfg.locale)} · {a.insurer} ·
         policy {a.policyNumber}
       </div>
     </div>
@@ -140,6 +141,7 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
 }
 
 function ResultHeader({ a, onSendAppeal }: { a: Analysis; onSendAppeal: () => void }) {
+  const locale = jurisdictionConfig(a.jurisdiction).locale;
   return (
     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
       <div>
@@ -150,7 +152,10 @@ function ResultHeader({ a, onSendAppeal }: { a: Analysis; onSendAppeal: () => vo
           {a.insurer} · {a.policyType}
         </h1>
         <p className="mt-1 text-ink-muted text-sm">
-          Policy {a.policyNumber} · analysed {new Date().toLocaleDateString()}
+          {a.jurisdiction === "US" && a.state
+            ? `${usStateName(a.state) ?? a.state} · `
+            : ""}
+          Policy {a.policyNumber} · analysed {new Date().toLocaleDateString(locale)}
         </p>
       </div>
       <div data-no-print="true" className="flex flex-wrap gap-2">
