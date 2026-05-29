@@ -41,11 +41,19 @@ interface TelegramMessage {
 // Constants
 // ---------------------------------------------------------------------------
 
-const OFFICIAL_TRIGGER = /^\/submit_mod(\d{2})_(a|b|c)$/i;
+// 04B is the foundation bridge module — it uses the literal token "04b"
+// instead of a 2-digit number, so we match it separately.
+const BRIDGE_TRIGGER    = /^\/submit_mod04b_(a|b|c)$/i;
+const OFFICIAL_TRIGGER  = /^\/submit_mod(\d{2})_(a|b|c)$/i;
 const CA_TRIGGER        = /^\/submit_capath_(\d{2})_(a|b|c)$/i;
 
 const LMC_MODULE_RANGE  = { min: 5, max: 24 };
 const CA_MODULE_RANGE   = { min: 1, max: 6  };
+
+// Module 04B is the prerequisite for Module 05. Stored in participant_modules
+// with module_num = 4 (matching the bridge from Steve's existing Module 04).
+// All other modules use their integer number directly.
+const MODULE_04B_NUM = 4;
 
 // ---------------------------------------------------------------------------
 // Crisis pre-check  (Priority 4)
@@ -116,21 +124,30 @@ export async function handleLmcTrigger(
   msg: TelegramMessage,
   db: unknown, // DrizzleDb
 ): Promise<boolean> {
-  const text  = (msg.text ?? '').trim();
-  const match = text.match(OFFICIAL_TRIGGER) ?? text.match(CA_TRIGGER);
+  const text       = (msg.text ?? '').trim();
+  const bridgeM    = text.match(BRIDGE_TRIGGER);
+  const officialM  = text.match(OFFICIAL_TRIGGER);
+  const caM        = text.match(CA_TRIGGER);
+  const match      = bridgeM ?? officialM ?? caM;
   if (!match) return false;
 
-  const isCA      = CA_TRIGGER.test(text);
-  const moduleNum = parseInt(match[1], 10);
-  const touchpoint = match[2].toLowerCase() as 'a' | 'b' | 'c';
-  const range     = isCA ? CA_MODULE_RANGE : LMC_MODULE_RANGE;
+  const isBridge = !!bridgeM;
+  const isCA     = !!caM;
 
-  // Validate range
-  if (moduleNum < range.min || moduleNum > range.max) {
-    await sendTelegramMessage(msg.chat.id,
-      `⚠️ That module number doesn't look right. Check the trigger phrase and try again.`
-    );
-    return true;
+  // Bridge module 04B has no number in its regex group, the touchpoint is group 1.
+  // Official/CA have moduleNum in group 1 and touchpoint in group 2.
+  const moduleNum  = isBridge ? MODULE_04B_NUM : parseInt(match[1], 10);
+  const touchpoint = (isBridge ? match[1] : match[2]).toLowerCase() as 'a' | 'b' | 'c';
+
+  // Validate range (skip for bridge — it's a fixed module number)
+  if (!isBridge) {
+    const range = isCA ? CA_MODULE_RANGE : LMC_MODULE_RANGE;
+    if (moduleNum < range.min || moduleNum > range.max) {
+      await sendTelegramMessage(msg.chat.id,
+        `⚠️ That module number doesn't look right. Check the trigger phrase and try again.`
+      );
+      return true;
+    }
   }
 
   // Look up participant
@@ -143,8 +160,9 @@ export async function handleLmcTrigger(
     return true;
   }
 
-  // Check module is unlocked (skip for CA pathway — no unlock gate)
-  if (!isCA) {
+  // Check module is unlocked (skip for CA pathway — no unlock gate).
+  // 04B is always unlocked on enrolment (it's the foundation bridge).
+  if (!isCA && !isBridge) {
     const moduleState = await getParticipantModuleState(participantEmail, moduleNum, db);
     if (!moduleState?.unlocked_at) {
       await sendTelegramMessage(msg.chat.id,
@@ -182,7 +200,9 @@ export async function handleLmcTrigger(
   if (swTelegramId) {
     const label = isCA
       ? `Affiliate Pathway CA-${String(moduleNum).padStart(2, '0')} Touchpoint ${touchpoint.toUpperCase()}`
-      : `Module ${moduleNum} Touchpoint ${touchpoint.toUpperCase()}`;
+      : isBridge
+        ? `Module 04B (AI Tools Tour) Touchpoint ${touchpoint.toUpperCase()}`
+        : `Module ${moduleNum} Touchpoint ${touchpoint.toUpperCase()}`;
     await sendTelegramMessage(swTelegramId,
       `📋 *Billable event started*\n\n` +
       `Participant: ${participantEmail}\n` +
@@ -195,7 +215,9 @@ export async function handleLmcTrigger(
   // Confirm to participant
   const moduleLabel = isCA
     ? `Affiliate Pathway CA-${String(moduleNum).padStart(2, '0')}`
-    : `Module ${moduleNum}`;
+    : isBridge
+      ? `Module 04B (AI Tools Tour)`
+      : `Module ${moduleNum}`;
   await sendTelegramMessage(msg.chat.id,
     `✅ Got it! Touchpoint ${touchpoint.toUpperCase()} for ${moduleLabel} has started.\n\n` +
     `Now send your work — a screenshot, photo, or message — and your support worker will reply soon.\n\n` +
@@ -244,6 +266,8 @@ async function checkAndAdvanceModule(
   // Mark module complete
   await upsertParticipantModule(participantEmail, moduleNum, { completedAt: new Date() }, db);
 
+  // Module 04B → Module 05. All other modules: nextModule = moduleNum + 1.
+  // (moduleNum === MODULE_04B_NUM === 4, so 4 + 1 === 5 — works without special-casing.)
   const nextModule = moduleNum + 1;
 
   if (nextModule > LMC_MODULE_RANGE.max) {

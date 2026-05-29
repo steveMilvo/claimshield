@@ -75,6 +75,189 @@ MilvoTech apps with affiliate programs (monthly recurring commission) are surfac
 
 ---
 
+# Part 0 — AI Foundations (Bridge from Module 04 to Module 05)
+
+This single module fills the gap between Steve's existing Module 04 (Brand & Logo) and the rest of v3 — where every activity assumes the learner already knows how to sign up for ChatGPT, Claude, or Gemini, paste a prompt, and read the answer. Most learners do not. Module 04B teaches the tools first.
+
+**Prerequisite:** Module 04 (LMC v2).
+**Unlocks:** Module 05.
+
+---
+
+## Module 04B — AI Tools Tour
+
+**Goal:** Set up free accounts on at least 2 AI tools (ChatGPT, Claude, Gemini), learn the copy-paste workflow, try voice input, and learn the 5 golden safety rules — so every other module in the course actually works for you.
+
+**Intro Video (Seedance Prompt):**
+> A person sitting at a kitchen table with a phone, tablet, and laptop in front of them. They tap the phone microphone and speak. The words "What can I do today?" appear on the screen. Three friendly AI logos light up around them — ChatGPT, Claude, Gemini — each writing a different helpful answer. The person smiles and gives a thumbs up. 15 seconds.
+
+**What to Do:**
+1. Meet the 3 main AI tools and what each one is best at.
+2. Create a free account on **ChatGPT** (required) and ONE other (Claude or Gemini).
+3. Learn the copy-paste workflow with a real practice prompt.
+4. Try voice input — talk to the AI instead of typing.
+5. Learn the 5 golden safety rules for using AI safely.
+
+**What You Will Make:** Working accounts on at least 2 AI tools, your own "AI Cheat Sheet" (a single page you keep next to your computer), and a finished safety checklist signed off by your support worker.
+
+> **🟢 AI Superpower:** A participant who has never typed a paragraph in their life can now have a free, friendly, expert conversation with the best AI in the world — in plain English, using voice input. Wasn't possible 3 years ago. Once this module is done, every other module in the program suddenly becomes accessible.
+
+---
+
+### Open Activity — Meet Your 3 AI Assistants
+
+This activity will take about 75–90 minutes. Take breaks. There is no rush.
+
+**Step 1 — Meet the 3 AI Tools (15 min)**
+
+Watch the bot's short intro and read this comparison table:
+
+| Tool | Website | What it's best at | Free version? |
+|---|---|---|---|
+| **ChatGPT** | chatgpt.com | All-rounder. Writing, research, ideas, simple questions. The one most people start with. | ✅ Yes |
+| **Claude** | claude.ai | Long writing, careful answers, reading letters and PDFs. Great at "be careful and honest" tasks. | ✅ Yes |
+| **Gemini** | gemini.google.com | Photos and images. Connected to Google. Best at picture editing and spreadsheets. | ✅ Yes |
+
+> **Honesty rule:** This course does **NOT** use **Grok**. The instructions are designed for the 3 tools above only.
+
+**Step 2 — Sign Up for ChatGPT (15 min — required)**
+
+1. Open a web browser. Go to **chatgpt.com**.
+2. Click **Sign up**.
+3. Use your existing email (the one you use for the program). Choose a password you can remember.
+4. Verify your email if asked (check inbox, click link).
+5. Skip any "upgrade to Pro" pop-up. The free version is enough.
+6. Send "Hi, I'm new here" as your first message. Read the reply.
+
+> **Safety:** Use your normal email. Never give ChatGPT your bank details, your password, or photos of children.
+
+**Step 3 — Sign Up for ONE Other (15 min — pick Claude OR Gemini)**
+
+If you mostly write words → choose **Claude** (claude.ai).
+If you mostly want to edit photos or use Google docs → choose **Gemini** (gemini.google.com).
+
+Same sign-up steps: email + password + verify.
+
+Send "Hi, I'm new here" as your first message in this tool too.
+
+**Step 4 — Learn the Copy-Paste Workflow (15 min)**
+
+This is the move you will use in every other module. Practise it now with a real prompt:
+
+```
+Hi! I am brand new to AI. Please write me 3 short, friendly tips for using
+you safely. Year 5 reading level. Plain Australian English.
+```
+
+How to copy-paste:
+1. **In Telegram:** ask the SynthexIQ bot for the prompt with `/get_prompt mod04b_practice`. Tap and hold the prompt text. Tap **Copy**.
+2. **Open your AI tool** (ChatGPT, Claude, or Gemini) on the same device.
+3. Tap and hold in the message box. Tap **Paste**.
+4. Tap **Send** (or press Enter).
+5. Read the answer out loud.
+
+> **Tip:** On a computer, copy = Ctrl+C (Windows) or ⌘+C (Mac). Paste = Ctrl+V or ⌘+V.
+
+**Step 5 — Try Voice Input (10 min)**
+
+If reading and typing are hard for you, this is the best feature in the whole course.
+
+**On ChatGPT phone app:** tap the microphone icon. Speak. Tap stop. The AI hears you and replies.
+
+**On Claude phone app:** tap the microphone icon next to the text box.
+
+**On Gemini phone app:** tap the microphone icon.
+
+Practice: tap mic and say:
+> "Tell me one nice fact about Australia in plain language."
+
+Listen to the answer.
+
+> **Why this matters:** You do not need to be able to read or type well to use AI. You can just talk to it.
+
+**Step 6 — Read and Sign the 5 Golden Safety Rules (10 min)**
+
+Print or screenshot this list. Tape it next to your computer:
+
+| # | Golden Rule | Why |
+|---|---|---|
+| 1 | **Never give AI your password or bank details.** | AI does not need them. Anyone asking for them is a scam. |
+| 2 | **Never upload photos of children.** | Privacy. Even for your own kids. |
+| 3 | **AI sometimes gets things wrong.** | Always read the answer carefully. If it sounds weird, ask your support worker. |
+| 4 | **AI is NOT your doctor, lawyer, or accountant.** | For health, legal, or money decisions, always check with a real human professional. |
+| 5 | **Be polite, but you don't have to be sorry.** | AI is a tool. You can say "no, try again" without feeling rude. |
+
+Read each one out loud. Sign the bottom of the page with your name and today's date.
+
+> **Why this matters:** Most AI accidents come from breaking one of these 5 rules. If you follow them, you will be safe.
+
+---
+
+### Billable Touchpoint A — Tool Choice Review (10 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development  
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod04b_a` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 1, tell the support worker which 2 tools you plan to set up (ChatGPT is required + Claude OR Gemini).
+2. *"I will set up [ChatGPT] and [Claude/Gemini]. Is that the right pick for me?"*
+3. Support worker checks fit (do you mostly write words → Claude; mostly want photo help → Gemini) and approves or suggests a swap.
+
+---
+
+### Billable Touchpoint B — First Prompt Critique (15 min, async)
+
+**NDIS Line Item:** Capacity Building — Skill Development  
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod04b_b` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. After Step 4, screenshot the AI's reply to your practice prompt.
+2. *"This is what AI said. Did I copy and paste right?"*
+3. Support worker confirms the workflow is working, troubleshoots if not, and sends a 30-second voice note welcoming the learner to AI.
+
+---
+
+### Billable Touchpoint C — Safety Rules Sign-Off (10 min, sync voice call)
+
+**NDIS Line Item:** Capacity Building — Skill Development  
+**Billing Trigger:** Learner submits via Telegram trigger phrase (see below)
+
+**To log this billable event:** Type `/submit_mod04b_c` in your Telegram group chat before you send your work. The bot records the start time. When your support worker replies, the bot records the end time and closes the event.
+
+1. Voice call the support worker.
+2. The support worker reads each of the 5 Golden Rules aloud and asks the learner to explain in their own words why each one matters.
+3. If the learner can explain all 5, the support worker marks **"AI Safety Certified"** and unlocks Module 05. Milestone logged.
+
+> **Why this is sync:** This is the only safety gate in the whole program. The SW must hear the learner explain each rule in their own words. No skipping.
+
+---
+
+**Trigger phrases for this module (type exactly as shown — starts billable clock):**
+- `/submit_mod04b_a` — submits Touchpoint A
+- `/submit_mod04b_b` — submits Touchpoint B
+- `/submit_mod04b_c` — submits Touchpoint C
+- Free chat with the bot is always unbillable and always available.
+
+**Telegram Bot Help (Unbillable, 24/7):**
+- `/get_prompt mod04b_practice` — bot sends the practice prompt to copy-paste
+- Ask "how do I sign up for ChatGPT?" — bot sends a 6-step picture guide
+- Ask "show me voice input" — bot sends a 20-second video tutorial
+- Ask "is this a scam?" — paste any suspicious message; bot checks it for you
+- Ask "what are the 5 rules?" — bot resends the safety checklist
+
+**Check-In Question:** Have you sent at least 1 prompt successfully on 2 different AI tools?
+
+**Quiz Question:**
+> Which of these is NEVER okay to give an AI?
+> - A) A short story about your business
+> - B) Your bank password ✓
+> - C) A question about Australia
+> - D) A photo of a coffee cup
+
+---
+
 # Part 1 — Microenterprise Library (cont.)
 
 ---
@@ -3916,10 +4099,11 @@ Every module produces **3 billable touchpoints**. At 2–3 modules per month (on
 
 All billable trigger phrases. Programme these into the SynthexIQ bot command registry.
 
-### Official Course (Modules 05–24)
+### Official Course (Module 04B + Modules 05–24)
 
 | Module | Touchpoint A | Touchpoint B | Touchpoint C |
 |---|---|---|---|
+| 04B — AI Tools Tour (Bridge) | `/submit_mod04b_a` | `/submit_mod04b_b` | `/submit_mod04b_c` |
 | 05 — Selling Online | `/submit_mod05_a` | `/submit_mod05_b` | `/submit_mod05_c` |
 | 06 — Product Photos | `/submit_mod06_a` | `/submit_mod06_b` | `/submit_mod06_c` |
 | 07 — Pricing My Stuff | `/submit_mod07_a` | `/submit_mod07_b` | `/submit_mod07_c` |
@@ -3986,7 +4170,7 @@ For the Replit team building the platform:
 
 8. **Group workshops** (Module 02B carry-forward + Module 12 quarterly): scheduling UI with 4-learner cap, 15-min billable per learner.
 
-9. **Trigger phrase registry**: the SynthexIQ bot must recognise all 60 official course commands (`/submit_modNN_[a|b|c]` for modules 05–24) plus 18 opt-in pathway commands (`/submit_capath_NN_[a|b|c]` for CA-01 to CA-06). Each command fires: (a) timestamp log, (b) SW push notification, (c) audit record creation.
+9. **Trigger phrase registry**: the SynthexIQ bot must recognise all 63 official course commands (3 for Module 04B + 60 for modules 05–24) plus 18 opt-in pathway commands (`/submit_capath_NN_[a|b|c]` for CA-01 to CA-06). The 04B commands use the form `/submit_mod04b_[a|b|c]`. Each command fires: (a) timestamp log, (b) SW push notification, (c) audit record creation.
 
 10. **Free-text firewall**: any message that does NOT start with `/submit_` is treated as unbillable. The bot answers freely. The billing log is never touched.
 

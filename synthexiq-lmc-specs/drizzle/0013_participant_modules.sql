@@ -21,8 +21,13 @@ CREATE TABLE participant_modules (
   INDEX idx_pm_incomplete    (completed_at, participant_email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Seed Module 05 as the entry point for all existing participants.
+-- Seed Module 04B (stored as module_num = 4) as the entry point for all
+-- participants. 04B is the AI Tools Tour bridge module — the prerequisite
+-- for Module 05 and everything that follows. Module 05 unlocks
+-- automatically when 04B is completed (via the trigger router's
+-- checkAndAdvanceModule path).
+--
 -- Run this AFTER the migration, with actual participant emails.
 -- INSERT INTO participant_modules (participant_email, module_num, unlocked_at)
--- SELECT email, 5, NOW() FROM users WHERE role = 'participant'
+-- SELECT email, 4, NOW() FROM users WHERE role = 'participant'
 -- ON DUPLICATE KEY UPDATE unlocked_at = COALESCE(unlocked_at, NOW());
