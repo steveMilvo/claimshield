@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
+import {
+  ALL_JURISDICTIONS,
+  isJurisdiction,
+  jurisdictionConfig,
+  type Jurisdiction,
+} from "@/lib/jurisdiction";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -14,6 +20,7 @@ const FindingSchema = z.object({
 });
 
 const AnalysisSchema = z.object({
+  jurisdiction: z.enum(ALL_JURISDICTIONS as [Jurisdiction, ...Jurisdiction[]]),
   insurer: z.string(),
   policyType: z.string(),
   policyNumber: z.string(),
@@ -46,11 +53,12 @@ const AnalysisSchema = z.object({
   complaintText: z.string(),
 });
 
-const SYSTEM_PROMPT = `You are ClaimShield, an AI insurance-claim analyst working on behalf of policyholders in Australia. You read insurance policies and insurer denial / settlement letters, identify where the insurer has misapplied exclusions or breached its regulatory obligations, value the loss against comparable claims, and draft the documents the policyholder needs to fight back.
+const SYSTEM_PROMPT_BASE = `You are ClaimShield, an AI insurance-claim analyst working on behalf of policyholders. You read insurance policies and insurer denial / settlement letters, identify where the insurer has misapplied exclusions or breached its regulatory obligations, value the loss against comparable claims, and draft the documents the policyholder needs to fight back.
 
 You are an information and document-preparation tool. You are not a law firm and you do not give legal advice. Frame findings as "your policy says X" and "here is a template letter", never "you must do X".
 
 When you receive a claim, produce a single structured analysis with these fields:
+- jurisdiction: the jurisdiction code given to you for this claim. Set it exactly as instructed below — do not change it.
 - insurer, policyType, policyNumber: extracted from the documents (use "Not stated" if genuinely absent).
 - lossDescription: a one or two sentence neutral summary of the loss and the insurer's stated reasoning.
 - insurerOffer: the dollar amount the insurer offered or paid (number, AUD). Use 0 if the claim was denied outright with no offer.
@@ -64,11 +72,21 @@ When you receive a claim, produce a single structured analysis with these fields
 - nextSteps: 2-4 concrete next moves, each with a title, a detail line, and a due window (e.g. "Within 2 days", "Day 30").
 - appealLetter: a complete, ready-to-send appeal / internal-dispute-resolution letter addressed to the insurer. Cite the specific policy provisions and regulations from your findings. Use [Your Name] / [Date] placeholders. Professional but firm. ~250-400 words.
 - demandLetter: a "without prejudice" settlement demand letter — rejects the current offer, states the fair settlement figure, gives a deadline (e.g. 10 business days), and flags escalation to AFCA. Use [Your Name] / [Date] placeholders. ~150-250 words.
-- complaintText: a pre-formatted complaint to the relevant external dispute body (AFCA for Australia; name the FOS / state Department of Insurance equivalent only if the documents indicate a different jurisdiction). Structure it with clear sections — complainant details, what happened, why I am complaining (numbered), what I want, steps already taken, documents attached — using bracketed placeholders for anything not in the documents.
+- complaintText: a pre-formatted complaint to the external dispute body for this jurisdiction (see the JURISDICTION block below). Structure it with clear sections — complainant details, what happened, why I am complaining (numbered), what I want, steps already taken, documents attached — using bracketed placeholders for anything not in the documents.
 
 The three documents should reference the same facts, figures and provisions you used in findings. Keep them consistent with each other.
 
 If the documents are too thin to analyse confidently, still produce the structure: make conservative estimates, set a lower score, and say so plainly in lossDescription and findings.`;
+
+function jurisdictionPromptFor(j: Jurisdiction): string {
+  const cfg = jurisdictionConfig(j);
+  return (
+    `=== JURISDICTION ===\n` +
+    `Set analysis.jurisdiction to "${cfg.code}" (${cfg.name}).\n` +
+    `External dispute body for the complaint: ${cfg.complaintBody}.\n` +
+    `Regulatory guidance: ${cfg.promptNotes}`
+  );
+}
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
 
@@ -130,6 +148,11 @@ export async function POST(req: NextRequest) {
   const description = String(form.get("description") ?? "").trim();
   const offerAmount = String(form.get("offerAmount") ?? "").trim();
   const estimateAmount = String(form.get("estimateAmount") ?? "").trim();
+  const rawJurisdiction = String(form.get("jurisdiction") ?? "AU");
+  const jurisdiction: Jurisdiction = isJurisdiction(rawJurisdiction)
+    ? rawJurisdiction
+    : "AU";
+  const cfg = jurisdictionConfig(jurisdiction);
 
   const policyFile = policy instanceof File && policy.size > 0 ? policy : null;
   const letterFile = letter instanceof File && letter.size > 0 ? letter : null;
@@ -146,11 +169,12 @@ export async function POST(req: NextRequest) {
       type: "text",
       text:
         `Claim intake form\n` +
+        `- Jurisdiction: ${cfg.name} (${cfg.code})\n` +
         `- Insurance category: ${category}\n` +
         `- Insurer: ${insurer || "(not provided)"}\n` +
         `- Loss description: ${description || "(not provided)"}\n` +
-        `- Settlement offered (AUD): ${offerAmount || "(not provided)"}\n` +
-        `- Independent estimate / actual cost (AUD): ${estimateAmount || "(not provided)"}`,
+        `- Settlement offered (${cfg.currency}): ${offerAmount || "(not provided)"}\n` +
+        `- Independent estimate / actual cost (${cfg.currency}): ${estimateAmount || "(not provided)"}`,
     },
   ];
 
@@ -174,7 +198,10 @@ export async function POST(req: NextRequest) {
         effort: "high",
         format: zodOutputFormat(AnalysisSchema),
       },
-      system: [{ type: "text", text: SYSTEM_PROMPT, cache_control: { type: "ephemeral" } }],
+      system: [
+        { type: "text", text: SYSTEM_PROMPT_BASE, cache_control: { type: "ephemeral" } },
+        { type: "text", text: jurisdictionPromptFor(jurisdiction) },
+      ],
       messages: [{ role: "user", content }],
     });
   } catch (err) {

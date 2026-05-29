@@ -6,6 +6,11 @@ import Link from "next/link";
 import { mockAnalysis, type Analysis } from "@/lib/mockAnalysis";
 import { getCase } from "@/lib/cases";
 import { downloadDocx } from "@/lib/downloadDocx";
+import {
+  formatMoney,
+  jurisdictionConfig,
+  type Jurisdiction,
+} from "@/lib/jurisdiction";
 import { ShieldMark } from "@/components/Logo";
 import { SendEmailDialog, type SendDraft } from "@/components/SendEmailDialog";
 
@@ -69,6 +74,9 @@ export default function AnalysisPage() {
 function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
   const [send, setSend] = useState<SendDraft | null>(null);
 
+  const jurisdiction: Jurisdiction = a.jurisdiction ?? "AU";
+  const cfg = jurisdictionConfig(jurisdiction);
+
   function draftFor(kind: "appeal" | "demand" | "complaint"): SendDraft {
     const claimRef = a.policyNumber ? ` — claim ${a.policyNumber}` : "";
     if (kind === "demand") {
@@ -80,8 +88,8 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
     }
     if (kind === "complaint") {
       return {
-        recipient: "complaints@afca.org.au",
-        subject: `AFCA complaint — ${a.insurer || "insurer"}${claimRef}`,
+        recipient: cfg.complaintEmail,
+        subject: `${cfg.complaintBody.split(" (")[0]} complaint — ${a.insurer || "insurer"}${claimRef}`,
         body: a.complaintText,
       };
     }
@@ -103,7 +111,7 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
 
       <div className="mt-8 grid lg:grid-cols-12 gap-6">
         <section className="lg:col-span-7 space-y-6">
-          <UpsideCard offer={a.insurerOffer} fair={a.estimatedFairValue} upside={a.upside} />
+          <UpsideCard offer={a.insurerOffer} fair={a.estimatedFairValue} upside={a.upside} j={jurisdiction} />
           <FindingsCard findings={a.findings} />
           {a.comparables.length > 0 && <ComparablesCard rows={a.comparables} />}
           <NextStepsCard steps={a.nextSteps} />
@@ -111,8 +119,8 @@ function AnalysisView({ a, demo }: { a: Analysis; demo: boolean }) {
 
         <aside className="lg:col-span-5 space-y-6">
           <ScoreCard score={a.score} label={a.scoreLabel} />
-          <DocumentsCard a={a} onSend={(kind) => setSend(draftFor(kind))} />
-          <AppealLetterCard letter={a.appealLetter} onSend={() => setSend(draftFor("appeal"))} />
+          <DocumentsCard a={a} j={jurisdiction} onSend={(kind) => setSend(draftFor(kind))} />
+          <AppealLetterCard letter={a.appealLetter} j={jurisdiction} onSend={() => setSend(draftFor("appeal"))} />
           <DisclaimerCard />
         </aside>
       </div>
@@ -175,7 +183,17 @@ function ResultHeader({ a, onSendAppeal }: { a: Analysis; onSendAppeal: () => vo
   );
 }
 
-function UpsideCard({ offer, fair, upside }: { offer: number; fair: number; upside: number }) {
+function UpsideCard({
+  offer,
+  fair,
+  upside,
+  j,
+}: {
+  offer: number;
+  fair: number;
+  upside: number;
+  j: Jurisdiction;
+}) {
   const pct = fair > 0 ? Math.min(100, Math.round((offer / fair) * 100)) : 0;
   return (
     <div className="rounded-2xl shield-gradient text-white p-6 md:p-8 relative overflow-hidden">
@@ -183,9 +201,9 @@ function UpsideCard({ offer, fair, upside }: { offer: number; fair: number; upsi
       <div className="relative grid sm:grid-cols-2 gap-6">
         <div>
           <div className="text-shield-100 text-sm">Estimated recoverable upside</div>
-          <div className="mt-1 text-5xl font-semibold tracking-tight">+{money(upside)}</div>
+          <div className="mt-1 text-5xl font-semibold tracking-tight">+{money(upside, j)}</div>
           <div className="mt-2 text-shield-100 text-sm">
-            The insurer offered {money(offer)} — fair value is {money(fair)}.
+            The insurer offered {money(offer, j)} — fair value is {money(fair, j)}.
           </div>
         </div>
         <div>
@@ -332,9 +350,11 @@ function bodyForKind(a: Analysis, kind: string): string {
 
 function DocumentsCard({
   a,
+  j,
   onSend,
 }: {
   a: Analysis;
+  j: Jurisdiction;
   onSend: (kind: "appeal" | "demand" | "complaint") => void;
 }) {
   const icons: Record<string, string> = { appeal: "📩", demand: "💰", complaint: "🏛️" };
@@ -345,7 +365,7 @@ function DocumentsCard({
     setBusy(name);
     setError(null);
     try {
-      await downloadDocx(name, body, kind);
+      await downloadDocx(name, body, kind, j);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed.");
     } finally {
@@ -388,7 +408,7 @@ function DocumentsCard({
   );
 }
 
-function AppealLetterCard({ letter, onSend }: { letter: string; onSend: () => void }) {
+function AppealLetterCard({ letter, j, onSend }: { letter: string; j: Jurisdiction; onSend: () => void }) {
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -407,7 +427,7 @@ function AppealLetterCard({ letter, onSend }: { letter: string; onSend: () => vo
     setBusy(true);
     setError(null);
     try {
-      await downloadDocx("ClaimShield Appeal Letter", letter, "appeal");
+      await downloadDocx("ClaimShield Appeal Letter", letter, "appeal", j);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Download failed.");
     } finally {
@@ -472,10 +492,6 @@ function Card({ eyebrow, title, children }: { eyebrow?: string; title: string; c
   );
 }
 
-function money(n: number) {
-  return (Number.isFinite(n) ? n : 0).toLocaleString("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  });
+function money(n: number, j?: Jurisdiction) {
+  return formatMoney(n, j);
 }

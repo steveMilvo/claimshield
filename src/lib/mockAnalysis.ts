@@ -12,7 +12,10 @@ export type Comparable = {
   note: string;
 };
 
+import type { Jurisdiction } from "./jurisdiction";
+
 export type Analysis = {
+  jurisdiction: Jurisdiction;
   insurer: string;
   policyType: string;
   policyNumber: string;
@@ -32,6 +35,7 @@ export type Analysis = {
 };
 
 export const mockAnalysis: Analysis = {
+  jurisdiction: "AU",
   insurer: "Auric Mutual Insurance",
   policyType: "Comprehensive Motor",
   policyNumber: "AM-9842-0411",

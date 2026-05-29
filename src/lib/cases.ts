@@ -1,4 +1,5 @@
 import type { Analysis } from "./mockAnalysis";
+import { jurisdictionConfig, type Jurisdiction } from "./jurisdiction";
 
 const INDEX_KEY = "claimshield:cases";
 const caseKey = (id: string) => `claimshield:case:${id}`;
@@ -6,11 +7,13 @@ const caseKey = (id: string) => `claimshield:case:${id}`;
 export type CaseSummary = {
   id: string;
   createdAt: number;
+  jurisdiction: Jurisdiction;
   insurer: string;
   policyType: string;
   score: number;
   scoreLabel: Analysis["scoreLabel"];
   upside: number;
+  currency: string;
 };
 
 function newId(): string {
@@ -47,14 +50,17 @@ export function saveCase(analysis: Analysis): string {
   if (typeof window === "undefined") return id;
   try {
     window.localStorage.setItem(caseKey(id), JSON.stringify(analysis));
+    const j: Jurisdiction = analysis.jurisdiction ?? "AU";
     const summary: CaseSummary = {
       id,
       createdAt: Date.now(),
+      jurisdiction: j,
       insurer: analysis.insurer,
       policyType: analysis.policyType,
       score: analysis.score,
       scoreLabel: analysis.scoreLabel,
       upside: analysis.upside,
+      currency: jurisdictionConfig(j).currency,
     };
     const next = [summary, ...listCases().filter((c) => c.id !== id)];
     window.localStorage.setItem(INDEX_KEY, JSON.stringify(next));

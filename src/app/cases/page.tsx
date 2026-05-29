@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { listCases, deleteCase, type CaseSummary } from "@/lib/cases";
+import { formatMoney } from "@/lib/jurisdiction";
 import { ShieldMark } from "@/components/Logo";
 
 export default function CasesPage() {
@@ -71,7 +72,7 @@ function CaseRow({ c, onDelete }: { c: CaseSummary; onDelete: () => void }) {
         </Link>
         <div className="text-right shrink-0">
           <div className="text-sm font-semibold text-accent-dark whitespace-nowrap">
-            +{money(c.upside)}
+            +{formatMoney(c.upside, c.jurisdiction)}
           </div>
           <div className="text-[11px] text-ink-muted">recoverable</div>
         </div>
@@ -129,10 +130,3 @@ function EmptyState() {
   );
 }
 
-function money(n: number) {
-  return (Number.isFinite(n) ? n : 0).toLocaleString("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  });
-}

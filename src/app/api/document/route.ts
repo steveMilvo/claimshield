@@ -5,6 +5,7 @@ import {
   isLegisProConfigured,
   type LegisProDocKind,
 } from "@/lib/legispro";
+import { isJurisdiction, type Jurisdiction } from "@/lib/jurisdiction";
 
 export const runtime = "nodejs";
 
@@ -66,7 +67,7 @@ function docResponse(
 }
 
 export async function POST(req: NextRequest) {
-  let payload: { title?: unknown; body?: unknown; kind?: unknown };
+  let payload: { title?: unknown; body?: unknown; kind?: unknown; jurisdiction?: unknown };
   try {
     payload = await req.json();
   } catch {
@@ -82,6 +83,9 @@ export async function POST(req: NextRequest) {
     typeof payload.kind === "string" && VALID_KINDS.has(payload.kind)
       ? (payload.kind as LegisProDocKind)
       : null;
+  const jurisdiction: Jurisdiction = isJurisdiction(payload.jurisdiction)
+    ? payload.jurisdiction
+    : "AU";
 
   if (!body.trim()) {
     return NextResponse.json({ error: "The document body is empty." }, { status: 400 });
@@ -90,7 +94,12 @@ export async function POST(req: NextRequest) {
   // Prefer LegisPro (the SynthexIQ document-generation engine) when configured.
   if (kind && isLegisProConfigured()) {
     try {
-      const result = await generateWithLegisPro({ kind, title, data: { title, body } });
+      const result = await generateWithLegisPro({
+        kind,
+        title,
+        data: { title, body },
+        jurisdiction,
+      });
       if (result?.kind === "binary") {
         return docResponse(
           result.bytes,

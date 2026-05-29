@@ -7,6 +7,7 @@ import { ShieldMark } from "@/components/Logo";
 import { cn } from "@/lib/cn";
 import { listCases, saveCase } from "@/lib/cases";
 import type { Analysis } from "@/lib/mockAnalysis";
+import { JURISDICTIONS, type Jurisdiction } from "@/lib/jurisdiction";
 
 type Step = 0 | 1 | 2 | 3;
 
@@ -22,6 +23,7 @@ export default function StartPage() {
   const [step, setStep] = useState<Step>(0);
   const [policyFile, setPolicyFile] = useState<File | null>(null);
   const [letterFile, setLetterFile] = useState<File | null>(null);
+  const [jurisdiction, setJurisdiction] = useState<Jurisdiction>("AU");
   const [category, setCategory] = useState("auto");
   const [insurer, setInsurer] = useState("");
   const [description, setDescription] = useState("");
@@ -53,6 +55,7 @@ export default function StartPage() {
       const fd = new FormData();
       if (policyFile) fd.append("policy", policyFile);
       if (letterFile) fd.append("letter", letterFile);
+      fd.append("jurisdiction", jurisdiction);
       fd.append("category", category);
       fd.append("insurer", insurer);
       fd.append("description", description);
@@ -102,6 +105,19 @@ export default function StartPage() {
               hint="Drop your policy PDF here, or click to choose"
             />
             <div className="mt-5 grid sm:grid-cols-2 gap-4">
+              <Field label="Jurisdiction">
+                <select
+                  value={jurisdiction}
+                  onChange={(e) => setJurisdiction(e.target.value as Jurisdiction)}
+                  className="input"
+                >
+                  {(Object.keys(JURISDICTIONS) as Jurisdiction[]).map((j) => (
+                    <option key={j} value={j}>
+                      {JURISDICTIONS[j].name} ({JURISDICTIONS[j].currency})
+                    </option>
+                  ))}
+                </select>
+              </Field>
               <Field label="Insurance category">
                 <select
                   value={category}
@@ -142,7 +158,7 @@ export default function StartPage() {
               />
             </Field>
             <div className="mt-4 grid sm:grid-cols-2 gap-4">
-              <Field label="Independent estimate / actual cost (AUD)">
+              <Field label={`Independent estimate / actual cost (${JURISDICTIONS[jurisdiction].currency})`}>
                 <input
                   inputMode="decimal"
                   value={estimateAmount}
@@ -173,7 +189,7 @@ export default function StartPage() {
               accept=".pdf,image/*"
               hint="Drop the denial letter / offer here"
             />
-            <Field label="Settlement offered (AUD)" className="mt-5">
+            <Field label={`Settlement offered (${JURISDICTIONS[jurisdiction].currency})`} className="mt-5">
               <input
                 inputMode="decimal"
                 value={offerAmount}
@@ -204,12 +220,23 @@ export default function StartPage() {
               <>
                 <Summary
                   items={[
+                    ["Jurisdiction", `${JURISDICTIONS[jurisdiction].name} (${JURISDICTIONS[jurisdiction].currency})`],
                     ["Category", labelForCategory(category)],
                     ["Insurer", insurer || "—"],
                     ["Policy file", policyFile?.name || "—"],
                     ["Letter file", letterFile?.name || "—"],
-                    ["Offered", offerAmount ? `$${offerAmount}` : "—"],
-                    ["Your estimate", estimateAmount ? `$${estimateAmount}` : "—"],
+                    [
+                      "Offered",
+                      offerAmount
+                        ? `${JURISDICTIONS[jurisdiction].currency} ${offerAmount}`
+                        : "—",
+                    ],
+                    [
+                      "Your estimate",
+                      estimateAmount
+                        ? `${JURISDICTIONS[jurisdiction].currency} ${estimateAmount}`
+                        : "—",
+                    ],
                   ]}
                 />
                 <button

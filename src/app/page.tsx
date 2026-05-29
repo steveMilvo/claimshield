@@ -52,7 +52,7 @@ function Hero() {
           </div>
           <div className="mt-7 flex items-center gap-4 text-sm text-ink-muted">
             <Stars />
-            <span>Built for AU policies. US &amp; UK coming soon.</span>
+            <span>AU, US and UK policies supported.</span>
           </div>
         </div>
 
@@ -146,8 +146,8 @@ function Check() {
 
 function TrustBar() {
   const items = [
-    "AU policies supported today",
-    "AFCA complaint ready",
+    "AU, US & UK supported",
+    "Regulator-ready complaint",
     "No lawyer required",
     "Pay only if you win more",
   ];
@@ -259,7 +259,7 @@ function Categories() {
       <SectionHeader
         eyebrow="Coverage"
         title="The categories where most dollars get lost"
-        body="MVP launches with auto/motor in Australia. We&rsquo;re expanding fast."
+        body="Covered today across AU, US and UK — pick your jurisdiction when you start. We&rsquo;re expanding fast."
       />
       <div className="mt-8 rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden">
         <table className="w-full text-sm">
@@ -332,7 +332,7 @@ function Pricing() {
       tag: "Full escalation",
       bullets: [
         "Everything in Claim Analysis",
-        "Regulator complaint filed (AFCA)",
+        "Regulator complaint filed (AFCA / DOI / FOS)",
         "30 days follow-up guidance",
         "Escalation playbook",
       ],
@@ -425,8 +425,8 @@ function FAQ() {
       a: "Policies and claim letters are processed in memory. We don't persist raw documents on our servers. Only anonymised outcomes feed back into the system intelligence.",
     },
     {
-      q: "What if I'm not in Australia?",
-      a: "We launch with Australian auto/motor claims and AFCA. US (state DOIs) and UK (FOS) are next.",
+      q: "Which countries do you cover?",
+      a: "Australia (AFCA), the United States (state Departments of Insurance) and the United Kingdom (Financial Ombudsman Service) — pick the jurisdiction when you start a claim. We're adding more.",
     },
     {
       q: "What's the ClaimShield Score?",

@@ -8,15 +8,18 @@ function safeName(title: string): string {
   );
 }
 
+import type { Jurisdiction } from "./jurisdiction";
+
 export async function downloadDocx(
   title: string,
   body: string,
   kind?: "appeal" | "demand" | "complaint",
+  jurisdiction?: Jurisdiction,
 ): Promise<void> {
   const res = await fetch("/api/document", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, body, kind }),
+    body: JSON.stringify({ title, body, kind, jurisdiction }),
   });
   if (!res.ok) {
     let msg = `Download failed (${res.status}).`;
