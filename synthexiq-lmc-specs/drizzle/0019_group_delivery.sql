@@ -1,10 +1,10 @@
--- Migration: 0017_group_delivery
+-- Migration: 0019_group_delivery
 -- Purpose: Enable cohort workshop billing at the NDIS Group Skill Development
 -- line item. Adds delivery_mode + workshop_id to billing_events and creates
 -- cohorts / cohort_members / workshops tables.
 -- See GROUP_WORKSHOP_REFACTOR_SPEC.md for the full design rationale.
 --
--- Apply order: 0011 → 0012 → 0013 → 0014 → 0015 → 0016 → 0017.
+-- Apply order: 0011 → 0012 → 0013 → 0014 → 0015 → 0016 → 0017 → 0018 → 0019.
 
 ALTER TABLE billing_events
   ADD COLUMN delivery_mode ENUM(

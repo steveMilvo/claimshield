@@ -265,7 +265,7 @@ A schema note: the existing `billing_events.touchpoint` ENUM is `('a','b','c')`.
 ## Schema additions (Migration 0017)
 
 ```sql
--- File: drizzle/0017_group_delivery.sql
+-- File: drizzle/0019_group_delivery.sql
 -- Allows billing_events to record group vs individual delivery modes
 -- and links a single workshop to multiple participant billing_events rows.
 

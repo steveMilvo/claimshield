@@ -1,7 +1,7 @@
--- Migration: 0018_intake_assessments
+-- Migration: 0020_intake_assessments
 -- Purpose: Track the 7-stage SLES intake flow for every applicant.
 -- See SLES_ENROLMENT_GATE_SPEC.md for the full design rationale.
--- Apply order: 0011 → 0012 → 0013 → 0014 → 0015 → 0016 → 0017 → 0018.
+-- Apply order: 0011 → 0012 → 0013 → 0014 → 0015 → 0016 → 0017 → 0018 → 0019 → 0020.
 
 CREATE TABLE intake_assessments (
   id                            INT UNSIGNED  NOT NULL AUTO_INCREMENT,

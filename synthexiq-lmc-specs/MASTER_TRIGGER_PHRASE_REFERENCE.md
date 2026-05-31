@@ -123,7 +123,7 @@ Used by the SW to log a cohort workshop conducted, producing 4 simultaneous bill
 
 **Workshop subtotal: 10 phrases (one per refactored module).**
 
-The `<id>` is the `workshops.id` from migration 0017. The SW issues the command after the workshop is conducted; the trigger router fans out to create the billing_events rows for each cohort_member attending.
+The `<id>` is the `workshops.id` from migration 0019. The SW issues the command after the workshop is conducted; the trigger router fans out to create the billing_events rows for each cohort_member attending.
 
 ---
 

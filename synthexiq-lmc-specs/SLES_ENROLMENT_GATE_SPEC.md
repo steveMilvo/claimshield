@@ -5,7 +5,7 @@
 **Purpose:** Define the eligibility gate that runs before any participant is enrolled into SLES delivery. Bad enrolment harms participants AND wastes $22k of funding AND damages the program's outcome stats — this gate exists to prevent all three.
 
 **Reads from:** participant submission via web client + supporting documents
-**Writes to:** new `intake_assessments` table (migration 0018) + creates `users.role='participant'` only on successful gate pass
+**Writes to:** new `intake_assessments` table (migration 0020) + creates `users.role='participant'` only on successful gate pass
 
 ---
 
@@ -271,7 +271,7 @@ If no current cohort has a slot → participant joins a forming cohort (start wi
 ## Database additions — Migration 0018
 
 ```sql
--- File: drizzle/0018_intake_assessments.sql
+-- File: drizzle/0020_intake_assessments.sql
 -- Purpose: Track the 7-stage SLES intake flow for every applicant.
 
 CREATE TABLE intake_assessments (
