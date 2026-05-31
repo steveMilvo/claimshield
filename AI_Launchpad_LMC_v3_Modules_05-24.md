@@ -4104,6 +4104,7 @@ All billable trigger phrases. Programme these into the SynthexIQ bot command reg
 | Module | Touchpoint A | Touchpoint B | Touchpoint C |
 |---|---|---|---|
 | 04B — AI Tools Tour (Bridge) | `/submit_mod04b_a` | `/submit_mod04b_b` | `/submit_mod04b_c` |
+| 04C — Money & Benefits Rules (Bridge — Hard Safety Gate) | `/submit_mod04c_a` | `/submit_mod04c_b` | `/submit_mod04c_c` |
 | 05 — Selling Online | `/submit_mod05_a` | `/submit_mod05_b` | `/submit_mod05_c` |
 | 06 — Product Photos | `/submit_mod06_a` | `/submit_mod06_b` | `/submit_mod06_c` |
 | 07 — Pricing My Stuff | `/submit_mod07_a` | `/submit_mod07_b` | `/submit_mod07_c` |

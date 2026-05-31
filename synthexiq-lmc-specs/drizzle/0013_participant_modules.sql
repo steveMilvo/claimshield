@@ -21,13 +21,18 @@ CREATE TABLE participant_modules (
   INDEX idx_pm_incomplete    (completed_at, participant_email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Seed Module 04B (stored as module_num = 4) as the entry point for all
--- participants. 04B is the AI Tools Tour bridge module — the prerequisite
--- for Module 05 and everything that follows. Module 05 unlocks
--- automatically when 04B is completed (via the trigger router's
--- checkAndAdvanceModule path).
+-- Seed bridge modules as the entry points for all participants.
+-- Bridge chain (added by migration 0015 which introduces module_sub_key):
+--   04B (module_num=4, sub_key='b') unlocks at enrolment
+--   04C (module_num=4, sub_key='c') unlocks when 04B is completed
+--   05 (module_num=5) unlocks when 04C is completed
+-- All later progression flows through checkAndAdvanceModule in triggerRouter.ts.
 --
--- Run this AFTER the migration, with actual participant emails.
--- INSERT INTO participant_modules (participant_email, module_num, unlocked_at)
--- SELECT email, 4, NOW() FROM users WHERE role = 'participant'
+-- Run this AFTER migrations 0013 + 0015, with actual participant emails.
+--
+-- INSERT INTO participant_modules (participant_email, module_num, module_sub_key, unlocked_at)
+-- SELECT email, 4, 'b', NOW() FROM users WHERE role = 'participant'
 -- ON DUPLICATE KEY UPDATE unlocked_at = COALESCE(unlocked_at, NOW());
+--
+-- Note: 04C is NOT seeded at enrolment — it's created by the trigger router
+-- only when 04B is complete (upsertBridgeModule with unlockedAt).

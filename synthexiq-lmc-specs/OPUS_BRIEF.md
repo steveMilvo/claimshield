@@ -65,6 +65,7 @@ synthexiq-lmc-specs/CAPABILITY_AUDIT_REVISED.md  ← what exists vs what to buil
 synthexiq-lmc-specs/drizzle/0012_billing_events.sql
 synthexiq-lmc-specs/drizzle/0013_participant_modules.sql
 synthexiq-lmc-specs/drizzle/0014_participant_consents.sql
+synthexiq-lmc-specs/drizzle/0015_module_sub_key.sql   ← adds bridge sub_key to support 04B + 04C
 synthexiq-lmc-specs/server/lmc/triggerRouter.ts   ← draft implementation
 ```
 
