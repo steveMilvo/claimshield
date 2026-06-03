@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { TASKS } from "@/lib/tasks";
-import { seedClassIfEmpty, getStudent, getActiveId } from "@/lib/store";
 import { overallRating } from "@/lib/studentModel";
+import type { StudentModel } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 const LOOP = [
@@ -18,36 +18,38 @@ const LOOP = [
 
 export default function Home() {
   const [name, setName] = useState<string>("");
-  const [overall, setOverall] = useState<{ p: number; n: number }>({ p: 0, n: 0 });
+  const [overall, setOverall] = useState(0);
 
   useEffect(() => {
-    seedClassIfEmpty();
-    const s = getStudent(getActiveId());
-    setName(s.displayName);
-    setOverall({ p: overallRating(s, "persuasive"), n: overallRating(s, "narrative") });
+    fetch("/api/student/me")
+      .then((r) => r.json())
+      .then((d) => {
+        const s = d.student as StudentModel;
+        setName(s.displayName);
+        setOverall(Math.max(overallRating(s, "persuasive"), overallRating(s, "narrative")));
+      })
+      .catch(() => {});
   }, []);
 
   return (
     <main className="min-h-screen">
-      {/* Header */}
       <header className="sticky top-0 z-20 border-b border-line/70 bg-canvas/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-3.5">
           <Logo />
           <nav className="flex items-center gap-1 text-sm">
+            <Link href="/signin" className="rounded-lg px-3 py-1.5 text-ink-muted hover:bg-paper hover:text-ink">
+              {name ? name : "Sign in"}
+            </Link>
             <Link href="/teacher" className="rounded-lg px-3 py-1.5 text-ink-muted hover:bg-paper hover:text-ink">
               Teacher view
             </Link>
-            <a
-              href="#start"
-              className="rounded-lg bg-ink px-3.5 py-1.5 font-medium text-paper hover:bg-ink-soft"
-            >
+            <a href="#start" className="rounded-lg bg-ink px-3.5 py-1.5 font-medium text-paper hover:bg-ink-soft">
               Start writing
             </a>
           </nav>
         </div>
       </header>
 
-      {/* Hero */}
       <section className="mx-auto max-w-5xl px-5 pt-16 pb-10">
         <p className="animate-fade-up text-sm font-medium uppercase tracking-[0.18em] text-pencil-500">
           Middle-school writing · NAPLAN-aligned
@@ -70,24 +72,19 @@ export default function Home() {
         </p>
 
         <div className="mt-7 flex flex-wrap items-center gap-3" id="start">
-          <a
-            href="#tasks"
-            className="rounded-xl bg-focus-500 px-5 py-2.5 font-medium text-white shadow-card transition hover:bg-focus-600"
-          >
+          <a href="#tasks" className="rounded-xl bg-focus-500 px-5 py-2.5 font-medium text-white shadow-card transition hover:bg-focus-600">
             Choose a writing task
           </a>
           {name && (
             <span className="text-sm text-ink-muted">
-              Signed in as <span className="font-medium text-ink-soft">{name}</span>
-              {(overall.p > 0 || overall.n > 0) && (
-                <> · writing rating {Math.max(overall.p, overall.n)}/100</>
-              )}
+              Writing as <span className="font-medium text-ink-soft">{name}</span>
+              {overall > 0 && <> · rating {overall}/100</>} ·{" "}
+              <Link href="/signin" className="underline hover:text-ink">switch</Link>
             </span>
           )}
         </div>
       </section>
 
-      {/* The loop */}
       <section className="mx-auto max-w-5xl px-5 pb-12">
         <div className="grid gap-3 rounded-2xl border border-line bg-paper p-4 paper-grain sm:grid-cols-5">
           {LOOP.map((s, i) => (
@@ -104,7 +101,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Task picker */}
       <section id="tasks" className="mx-auto max-w-5xl px-5 pb-20">
         <h2 className="font-serif text-2xl text-ink">Pick a prompt</h2>
         <p className="mt-1 text-sm text-ink-muted">
@@ -125,9 +121,7 @@ export default function Home() {
                 <span
                   className={cn(
                     "rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide",
-                    t.textType === "persuasive"
-                      ? "bg-focus-50 text-focus-700"
-                      : "bg-pencil-100 text-pencil-600"
+                    t.textType === "persuasive" ? "bg-focus-50 text-focus-700" : "bg-pencil-100 text-pencil-600"
                   )}
                 >
                   {t.textType}

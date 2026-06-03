@@ -48,7 +48,9 @@ transfer-gated evidence of mastery · spacing for conventions.
 | API routes | `src/app/api/diagnose`, `src/app/api/practice` |
 | Writing studio | `src/components/Studio.tsx` |
 | Teacher class model | `src/app/teacher/page.tsx` |
-| Persistence (MVP: localStorage; swap for DB in Phase 1) | `src/lib/store.ts` |
+| Server persistence (canonical, JSON file; swap for Postgres in Phase 1) | `src/lib/server/store.ts` |
+| Identity / sessions + Google OAuth scaffold | `src/lib/server/identity.ts`, `src/app/api/auth/*` |
+| Sign-in / roster | `src/app/signin/page.tsx` |
 
 ### LLM vs mock
 

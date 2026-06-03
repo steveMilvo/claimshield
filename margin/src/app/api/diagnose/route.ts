@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { scoreWriting, buildDiagnosis } from "@/lib/scoring";
-import { selectFocusTrait, dominantTag } from "@/lib/studentModel";
+import {
+  selectFocusTrait,
+  dominantTag,
+  applyDiagnosis,
+} from "@/lib/studentModel";
 import { misconceptionsFor } from "@/lib/taxonomy";
-import { newStudent } from "@/lib/studentModel";
 import type { StudentModel, TraitScore } from "@/lib/types";
+import { getSessionOrDefault } from "@/lib/server/identity";
+import { getStudent, saveStudent } from "@/lib/server/store";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -13,8 +18,8 @@ const Body = z.object({
   text: z.string().min(1),
   textType: z.enum(["persuasive", "narrative"]),
   taskId: z.string(),
-  /** The caller's current student model (client-owned). Optional on first run. */
-  model: z.any().optional(),
+  /** Optional override; defaults to the signed-in student. */
+  studentId: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -25,37 +30,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid request", detail: String(e) }, { status: 400 });
   }
 
+  const session = getSessionOrDefault();
+  const studentId = body.studentId || session.id;
+  const stored = getStudent(studentId);
+
   const wordCount = body.text.trim().split(/\s+/).filter(Boolean).length;
   const { scores, engine } = await scoreWriting(body.text, body.textType);
 
-  // Provisional model = caller's model with these scores' tags folded in, so
-  // focus selection reflects this piece too.
-  const model: StudentModel =
-    (body.model as StudentModel) || newStudent("anon", "Student");
-
-  const { trait } = selectFocusTrait(
-    foldTagsIntoModel(model, scores),
-    body.textType
-  );
-
-  // Choose the misconception within the focus trait: prefer one observed on
-  // THIS piece, else the student's dominant historical tag, else canonical.
+  const { trait } = selectFocusTrait(foldTags(stored, scores), body.textType);
   const observedTagForFocus =
     scores.find((s) => s.trait === trait)?.tags?.[0] ??
-    dominantTag(model.traits[trait], misconceptionsFor(trait)[0]?.id ?? "");
+    dominantTag(stored.traits[trait], misconceptionsFor(trait)[0]?.id ?? "");
 
-  const diagnosis = buildDiagnosis(
-    scores,
-    { trait, tag: observedTagForFocus },
-    wordCount
-  );
+  const diagnosis = buildDiagnosis(scores, { trait, tag: observedTagForFocus }, wordCount);
 
-  return NextResponse.json({ diagnosis, engine });
+  // Cold-write rule (server-authoritative): the first attempt at a given task
+  // is a cold write and can count toward transfer-based mastery; subsequent
+  // re-checks of the same task are revisions and cannot grant mastery.
+  const cold = !stored.pieces.some((p) => p.taskId === body.taskId);
+
+  const updated = applyDiagnosis(stored, diagnosis, {
+    taskId: body.taskId,
+    textType: body.textType,
+    cold,
+    t: Date.now(),
+  });
+  const savedStudent = saveStudent(updated, stored.classId);
+
+  return NextResponse.json({ diagnosis, engine, cold, student: savedStudent });
 }
 
-/** Non-mutating: returns a shallow clone with this piece's tags counted, used
- * only to inform focus selection for the current request. */
-function foldTagsIntoModel(model: StudentModel, scores: TraitScore[]): StudentModel {
+function foldTags(model: StudentModel, scores: TraitScore[]): StudentModel {
   const traits = { ...model.traits };
   for (const s of scores) {
     const st = traits[s.trait];

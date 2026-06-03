@@ -11,17 +11,7 @@ import { TASK_MAP } from "@/lib/tasks";
 import type { Diagnosis, StudentModel } from "@/lib/types";
 import { TRAIT_MAP, traitsFor } from "@/lib/rubric";
 import { TAXONOMY_MAP } from "@/lib/taxonomy";
-import {
-  applyDiagnosis,
-  overallRating,
-  selectFocusTrait,
-} from "@/lib/studentModel";
-import {
-  seedClassIfEmpty,
-  getActiveId,
-  getStudent,
-  saveStudent,
-} from "@/lib/store";
+import { overallRating } from "@/lib/studentModel";
 import { cn } from "@/lib/cn";
 
 type Phase = "write" | "diagnosed" | "practice";
@@ -33,16 +23,17 @@ export function Studio({ task }: { task: WritingTask }) {
   const [diagnosis, setDiagnosis] = useState<Diagnosis | null>(null);
   const [engine, setEngine] = useState<"llm" | "mock">("mock");
   const [model, setModel] = useState<StudentModel | null>(null);
-  const [coldDone, setColdDone] = useState(false);
+  const [hasDiagnosed, setHasDiagnosed] = useState(false);
   const [lastFocusBand, setLastFocusBand] = useState<number | null>(null);
   const [focusDelta, setFocusDelta] = useState<number | null>(null);
   const [practised, setPractised] = useState(false);
-  const [startedAt] = useState(() => Date.now());
   const editsRef = useRef(0);
 
   useEffect(() => {
-    seedClassIfEmpty();
-    setModel(getStudent(getActiveId()));
+    fetch("/api/student/me")
+      .then((r) => r.json())
+      .then((d) => setModel(d.student))
+      .catch(() => setModel(null));
   }, []);
 
   const words = useMemo(() => text.trim().split(/\s+/).filter(Boolean).length, [text]);
@@ -53,42 +44,25 @@ export function Studio({ task }: { task: WritingTask }) {
   const lowConfidence = diagnosis ? diagnosis.overallConfidence < 0.55 : false;
 
   async function runDiagnose() {
-    if (words < 20 || !model) return;
+    if (words < 20) return;
     setLoading(true);
     try {
       const res = await fetch("/api/diagnose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          textType: task.textType,
-          taskId: task.id,
-          model,
-        }),
+        body: JSON.stringify({ text, textType: task.textType, taskId: task.id }),
       });
       const data = await res.json();
       const diag: Diagnosis = data.diagnosis;
       setEngine(data.engine);
 
-      const isCold = !coldDone; // first submission of this task instance is cold
       const newBand = diag.scores.find((s) => s.trait === diag.focusTrait)?.band ?? 0;
-      if (lastFocusBand !== null && diag.focusTrait && phase !== "write") {
-        // (not used path)
-      }
-      // delta vs previous focus band (revision improvement)
       if (lastFocusBand !== null) setFocusDelta(newBand - lastFocusBand);
       setLastFocusBand(newBand);
 
-      const updated = applyDiagnosis(model, diag, {
-        taskId: task.id,
-        textType: task.textType,
-        cold: isCold,
-        t: Date.now(),
-      });
-      setModel(updated);
-      saveStudent(updated);
-      setColdDone(true);
+      setModel(data.student); // server is the source of truth
       setDiagnosis(diag);
+      setHasDiagnosed(true);
       setPhase("diagnosed");
     } finally {
       setLoading(false);
@@ -128,7 +102,6 @@ export function Studio({ task }: { task: WritingTask }) {
       </header>
 
       <div className="mx-auto grid max-w-6xl gap-6 px-5 py-7 lg:grid-cols-[1fr_360px]">
-        {/* Left: prompt + writing surface OR practice */}
         <section>
           <div className="rounded-2xl border border-line bg-card p-5 shadow-card">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-pencil-500">
@@ -149,7 +122,6 @@ export function Studio({ task }: { task: WritingTask }) {
             />
           ) : (
             <div className="mt-4">
-              {/* Writing surface */}
               <div className="rounded-2xl border border-line bg-paper paper-grain p-1.5 shadow-card">
                 <textarea
                   value={text}
@@ -188,7 +160,7 @@ export function Studio({ task }: { task: WritingTask }) {
                       : "bg-focus-500 text-white hover:bg-focus-600"
                   )}
                 >
-                  {loading ? "Reading your writing…" : coldDone ? "Re-check my draft" : "Get feedback"}
+                  {loading ? "Reading your writing…" : hasDiagnosed ? "Re-check my draft" : "Get feedback"}
                 </button>
               </div>
               {words < 20 && (
@@ -198,9 +170,7 @@ export function Studio({ task }: { task: WritingTask }) {
           )}
         </section>
 
-        {/* Right: the margin — competency model + notes */}
         <aside className="space-y-4">
-          {/* Competency snapshot */}
           <div className="rounded-2xl border border-line bg-card p-4 shadow-card">
             <div className="flex items-center justify-between">
               <div>
@@ -226,7 +196,6 @@ export function Studio({ task }: { task: WritingTask }) {
         </aside>
       </div>
 
-      {/* Diagnosis margin notes (full-width band under the studio) */}
       {phase === "diagnosed" && diagnosis && focusScore && focusDef && (
         <section className="mx-auto max-w-6xl animate-fade-up px-5 pb-16">
           {lowConfidence && (
@@ -239,7 +208,6 @@ export function Studio({ task }: { task: WritingTask }) {
             </div>
           )}
 
-          {/* The focus move — the one thing to work on */}
           <div className="rounded-2xl border border-focus-200 bg-focus-50 p-5 shadow-card">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -265,7 +233,6 @@ export function Studio({ task }: { task: WritingTask }) {
             )}
           </div>
 
-          {/* All other trait notes — the margin */}
           <h4 className="mt-7 mb-3 font-serif text-lg text-ink">Margin notes</h4>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {diagnosis.scores
@@ -291,7 +258,6 @@ export function Studio({ task }: { task: WritingTask }) {
               })}
           </div>
 
-          {/* Transfer CTA */}
           {practised && parallel && (
             <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-growth-100 bg-growth-50 p-5">
               <div>
