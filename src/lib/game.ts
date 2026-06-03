@@ -59,6 +59,8 @@ export interface Item {
   errorIdx: number[]; // which tokens are the mistake (empty when NONE)
   whyWrong: string;
   corrections: { text: string; correct: boolean }[];
+  provenance?: "ai" | "offline"; // how the item was authored
+  verifyReason?: string; // Claude verifier's note (ai items only)
 }
 
 // The "practised" content domain. Anything else counts as a transfer

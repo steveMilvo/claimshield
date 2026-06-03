@@ -47,7 +47,9 @@ PASS only if:
 - error items: "text" contains EXACTLY ONE mistake, it is of the stated "type", it is located at "errorPhrase", and the rest of "text" still matches "trueSentence".
 Be conservative: if unsure, fail it. Reject anything inappropriate for young children.
 
-Return ONLY JSON: {"results":[{"ok":true|false}]}  (same order as input).`;
+For each item also give a SHORT "reason" (max ~12 words) a teacher can read — e.g. "One number changed; rest matches." or "Faithful, no mistake."
+
+Return ONLY JSON: {"results":[{"ok":true|false,"reason":"..."}]}  (same order as input).`;
 
 function extractJson(text: string): any {
   let t = text.trim();
@@ -125,7 +127,7 @@ export async function POST(req: Request) {
       return Response.json({ error: "empty_generation" }, { status: 502 });
 
     // 2) verify
-    let verdicts: { ok: boolean }[] = [];
+    let verdicts: { ok: boolean; reason?: string }[] = [];
     try {
       const vMsg = await client.messages.create({
         model: VERIFY_MODEL,
@@ -143,6 +145,7 @@ export async function POST(req: Request) {
     const items: Item[] = [];
     raw.forEach((r, i) => {
       if (verdicts[i] && verdicts[i].ok === false) return;
+      const verifyReason = verdicts[i]?.reason;
       const tokens = r.text.trim().split(/\s+/);
       if (r.type === "none") {
         items.push({
@@ -155,6 +158,8 @@ export async function POST(req: Request) {
           errorIdx: [],
           whyWrong: "",
           corrections: [],
+          provenance: "ai",
+          verifyReason,
         });
         return;
       }
@@ -174,6 +179,8 @@ export async function POST(req: Request) {
           { text: r.text, correct: false },
           { text: "Pip isn't sure — let's check a trusted book.", correct: false },
         ],
+        provenance: "ai",
+        verifyReason,
       });
     });
 

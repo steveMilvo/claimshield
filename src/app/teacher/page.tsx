@@ -169,15 +169,22 @@ export default function TeacherPage() {
             {items.map((it) => (
               <div key={it.id} className="rounded-2xl bg-white p-4 shadow-soft">
                 <div className="mb-1 flex items-center justify-between">
-                  {it.errorType === "NONE" ? (
-                    <span className="rounded-full bg-mint/25 px-2 py-0.5 text-xs font-bold text-ink/70">
-                      ✓ All true
-                    </span>
-                  ) : (
-                    <span className="rounded-full bg-bubble/20 px-2 py-0.5 text-xs font-bold text-bubble">
-                      Mistake: {TYPE_LABELS[it.errorType as SkillKey]}
-                    </span>
-                  )}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {it.errorType === "NONE" ? (
+                      <span className="rounded-full bg-mint/25 px-2 py-0.5 text-xs font-bold text-ink/70">
+                        ✓ All true
+                      </span>
+                    ) : (
+                      <span className="rounded-full bg-bubble/20 px-2 py-0.5 text-xs font-bold text-bubble">
+                        Mistake: {TYPE_LABELS[it.errorType as SkillKey]}
+                      </span>
+                    )}
+                    {it.provenance === "ai" && (
+                      <span className="rounded-full bg-sky/15 px-2 py-0.5 text-xs font-bold text-sky">
+                        ✨ Verified by Claude
+                      </span>
+                    )}
+                  </div>
                   <button
                     onClick={() => removeItem(it.id)}
                     className="text-sm text-ink/40 hover:text-bubble"
@@ -196,6 +203,9 @@ export default function TeacherPage() {
                     </span>
                   ))}
                 </p>
+                {it.verifyReason && (
+                  <p className="mt-1.5 text-xs italic text-ink/45">Checker: {it.verifyReason}</p>
+                )}
               </div>
             ))}
           </div>
