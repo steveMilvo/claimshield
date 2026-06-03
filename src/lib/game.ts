@@ -50,6 +50,7 @@ export type ErrorType = SkillKey | "NONE";
 
 export interface Item {
   id: string;
+  topic?: string; // content domain; defaults to PRIMARY_TOPIC
   chip: string; // the direction the child gives Pip
   mission: string; // tiny framing for the turn
   errorType: ErrorType;
@@ -60,6 +61,10 @@ export interface Item {
   corrections: { text: string; correct: boolean }[];
 }
 
+// The "practised" content domain. Anything else counts as a transfer
+// (new-topic) trial — evidence the skill generalises, not memorisation.
+export const PRIMARY_TOPIC = "life-cycles";
+
 export type Skills = Record<SkillKey, number>;
 
 export interface SkillStat {
@@ -67,6 +72,13 @@ export interface SkillStat {
   misses: number;
   falseAlarms: number;
   correctRejections: number;
+}
+
+export interface TurnLog {
+  topic: string;
+  skill: SkillKey | "NONE";
+  isError: boolean;
+  correct: boolean;
 }
 
 export interface GameState {
@@ -78,6 +90,7 @@ export interface GameState {
   calTrials: number;
   caught: number; // total good catches (for streaks/celebration)
   turns: number;
+  log: TurnLog[];
 }
 
 export const PRIOR = 0.18;
@@ -96,6 +109,7 @@ export function initState(): GameState {
     calTrials: 0,
     caught: 0,
     turns: 0,
+    log: [],
   };
 }
 
@@ -129,29 +143,25 @@ export function applyTurn(
 ): { state: GameState; result: TurnResult } {
   const next: GameState = structuredCloneSafe(state);
   next.turns += 1;
+  const topic = item.topic ?? PRIMARY_TOPIC;
+  let result: TurnResult;
 
   if (item.errorType === "NONE") {
     next.calTrials += 1;
-    if (!saidWrong) {
-      next.calTrue += 1;
-      next.calibration = next.calTrue / next.calTrials;
-      return {
-        state: next,
-        result: {
+    if (!saidWrong) next.calTrue += 1;
+    next.calibration = next.calTrue / next.calTrials;
+    result = saidWrong
+      ? {
+          outcome: "falseAlarm",
+          message:
+            "Careful! That answer was actually correct. Pip isn't always wrong — check carefully.",
+        }
+      : {
           outcome: "goodTrust",
           message: "Nice — that one was actually true. You didn't get tricked!",
-        },
-      };
-    }
-    next.calibration = next.calTrue / next.calTrials;
-    return {
-      state: next,
-      result: {
-        outcome: "falseAlarm",
-        message:
-          "Careful! That answer was actually correct. Pip isn't always wrong — check carefully.",
-      },
-    };
+        };
+    next.log.push({ topic, skill: "NONE", isError: false, correct: !saidWrong });
+    return { state: next, result };
   }
 
   const skill = item.errorType;
@@ -163,36 +173,49 @@ export function applyTurn(
     stat.hits += 1;
     next.caught += 1;
     next.mastery[skill] = bktUpdate(next.mastery[skill], true);
-    return {
-      state: next,
-      result: { outcome: "catch", message: "Great catch! You found Pip's mistake. 🎉" },
-    };
-  }
-
-  if (saidWrong && !tappedRight) {
-    // sensed something off but pointed at the wrong bit — partial
+    result = { outcome: "catch", message: "Great catch! You found Pip's mistake. 🎉" };
+  } else if (saidWrong && !tappedRight) {
+    // sensed something off but pointed at the wrong bit
     stat.misses += 1;
     next.mastery[skill] = bktUpdate(next.mastery[skill], false);
-    return {
-      state: next,
-      result: {
-        outcome: "miss",
-        message: `So close! The tricky bit was "${item.errorIdx
-          .map((i) => item.tokens[i])
-          .join(" ")}". ${item.whyWrong}`,
-      },
+    result = {
+      outcome: "miss",
+      message: `So close! The tricky bit was "${item.errorIdx
+        .map((i) => item.tokens[i])
+        .join(" ")}". ${item.whyWrong}`,
     };
+  } else {
+    // said "Pip's right" but it was wrong
+    stat.misses += 1;
+    next.mastery[skill] = bktUpdate(next.mastery[skill], false);
+    result = { outcome: "miss", message: `Hmm, Pip slipped one past you. ${item.whyWrong}` };
   }
 
-  // said "Pip's right" but it was wrong
-  stat.misses += 1;
-  next.mastery[skill] = bktUpdate(next.mastery[skill], false);
+  next.log.push({ topic, skill, isError: true, correct: caughtIt });
+  return { state: next, result };
+}
+
+export interface TransferReport {
+  practised: { trials: number; rate: number | null };
+  transfer: { trials: number; rate: number | null };
+}
+
+// Detection rate on the practised topic vs on new (transfer) topics.
+export function transferReport(state: GameState): TransferReport {
+  let pH = 0, pT = 0, tH = 0, tT = 0;
+  for (const l of state.log) {
+    if (!l.isError) continue;
+    if (l.topic === PRIMARY_TOPIC) {
+      pT++;
+      if (l.correct) pH++;
+    } else {
+      tT++;
+      if (l.correct) tH++;
+    }
+  }
   return {
-    state: next,
-    result: {
-      outcome: "miss",
-      message: `Hmm, Pip slipped one past you. ${item.whyWrong}`,
-    },
+    practised: { trials: pT, rate: pT ? pH / pT : null },
+    transfer: { trials: tT, rate: tT ? tH / tT : null },
   };
 }
 

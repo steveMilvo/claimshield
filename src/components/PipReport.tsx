@@ -7,6 +7,7 @@ import {
   dprimeBand,
   criterionPosture,
   masteryToTier,
+  transferReport,
   type GameState,
   type SkillKey,
 } from "@/lib/game";
@@ -33,6 +34,7 @@ export default function PipReport({
   const cPct = Math.max(2, Math.min(98, ((sd.criterion + 1.5) / 3) * 100));
 
   const summary = buildSummary(state, sd.dprime);
+  const transfer = transferReport(state);
 
   return (
     <div
@@ -109,6 +111,34 @@ export default function PipReport({
           <Stat label="Trusted true" value={sd.correctRejections} tone="#5BC8F5" />
         </div>
 
+        {/* transfer (new-topic) test */}
+        {transfer.transfer.trials > 0 && (
+          <div className="mt-4 rounded-2xl bg-white p-4 shadow-soft">
+            <span className="text-sm font-bold uppercase tracking-wide text-ink/50">
+              New-topic test (transfer)
+            </span>
+            <div className="mt-2 flex flex-wrap items-center gap-4">
+              <Pair
+                label="Practised topic"
+                rate={transfer.practised.rate}
+                trials={transfer.practised.trials}
+                tone="#5BC8F5"
+              />
+              <span className="text-2xl text-ink/30" aria-hidden>→</span>
+              <Pair
+                label="New topic"
+                rate={transfer.transfer.rate}
+                trials={transfer.transfer.trials}
+                tone="#3FD3A7"
+              />
+            </div>
+            <p className="mt-2 text-sm text-ink/55">
+              Catching mistakes in content they never practised is evidence the skill{" "}
+              <b>transfers</b> — they learned to spot AI errors, not just memorise answers.
+            </p>
+          </div>
+        )}
+
         {/* per-skill */}
         <h3 className="mt-6 font-display text-xl font-bold">By skill</h3>
         <div className="mt-2 space-y-2">
@@ -150,6 +180,29 @@ export default function PipReport({
             “say-wrong-to-everything” strategy — the core of the build spec’s mastery loop.
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Pair({
+  label,
+  rate,
+  trials,
+  tone,
+}: {
+  label: string;
+  rate: number | null;
+  trials: number;
+  tone: string;
+}) {
+  return (
+    <div>
+      <div className="font-display text-2xl font-bold" style={{ color: tone }}>
+        {rate === null ? "—" : `${Math.round(rate * 100)}%`}
+      </div>
+      <div className="text-xs text-ink/55">
+        {label} · {trials} {trials === 1 ? "try" : "tries"}
       </div>
     </div>
   );
