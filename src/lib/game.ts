@@ -230,3 +230,94 @@ export function overallStage(t: PipTiers): number {
   const avg = (t.eyes + t.mouth + t.body + t.source) / 4;
   return Math.round(avg);
 }
+
+// ---- Signal-detection report (teacher-facing evidence of mastery) ----
+// d′ separates a genuinely discerning child from one who just says "wrong"
+// to everything; criterion c reveals trust posture (cynical ↔ credulous).
+
+// Inverse normal CDF (probit) — Acklam's approximation.
+function probit(p: number): number {
+  const a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924];
+  const b = [-54.4760987982241, 161.585836858041, -155.698979859887, 66.8013118877197, -13.2806815528857];
+  const c = [-0.00778489400243029, -0.322396458041136, -2.40075827716184, -2.54973253934373, 4.37466414146497, 2.93816398269878];
+  const d = [0.00778469570904146, 0.32246712907004, 2.445134137143, 3.75440866190742];
+  const plow = 0.02425, phigh = 1 - plow;
+  let q: number, r: number;
+  if (p < plow) {
+    q = Math.sqrt(-2 * Math.log(p));
+    return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+  } else if (p <= phigh) {
+    q = p - 0.5; r = q * q;
+    return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1);
+  } else {
+    q = Math.sqrt(-2 * Math.log(1 - p));
+    return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+  }
+}
+
+export interface SDReport {
+  hits: number;
+  misses: number;
+  falseAlarms: number;
+  correctRejections: number;
+  hitRate: number;
+  faRate: number;
+  dprime: number;
+  criterion: number;
+  errorTrials: number;
+  truthTrials: number;
+}
+
+export function sdReport(state: GameState): SDReport {
+  let hits = 0, misses = 0;
+  (Object.keys(state.stats) as SkillKey[]).forEach((k) => {
+    hits += state.stats[k].hits;
+    misses += state.stats[k].misses;
+  });
+  const correctRejections = state.calTrue;
+  const falseAlarms = state.calTrials - state.calTrue;
+  const errorTrials = hits + misses;
+  const truthTrials = correctRejections + falseAlarms;
+  // log-linear correction (add 0.5 to each cell) for small-N stability
+  const H = (hits + 0.5) / (errorTrials + 1);
+  const F = (falseAlarms + 0.5) / (truthTrials + 1);
+  return {
+    hits,
+    misses,
+    falseAlarms,
+    correctRejections,
+    hitRate: errorTrials ? hits / errorTrials : 0,
+    faRate: truthTrials ? falseAlarms / truthTrials : 0,
+    dprime: probit(H) - probit(F),
+    criterion: -0.5 * (probit(H) + probit(F)),
+    errorTrials,
+    truthTrials,
+  };
+}
+
+export function skillDetection(state: GameState, key: SkillKey) {
+  const s = state.stats[key];
+  const trials = s.hits + s.misses;
+  return { trials, rate: trials ? s.hits / trials : null };
+}
+
+export function dprimeBand(d: number): { label: string; tone: string } {
+  if (d < 0.5) return { label: "Still guessing", tone: "bubble" };
+  if (d < 1.0) return { label: "Starting to spot mistakes", tone: "sunny" };
+  if (d < 1.8) return { label: "Good at spotting AI mistakes", tone: "sky" };
+  return { label: "Excellent — clearly discerning", tone: "mint" };
+}
+
+export function criterionPosture(c: number): { label: string; note: string } {
+  if (c < -0.4)
+    return {
+      label: "Leans skeptical",
+      note: "Tends to call things wrong even when true — encourage trusting correct answers.",
+    };
+  if (c > 0.4)
+    return {
+      label: "Leans trusting",
+      note: "Tends to accept Pip too easily — encourage checking before agreeing.",
+    };
+  return { label: "Well balanced", note: "Tells true from false without over-trusting or over-rejecting." };
+}

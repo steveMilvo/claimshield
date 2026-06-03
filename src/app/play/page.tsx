@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import Pip from "@/components/Pip";
 import SkillBars from "@/components/SkillBar";
+import PipReport from "@/components/PipReport";
 import {
   ITEMS,
 } from "@/lib/items";
@@ -44,6 +45,7 @@ export default function PlayPage() {
   const [color, setColor] = useState(COLORS[0]);
   const [muted, setMuted] = useState(false);
   const [pipPulse, setPipPulse] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   const item = order.current[qi % order.current.length];
   const tiers = pipTiers(state);
@@ -113,7 +115,12 @@ export default function PlayPage() {
     setResult(null);
     setTapped(null);
     setGrew(null);
-    setQi((q) => q + 1);
+    const nextQi = qi + 1;
+    // end of a session (worked through the deck once) → show the report
+    if (nextQi > 0 && nextQi % order.current.length === 0) {
+      setShowReport(true);
+    }
+    setQi(nextQi);
     setPhase("ask");
   }
 
@@ -155,8 +162,16 @@ export default function PlayPage() {
           >
             {muted ? "🔇" : "🔊"}
           </button>
+          <button
+            onClick={() => setShowReport(true)}
+            className="rounded-full bg-grape px-4 py-1.5 font-display text-sm font-semibold text-white shadow-soft transition hover:scale-105"
+          >
+            📊 Report
+          </button>
         </div>
       </header>
+
+      {showReport && <PipReport state={state} onClose={() => setShowReport(false)} />}
 
       <div className="grid gap-6 md:grid-cols-[300px_1fr]">
         {/* Pip column */}
