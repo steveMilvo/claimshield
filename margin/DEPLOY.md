@@ -6,7 +6,40 @@ Margin is a standard Next.js 14 app. It runs two ways with **zero code changes**
   in-memory store on a read-only filesystem. Great for local dev and quick demos.
 - **`DATABASE_URL` set** → uses Postgres (Neon, Supabase, RDS, …). This is the production path.
 
-## Recommended: Vercel + Neon (free tiers, ~10 minutes)
+## Railway (Postgres + app in one project, ~10 minutes)
+
+Railway is the smallest number of moving parts: the database and the app live in the same
+project, and `DATABASE_URL` is wired between them for you. `railway.json` (in this folder) and a
+`PORT`-aware start command are already committed, so it's mostly clicking.
+
+1. **New Project → Deploy from GitHub repo** → pick this repo.
+2. In the service: **Settings → Root Directory = `margin`** (this app lives in a subfolder).
+   Nixpacks auto-detects Next.js; no build config needed.
+3. **Add Postgres:** in the project, **+ New → Database → Add PostgreSQL**.
+4. **Wire the database into the app service.** In the app service → **Variables → New Variable
+   → Add Reference** → select the Postgres service's `DATABASE_URL`. (Using the reference picks
+   the private-network URL, which is fast and free of egress.)
+5. **Add the other variables** on the app service:
+
+   | Variable | Required | Notes |
+   |---|---|---|
+   | `DATABASE_URL` | ✅ | The reference you added in step 4 |
+   | `ANTHROPIC_API_KEY` | recommended | Turns on the real Claude scorer + safeguarding triage |
+   | `PGSSL` | only if needed | Set to `disable` if you see a TLS error on Railway's internal Postgres. The default (`prefer`) usually just works. |
+   | `MARGIN_MODEL` | optional | Defaults to a current Claude model |
+   | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | optional | Enables "Continue with Google" |
+
+6. **Deploy.** The schema is created lazily on first request, so there's nothing else to run.
+   (Optional: open the app service shell and run `npm run db:setup` to seed + verify.)
+7. **Generate a domain:** app service → **Settings → Networking → Generate Domain**. Visit it.
+8. **Google sign-in (optional):** add `https://YOUR-RAILWAY-DOMAIN/api/auth/google/callback`
+   as an authorised redirect URI in the Google Cloud console.
+
+> CLI alternative: `npm i -g @railway/cli`, then `railway login`, `cd margin`,
+> `railway init`, `railway add` (Postgres), `railway up`. The dashboard flow above is easier
+> for a first deploy.
+
+## Recommended alternative: Vercel + Neon (free tiers, ~10 minutes)
 
 1. **Create a Postgres database** (Neon or Supabase). Copy the connection string
    (Neon gives you a `postgres://…?sslmode=require` URL — perfect, SSL is on by default).

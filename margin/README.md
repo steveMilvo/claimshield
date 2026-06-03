@@ -106,8 +106,9 @@ data — swap in a double-marked corpus of real scripts for a real readiness dec
 
 ## Deploying
 
-See [DEPLOY.md](./DEPLOY.md). Short version: push to Vercel (root directory `margin`), set
-`DATABASE_URL` (Neon/Supabase) + `ANTHROPIC_API_KEY`, and `npm run db:setup`. With no
+See [DEPLOY.md](./DEPLOY.md). Short version: deploy on **Railway** (set Root Directory to
+`margin`, add the PostgreSQL plugin, reference its `DATABASE_URL`, add `ANTHROPIC_API_KEY`) or
+**Vercel + Neon**. `railway.json` and a `PORT`-aware start command are committed. With no
 `DATABASE_URL` it runs on the local JSON store — no database needed for dev.
 
 ## What's deliberately NOT here yet (roadmap)

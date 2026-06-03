@@ -24,8 +24,15 @@ let schemaReady: Promise<void> | null = null;
 
 function db() {
   if (!sql) {
+    // SSL: 'prefer' uses TLS when the server offers it (Neon/Supabase) and
+    // falls back to plaintext when it doesn't (e.g. Railway's internal network).
+    // Override with PGSSL=require / verify-full / disable as needed.
+    const ssl =
+      process.env.PGSSL === "disable"
+        ? false
+        : (process.env.PGSSL as "require" | "prefer" | "verify-full" | undefined) || "prefer";
     sql = postgres(process.env.DATABASE_URL!, {
-      ssl: process.env.PGSSL === "disable" ? false : "require",
+      ssl,
       max: Number(process.env.PG_POOL_MAX || 5),
       idle_timeout: 20,
     });
