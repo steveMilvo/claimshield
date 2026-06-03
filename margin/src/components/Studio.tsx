@@ -14,7 +14,12 @@ import { TAXONOMY_MAP } from "@/lib/taxonomy";
 import { overallRating } from "@/lib/studentModel";
 import { cn } from "@/lib/cn";
 
-type Phase = "write" | "diagnosed" | "practice";
+type Phase = "write" | "diagnosed" | "practice" | "support";
+
+interface SupportInfo {
+  message: string;
+  lines: { region: string; name: string; contact: string; note: string }[];
+}
 
 export function Studio({ task }: { task: WritingTask }) {
   const [text, setText] = useState("");
@@ -27,6 +32,7 @@ export function Studio({ task }: { task: WritingTask }) {
   const [lastFocusBand, setLastFocusBand] = useState<number | null>(null);
   const [focusDelta, setFocusDelta] = useState<number | null>(null);
   const [practised, setPractised] = useState(false);
+  const [support, setSupport] = useState<SupportInfo | null>(null);
   const editsRef = useRef(0);
 
   useEffect(() => {
@@ -53,6 +59,15 @@ export function Studio({ task }: { task: WritingTask }) {
         body: JSON.stringify({ text, textType: task.textType, taskId: task.id }),
       });
       const data = await res.json();
+
+      // Safeguarding: an urgent disclosure suppresses feedback and shows a
+      // caring check-in instead. The AI never counsels — a teacher is alerted.
+      if (data.suppressed) {
+        setSupport(data.support);
+        setPhase("support");
+        return;
+      }
+
       const diag: Diagnosis = data.diagnosis;
       setEngine(data.engine);
 
@@ -71,6 +86,62 @@ export function Studio({ task }: { task: WritingTask }) {
 
   if (!model) {
     return <div className="grid min-h-screen place-items-center text-ink-muted">Loading studio…</div>;
+  }
+
+  if (phase === "support" && support) {
+    return (
+      <main className="min-h-screen">
+        <header className="border-b border-line/70">
+          <div className="mx-auto flex max-w-2xl items-center px-5 py-3.5">
+            <Link href="/"><Logo /></Link>
+          </div>
+        </header>
+        <div className="mx-auto max-w-2xl px-5 py-12">
+          <div className="rounded-2xl border border-line bg-card p-7 shadow-card">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-focus-50 text-focus-600">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <path d="M12 21s-7-4.6-9.3-9.2C1.2 8.7 2.8 5.5 6 5.5c2 0 3.2 1.3 4 2.5.8-1.2 2-2.5 4-2.5 3.2 0 4.8 3.2 3.3 6.3C19 16.4 12 21 12 21z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h1 className="font-serif text-2xl leading-snug text-ink">Thanks for trusting these words to the page.</h1>
+            <p className="mt-3 leading-relaxed text-ink-soft">{support.message}</p>
+
+            <div className="mt-6 rounded-xl border border-line bg-paper p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">People you can talk to, any time</p>
+              <ul className="mt-3 space-y-2">
+                {support.lines.map((l, i) => (
+                  <li key={i} className="flex items-baseline justify-between gap-3 text-sm">
+                    <span className="text-ink">
+                      <span className="font-medium">{l.name}</span>
+                      <span className="ml-1.5 text-ink-faint">· {l.region}</span>
+                    </span>
+                    <span className="text-right">
+                      <span className="font-semibold text-ink">{l.contact}</span>
+                      <span className="ml-2 text-ink-faint">{l.note}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-6 flex items-center gap-3">
+              <Link href="/" className="rounded-xl bg-ink px-5 py-2.5 font-medium text-paper hover:bg-ink-soft">
+                Back to home
+              </Link>
+              <button
+                onClick={() => { setSupport(null); setPhase("write"); }}
+                className="text-sm text-ink-muted hover:text-ink"
+              >
+                Keep writing
+              </button>
+            </div>
+          </div>
+          <p className="mt-4 px-1 text-xs text-ink-faint">
+            You&apos;re not in trouble. A teacher has been let know so a person you trust can check in with you.
+          </p>
+        </div>
+      </main>
+    );
   }
 
   const overall = overallRating(model, task.textType);

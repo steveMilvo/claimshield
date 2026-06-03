@@ -9,7 +9,8 @@ import {
 import { misconceptionsFor } from "@/lib/taxonomy";
 import type { StudentModel, TraitScore } from "@/lib/types";
 import { getSessionOrDefault } from "@/lib/server/identity";
-import { getStudent, saveStudent } from "@/lib/server/store";
+import { getStudent, saveStudent, addAlert } from "@/lib/server/store";
+import { evaluateSafeguarding, crisisResources } from "@/lib/safeguarding";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -33,6 +34,45 @@ export async function POST(req: NextRequest) {
   const session = getSessionOrDefault();
   const studentId = body.studentId || session.id;
   const stored = getStudent(studentId);
+
+  // Safeguarding triage runs BEFORE scoring. A writing tool receives
+  // disclosures of harm; the AI must never counsel or engage with one.
+  const sg = await evaluateSafeguarding(body.text);
+
+  if (sg.severity === "urgent") {
+    // Raise to the teacher/DSL and suppress normal feedback. We deliberately
+    // do NOT score or "grade" a disclosure, and do not update the model.
+    addAlert({
+      studentId: stored.studentId,
+      studentName: stored.displayName,
+      classId: stored.classId,
+      category: sg.category ?? "other",
+      severity: "urgent",
+      span: sg.span ?? "",
+      rationale: sg.rationale,
+      taskId: body.taskId,
+    });
+    return NextResponse.json({
+      suppressed: true,
+      safeguarding: { severity: sg.severity, category: sg.category },
+      support: crisisResources(),
+    });
+  }
+
+  // Lower-level concern: a trusted adult is notified, but the student still
+  // gets their writing feedback (silently, so they are not singled out).
+  if (sg.severity === "concern") {
+    addAlert({
+      studentId: stored.studentId,
+      studentName: stored.displayName,
+      classId: stored.classId,
+      category: sg.category ?? "other",
+      severity: "concern",
+      span: sg.span ?? "",
+      rationale: sg.rationale,
+      taskId: body.taskId,
+    });
+  }
 
   const wordCount = body.text.trim().split(/\s+/).filter(Boolean).length;
   const { scores, engine } = await scoreWriting(body.text, body.textType);

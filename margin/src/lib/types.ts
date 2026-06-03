@@ -2,6 +2,51 @@
 
 export type TextType = "persuasive" | "narrative";
 
+/* --------------------------- Safeguarding --------------------------- */
+
+export type SafeguardCategory =
+  | "self_harm"
+  | "abuse"
+  | "neglect"
+  | "violence"
+  | "bullying"
+  | "substance"
+  | "eating_disorder"
+  | "distress"
+  | "other";
+
+export type SafeguardSeverity = "none" | "monitor" | "concern" | "urgent";
+
+/** Output of the safeguarding triage. NEVER contains advice for the student —
+ * it only classifies and routes to a trusted adult. */
+export interface SafeguardSignal {
+  flagged: boolean;
+  category: SafeguardCategory | null;
+  severity: SafeguardSeverity;
+  /** Why it triaged this way — for the teacher/DSL, not the student. */
+  rationale: string;
+  /** The passage that triggered the flag. */
+  span?: string;
+  engine: "rules" | "llm" | "rules+llm";
+}
+
+/** A safeguarding alert raised to the teacher / Designated Safeguarding Lead. */
+export interface SafeguardAlert {
+  id: string;
+  studentId: string;
+  studentName: string;
+  classId: string;
+  category: SafeguardCategory;
+  severity: SafeguardSeverity;
+  span: string;
+  rationale: string;
+  taskId?: string;
+  createdAt: number;
+  acknowledged: boolean;
+  acknowledgedBy?: string;
+  acknowledgedAt?: number;
+}
+
 /** Stable IDs for the analytic traits we model (NAPLAN-aligned). */
 export type TraitId =
   | "audience"

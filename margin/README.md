@@ -51,6 +51,21 @@ transfer-gated evidence of mastery · spacing for conventions.
 | Server persistence (canonical, JSON file; swap for Postgres in Phase 1) | `src/lib/server/store.ts` |
 | Identity / sessions + Google OAuth scaffold | `src/lib/server/identity.ts`, `src/app/api/auth/*` |
 | Sign-in / roster | `src/app/signin/page.tsx` |
+| Safeguarding triage (rules + optional LLM) + escalation | `src/lib/safeguarding.ts`, `src/app/api/alerts` |
+
+### Safeguarding
+
+A writing tool receives disclosures of harm. Margin runs a triage **before** scoring
+(`src/lib/safeguarding.ts`): a deterministic rules net (always on) plus an optional LLM
+classifier (when a key is set), taking the higher severity of the two.
+
+- **Urgent** (active self-harm/suicidal intent, current abuse, credible threat): the AI's
+  feedback is **suppressed**, the student sees a calm, non-clinical check-in with AU/NZ crisis
+  lines, and a **teacher/DSL alert** is raised. The AI never counsels.
+- **Concern**: feedback is still given (so the student isn't singled out), and a silent alert is
+  raised for review.
+- Alerts surface at the top of the teacher dashboard with the flagged passage and a
+  *mark-reviewed* action. The human safeguarding lead always decides what happens next.
 
 ### LLM vs mock
 
@@ -93,10 +108,11 @@ data — swap in a double-marked corpus of real scripts for a real readiness dec
 
 - **Scorer calibration harness** — the kill-switch experiment: measure LLM-judge agreement with
   human NAPLAN markers (target quadratic-weighted κ ≥ ~0.6 per trait) **before** trusting the model.
-- Real database + auth + Google Classroom SSO (replaces localStorage).
+- Postgres (replacing the JSON store) + hosted deploy + Google Classroom roster import.
 - Oral composition (Whisper STT) for the primary tier; senior exam-prep tier.
-- Safeguarding-disclosure detection + teacher escalation pipeline.
 - Spaced retrieval scheduling for conventions; process/keystroke capture for academic integrity.
+- Safeguarding: per-class escalation routing to the named DSL, audit export, and tuning the
+  detector with a safeguarding lead (the current rules are a conservative starting net).
 
 See the design doc in the conversation history for the full three-tier product, GTM, and risk
 analysis.

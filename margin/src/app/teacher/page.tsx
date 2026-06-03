@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Logo } from "@/components/Logo";
 import { overallRating, masteredCount, totalGrowth } from "@/lib/studentModel";
 import { traitsFor } from "@/lib/rubric";
-import type { StudentModel, TextType } from "@/lib/types";
+import type { SafeguardAlert, StudentModel, TextType } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
 function cellColor(rating: number, seen: boolean, mastered: boolean) {
@@ -23,6 +23,7 @@ export default function TeacherPage() {
   const [className, setClassName] = useState("8E English");
   const [type, setType] = useState<TextType>("persuasive");
   const [loading, setLoading] = useState(true);
+  const [alerts, setAlerts] = useState<SafeguardAlert[]>([]);
 
   function refresh() {
     fetch("/api/class")
@@ -32,6 +33,19 @@ export default function TeacherPage() {
         if (d.class?.name) setClassName(d.class.name);
       })
       .finally(() => setLoading(false));
+    fetch("/api/alerts")
+      .then((r) => r.json())
+      .then((d) => setAlerts(d.alerts ?? []))
+      .catch(() => {});
+  }
+
+  async function acknowledge(id: string) {
+    await fetch("/api/alerts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    refresh();
   }
   useEffect(() => {
     refresh();
@@ -94,6 +108,56 @@ export default function TeacherPage() {
           {className} · {type} writing. Each cell is a live, trait-level competency estimate —
           green means mastered (proven on a transfer prompt).
         </p>
+
+        {/* Safeguarding — always above the fold, never buried. */}
+        {alerts.filter((a) => !a.acknowledged).length > 0 && (
+          <div className="mt-5 rounded-2xl border border-danger/40 bg-danger/5 p-4">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-danger text-xs font-bold text-white">
+                {alerts.filter((a) => !a.acknowledged).length}
+              </span>
+              <h2 className="font-serif text-lg text-ink">Safeguarding — needs your review</h2>
+            </div>
+            <p className="mt-1 text-sm text-ink-muted">
+              Margin flagged possible disclosures of harm and held the AI back. These are a triage
+              net, not a judgement — review each with your safeguarding lead and follow your school&apos;s process.
+            </p>
+            <ul className="mt-3 space-y-2">
+              {alerts
+                .filter((a) => !a.acknowledged)
+                .map((a) => (
+                  <li key={a.id} className="rounded-xl border border-line bg-card p-3.5">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={cn(
+                            "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide",
+                            a.severity === "urgent" ? "bg-danger text-white" : "bg-warn/20 text-warn"
+                          )}
+                        >
+                          {a.severity}
+                        </span>
+                        <span className="font-medium text-ink">{a.studentName}</span>
+                        <span className="text-xs text-ink-faint">· {a.category.replace("_", " ")}</span>
+                        <span className="text-xs text-ink-faint">· {new Date(a.createdAt).toLocaleString()}</span>
+                      </div>
+                      <button
+                        onClick={() => acknowledge(a.id)}
+                        className="rounded-lg border border-line px-3 py-1 text-sm text-ink-muted hover:border-ink hover:text-ink"
+                      >
+                        Mark reviewed
+                      </button>
+                    </div>
+                    {a.span && (
+                      <p className="mt-2 border-l-2 border-danger/50 pl-3 font-serif text-sm text-ink-soft">
+                        “{a.span}”
+                      </p>
+                    )}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
 
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-line bg-card p-4 shadow-card">

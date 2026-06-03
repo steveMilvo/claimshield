@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { StudentModel } from "../types";
+import type { StudentModel, SafeguardAlert } from "../types";
 import { newStudent } from "../studentModel";
 
 /**
@@ -29,6 +29,7 @@ interface DB {
   version: 1;
   students: Record<string, StoredStudent>;
   classes: Record<string, ClassRecord>;
+  alerts: SafeguardAlert[];
 }
 
 const DATA_DIR = process.env.MARGIN_DATA_DIR || path.join(process.cwd(), "data");
@@ -41,7 +42,7 @@ let memory: DB | null = null; // in-memory fallback / cache
 let canWriteDisk = true;
 
 function blankDB(): DB {
-  return { version: 1, students: {}, classes: {} };
+  return { version: 1, students: {}, classes: {}, alerts: [] };
 }
 
 function load(): DB {
@@ -49,6 +50,7 @@ function load(): DB {
   try {
     const raw = fs.readFileSync(DB_PATH, "utf8");
     memory = JSON.parse(raw) as DB;
+    if (!memory.alerts) memory.alerts = []; // migrate older files
   } catch {
     memory = blankDB();
   }
@@ -120,6 +122,39 @@ export function listClassStudents(classId = DEFAULT_CLASS): StoredStudent[] {
 
 export function defaultClassId(): string {
   return DEFAULT_CLASS;
+}
+
+/* ----------------------------- Safeguarding ----------------------------- */
+
+export function addAlert(
+  a: Omit<SafeguardAlert, "id" | "createdAt" | "acknowledged">
+): SafeguardAlert {
+  const db = seedIfEmpty();
+  const alert: SafeguardAlert = {
+    ...a,
+    id: `alert_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    createdAt: Date.now(),
+    acknowledged: false,
+  };
+  db.alerts.unshift(alert);
+  persist(db);
+  return alert;
+}
+
+export function listAlerts(classId = DEFAULT_CLASS): SafeguardAlert[] {
+  const db = seedIfEmpty();
+  return db.alerts.filter((a) => a.classId === classId);
+}
+
+export function acknowledgeAlert(id: string, by: string): SafeguardAlert | null {
+  const db = seedIfEmpty();
+  const alert = db.alerts.find((a) => a.id === id);
+  if (!alert) return null;
+  alert.acknowledged = true;
+  alert.acknowledgedBy = by;
+  alert.acknowledgedAt = Date.now();
+  persist(db);
+  return alert;
 }
 
 /** Find or create a student by external identity (e.g. Google sub/email). */
