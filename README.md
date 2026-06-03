@@ -16,6 +16,14 @@ npm install
 npm run dev      # http://localhost:3000  → click "Start teaching Pip"
 ```
 
+**Teacher Content Studio (`/teacher`)** — a teacher pastes what the class is
+studying; Pip turns it into practice, keeping most of it true and planting **one
+controlled mistake** in the rest (a deviation from the teacher's vetted text,
+never an invented world-fact). The teacher reviews/approves every item, then
+publishes it to the class; `/play` picks it up. Children practise *their own*
+curriculum content while building AI-literacy. (Prototype uses an offline
+rule-based generator; production swaps in Claude generate + verify.)
+
 A playable build of the **"Catch Pip's Mistake"** loop (Next.js + TypeScript +
 Tailwind). The child directs Pip, Pip answers — sometimes with a *planted*
 mistake — and the child catches it, taps the wrong words, and teaches Pip the

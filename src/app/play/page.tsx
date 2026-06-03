@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import Pip from "@/components/Pip";
 import SkillBars from "@/components/SkillBar";
@@ -37,7 +37,8 @@ function shuffle<T>(arr: T[]): T[] {
 
 export default function PlayPage() {
   const [state, setState] = useState<GameState>(() => initState());
-  const order = useRef<Item[]>(shuffle(ITEMS));
+  const [deck, setDeck] = useState<Item[]>(() => shuffle(ITEMS));
+  const [packName, setPackName] = useState<string | null>(null);
   const [qi, setQi] = useState(0);
   const [phase, setPhase] = useState<Phase>("ask");
   const [tapped, setTapped] = useState<number | null>(null);
@@ -56,7 +57,24 @@ export default function PlayPage() {
     pattern: "none",
   });
 
-  const item = order.current[qi % order.current.length];
+  // Load a teacher-published pack (from the Content Studio) if present.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("pip-pack");
+      if (!raw) return;
+      const pack = JSON.parse(raw) as { name?: string; items?: Item[] };
+      if (pack.items && pack.items.length > 0) {
+        setDeck(shuffle(pack.items));
+        setPackName(pack.name ?? "Your class topic");
+        setQi(0);
+        setState(initState());
+      }
+    } catch {
+      /* ignore malformed pack */
+    }
+  }, []);
+
+  const item = deck[qi % deck.length];
   const ceiling = pipTiers(state); // what mastery has unlocked
   const cap = (k: "eyes" | "mouth" | "body" | "source") =>
     Math.min(look[k] ?? ceiling[k], ceiling[k]);
@@ -135,7 +153,7 @@ export default function PlayPage() {
     setGrew(null);
     const nextQi = qi + 1;
     // end of a session (worked through the deck once) → show the report
-    if (nextQi > 0 && nextQi % order.current.length === 0) {
+    if (nextQi > 0 && nextQi % deck.length === 0) {
       setShowReport(true);
     }
     setQi(nextQi);
@@ -159,6 +177,12 @@ export default function PlayPage() {
           Pip
         </Link>
         <div className="flex items-center gap-2">
+          <Link
+            href="/teacher"
+            className="rounded-full bg-white/70 px-3 py-1.5 font-display text-sm font-semibold text-grapeDark shadow-soft transition hover:scale-105"
+          >
+            👩‍🏫 Teacher
+          </Link>
           <button
             onClick={() => setMuted((m) => !m)}
             className="rounded-full bg-white/70 px-3 py-1.5 text-lg shadow-soft"
@@ -213,7 +237,7 @@ export default function PlayPage() {
           {/* mission */}
           <div className="mb-3 rounded-2xl bg-white/70 px-5 py-3 shadow-soft">
             <span className="text-sm font-bold uppercase tracking-wide text-grape">
-              Mission
+              {packName ? `Topic · ${packName}` : "Mission"}
             </span>
             <p className="font-display text-lg">{item.mission}</p>
           </div>
