@@ -6,8 +6,23 @@
 
 **Working title:** *Pip* (the apprentice the child trains is "Pip"). Naming TBD.
 
-This repository holds the **planning and specification docs** for the product.
-It is not application code.
+This repository holds the **planning/specification docs** *and* a **runnable
+prototype** of the core loop.
+
+## Run the prototype
+
+```bash
+npm install
+npm run dev      # http://localhost:3000  → click "Start teaching Pip"
+```
+
+A playable build of the **"Catch Pip's Mistake"** loop (Next.js + TypeScript +
+Tailwind). The child directs Pip, Pip answers — sometimes with a *planted*
+mistake — and the child catches it, taps the wrong words, and teaches Pip the
+fix. **Pip's avatar visually evolves** as per-skill mastery grows (eyes ↔
+spotting made-up facts, smile ↔ fairness, body ↔ no-bragging, book ↔ checking
+sources). Runs fully offline — hard-coded item bank, browser text-to-speech, no
+API keys. `public/pip-evolution.svg` shows the five growth stages.
 
 ## The core insight
 
