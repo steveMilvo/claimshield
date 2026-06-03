@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   const session = getSessionOrDefault();
   const studentId = body.studentId || session.id;
-  const stored = getStudent(studentId);
+  const stored = await getStudent(studentId);
 
   // Safeguarding triage runs BEFORE scoring. A writing tool receives
   // disclosures of harm; the AI must never counsel or engage with one.
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   if (sg.severity === "urgent") {
     // Raise to the teacher/DSL and suppress normal feedback. We deliberately
     // do NOT score or "grade" a disclosure, and do not update the model.
-    addAlert({
+    await addAlert({
       studentId: stored.studentId,
       studentName: stored.displayName,
       classId: stored.classId,
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
   // Lower-level concern: a trusted adult is notified, but the student still
   // gets their writing feedback (silently, so they are not singled out).
   if (sg.severity === "concern") {
-    addAlert({
+    await addAlert({
       studentId: stored.studentId,
       studentName: stored.displayName,
       classId: stored.classId,
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
     cold,
     t: Date.now(),
   });
-  const savedStudent = saveStudent(updated, stored.classId);
+  const savedStudent = await saveStudent(updated, stored.classId);
 
   return NextResponse.json({ diagnosis, engine, cold, student: savedStudent });
 }

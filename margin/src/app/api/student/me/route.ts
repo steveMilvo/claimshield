@@ -7,6 +7,6 @@ export const runtime = "nodejs";
 /** The current signed-in student's model (canonical, server-owned). */
 export async function GET() {
   const session = getSessionOrDefault();
-  const student = getStudent(session.id);
+  const student = await getStudent(session.id);
   return NextResponse.json({ student, session });
 }

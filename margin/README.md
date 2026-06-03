@@ -48,7 +48,7 @@ transfer-gated evidence of mastery · spacing for conventions.
 | API routes | `src/app/api/diagnose`, `src/app/api/practice` |
 | Writing studio | `src/components/Studio.tsx` |
 | Teacher class model | `src/app/teacher/page.tsx` |
-| Server persistence (canonical, JSON file; swap for Postgres in Phase 1) | `src/lib/server/store.ts` |
+| Server persistence (driver dispatch: JSON local / Postgres in prod) | `src/lib/server/store.ts`, `storeJson.ts`, `storePg.ts` |
 | Identity / sessions + Google OAuth scaffold | `src/lib/server/identity.ts`, `src/app/api/auth/*` |
 | Sign-in / roster | `src/app/signin/page.tsx` |
 | Safeguarding triage (rules + optional LLM) + escalation | `src/lib/safeguarding.ts`, `src/app/api/alerts` |
@@ -104,11 +104,18 @@ Runs on the deterministic mock by default; set `ANTHROPIC_API_KEY` in `.env.loca
 calibrate the real Claude judge. Uses `fixtures/anchor-scripts.json` (illustrative seed
 data — swap in a double-marked corpus of real scripts for a real readiness decision).
 
+## Deploying
+
+See [DEPLOY.md](./DEPLOY.md). Short version: push to Vercel (root directory `margin`), set
+`DATABASE_URL` (Neon/Supabase) + `ANTHROPIC_API_KEY`, and `npm run db:setup`. With no
+`DATABASE_URL` it runs on the local JSON store — no database needed for dev.
+
 ## What's deliberately NOT here yet (roadmap)
 
 - **Scorer calibration harness** — the kill-switch experiment: measure LLM-judge agreement with
   human NAPLAN markers (target quadratic-weighted κ ≥ ~0.6 per trait) **before** trusting the model.
-- Postgres (replacing the JSON store) + hosted deploy + Google Classroom roster import.
+- Google Classroom roster import (the OAuth login is done; roster sync is next).
+- Encrypted/signed sessions (NextAuth or iron-session) to replace the base64 session cookie.
 - Oral composition (Whisper STT) for the primary tier; senior exam-prep tier.
 - Spaced retrieval scheduling for conventions; process/keystroke capture for academic integrity.
 - Safeguarding: per-class escalation routing to the named DSL, audit export, and tuning the

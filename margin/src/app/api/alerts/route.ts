@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 /** Safeguarding alerts for the teacher / DSL of the current class. */
 export async function GET() {
   const session = getSessionOrDefault();
-  const alerts = listAlerts(session.classId);
+  const alerts = await listAlerts(session.classId);
   return NextResponse.json({ alerts });
 }
 
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     return NextResponse.json({ error: "Invalid request", detail: String(e) }, { status: 400 });
   }
-  const alert = acknowledgeAlert(body.id, session.name);
+  const alert = await acknowledgeAlert(body.id, session.name);
   if (!alert) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ ok: true, alert });
 }

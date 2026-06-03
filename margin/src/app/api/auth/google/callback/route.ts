@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
     const name: string = profile.name || profile.email || "Student";
     if (!sub) throw new Error("no profile sub");
 
-    const student = upsertStudentByExternalId(sub, name, defaultClassId());
+    const student = await upsertStudentByExternalId(sub, name, defaultClassId());
     const session: Session = {
       role: "student",
       id: student.studentId,

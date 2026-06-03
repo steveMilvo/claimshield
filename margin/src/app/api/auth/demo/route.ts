@@ -12,12 +12,15 @@ export const runtime = "nodejs";
 
 /** List the roster (for the sign-in picker). */
 export async function GET() {
-  const cls = getClass(defaultClassId());
-  const students =
-    cls?.studentIds.map((id) => {
-      const s = getStudent(id);
-      return { id: s.studentId, name: s.displayName };
-    }) ?? [];
+  const cls = await getClass(defaultClassId());
+  const students = cls
+    ? await Promise.all(
+        cls.studentIds.map(async (id) => {
+          const s = await getStudent(id);
+          return { id: s.studentId, name: s.displayName };
+        })
+      )
+    : [];
   return NextResponse.json({
     class: cls,
     students,
