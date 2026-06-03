@@ -96,6 +96,7 @@ export interface GameState {
   // the practised content domain for this session (a custom pack overrides
   // the built-in default); anything else in the log counts as transfer.
   practisedTopic?: string;
+  transferTopic?: string; // display name for the new-topic probe domain
 }
 
 export const PRIOR = 0.18;

@@ -62,12 +62,21 @@ export default function PlayPage() {
     try {
       const raw = localStorage.getItem("pip-pack");
       if (!raw) return;
-      const pack = JSON.parse(raw) as { name?: string; items?: Item[]; practisedTopic?: string };
+      const pack = JSON.parse(raw) as {
+        name?: string;
+        items?: Item[];
+        practisedTopic?: string;
+        transferTopic?: string;
+      };
       if (pack.items && pack.items.length > 0) {
         setDeck(shuffle(pack.items));
         setPackName(pack.name ?? "Your class topic");
         setQi(0);
-        setState({ ...initState(), practisedTopic: pack.practisedTopic });
+        setState({
+          ...initState(),
+          practisedTopic: pack.practisedTopic,
+          transferTopic: pack.transferTopic,
+        });
       }
     } catch {
       /* ignore malformed pack */

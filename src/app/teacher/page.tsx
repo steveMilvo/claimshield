@@ -22,6 +22,7 @@ export default function TeacherPage() {
   const [transferContent, setTransferContent] = useState("");
   const [items, setItems] = useState<Item[] | null>(null);
   const [practisedTopic, setPractisedTopic] = useState<string | undefined>(undefined);
+  const [transferTopic, setTransferTopic] = useState<string | undefined>(undefined);
   const [published, setPublished] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -55,6 +56,7 @@ export default function TeacherPage() {
       if (res.ok && data.items?.length) {
         setItems([...data.items, ...(data.transferItems ?? [])]);
         setPractisedTopic(data.practisedTopic);
+        setTransferTopic(data.transferTopic ?? undefined);
         setNotice(
           data.transferTopic
             ? `Generated and verified by Claude, plus ${data.transferItems?.length ?? 0} new-topic transfer probes from "${data.transferTopic}". Review each item below.`
@@ -64,6 +66,7 @@ export default function TeacherPage() {
         // graceful fallback to the offline generator (single topic only)
         setItems(generateItems(content, { topic, types, count: 10, truthRatio: 0.4 }));
         setPractisedTopic(undefined);
+        setTransferTopic(undefined);
         setNotice(
           data.error === "no_key"
             ? "No ANTHROPIC_API_KEY set — used the offline generator. Add a key to .env.local for Claude-quality items."
@@ -86,7 +89,10 @@ export default function TeacherPage() {
   function publish() {
     if (!items || items.length === 0) return;
     const topic = name.trim() || "Our class topic";
-    localStorage.setItem("pip-pack", JSON.stringify({ name: topic, items, practisedTopic }));
+    localStorage.setItem(
+      "pip-pack",
+      JSON.stringify({ name: topic, items, practisedTopic, transferTopic })
+    );
     setPublished(true);
   }
 

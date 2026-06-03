@@ -119,14 +119,14 @@ export default function PipReport({
             </span>
             <div className="mt-2 flex flex-wrap items-center gap-4">
               <Pair
-                label="Practised topic"
+                label={state.practisedTopic ?? "Practised topic"}
                 rate={transfer.practised.rate}
                 trials={transfer.practised.trials}
                 tone="#5BC8F5"
               />
               <span className="text-2xl text-ink/30" aria-hidden>→</span>
               <Pair
-                label="New topic"
+                label={state.transferTopic ?? "New topic"}
                 rate={transfer.transfer.rate}
                 trials={transfer.transfer.trials}
                 tone="#3FD3A7"
