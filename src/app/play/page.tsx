@@ -5,6 +5,7 @@ import Link from "next/link";
 import Pip from "@/components/Pip";
 import SkillBars from "@/components/SkillBar";
 import PipReport from "@/components/PipReport";
+import WorkshopModal, { type Look } from "@/components/WorkshopModal";
 import {
   ITEMS,
 } from "@/lib/items";
@@ -46,10 +47,27 @@ export default function PlayPage() {
   const [muted, setMuted] = useState(false);
   const [pipPulse, setPipPulse] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [showWorkshop, setShowWorkshop] = useState(false);
+  const [look, setLook] = useState<Look>({
+    eyes: null,
+    mouth: null,
+    body: null,
+    source: null,
+    pattern: "none",
+  });
 
   const item = order.current[qi % order.current.length];
-  const tiers = pipTiers(state);
-  const stage = overallStage(tiers);
+  const ceiling = pipTiers(state); // what mastery has unlocked
+  const cap = (k: "eyes" | "mouth" | "body" | "source") =>
+    Math.min(look[k] ?? ceiling[k], ceiling[k]);
+  const tiers = {
+    eyes: cap("eyes"),
+    mouth: cap("mouth"),
+    body: cap("body"),
+    source: cap("source"),
+    glow: ceiling.glow,
+  };
+  const stage = overallStage(ceiling);
 
   const correctionOrder = useMemo(
     () => shuffle(item.corrections),
@@ -141,19 +159,6 @@ export default function PlayPage() {
           Pip
         </Link>
         <div className="flex items-center gap-2">
-          <div className="hidden items-center gap-1 rounded-full bg-white/70 px-3 py-1.5 shadow-soft sm:flex">
-            {COLORS.map((c) => (
-              <button
-                key={c}
-                aria-label={`Colour Pip ${c}`}
-                onClick={() => setColor(c)}
-                className={`h-6 w-6 rounded-full ring-2 transition ${
-                  color === c ? "ring-ink scale-110" : "ring-white"
-                }`}
-                style={{ background: c }}
-              />
-            ))}
-          </div>
           <button
             onClick={() => setMuted((m) => !m)}
             className="rounded-full bg-white/70 px-3 py-1.5 text-lg shadow-soft"
@@ -161,6 +166,12 @@ export default function PlayPage() {
             aria-label={muted ? "Unmute Pip" : "Mute Pip"}
           >
             {muted ? "🔇" : "🔊"}
+          </button>
+          <button
+            onClick={() => setShowWorkshop(true)}
+            className="rounded-full bg-white/70 px-4 py-1.5 font-display text-sm font-semibold text-grapeDark shadow-soft transition hover:scale-105"
+          >
+            🎨 Workshop
           </button>
           <button
             onClick={() => setShowReport(true)}
@@ -172,12 +183,22 @@ export default function PlayPage() {
       </header>
 
       {showReport && <PipReport state={state} onClose={() => setShowReport(false)} />}
+      {showWorkshop && (
+        <WorkshopModal
+          ceiling={ceiling}
+          look={look}
+          color={color}
+          onLook={(patch) => setLook((l) => ({ ...l, ...patch }))}
+          onColor={setColor}
+          onClose={() => setShowWorkshop(false)}
+        />
+      )}
 
       <div className="grid gap-6 md:grid-cols-[300px_1fr]">
         {/* Pip column */}
         <aside className="flex flex-col items-center">
           <div className={pipPulse ? "animate-wiggle" : "animate-bob"}>
-            <Pip tiers={tiers} color={color} size={260} />
+            <Pip tiers={tiers} color={color} pattern={look.pattern} size={260} />
           </div>
           <div className="mt-1 rounded-full bg-grape/10 px-4 py-1 font-display text-lg font-semibold text-grapeDark">
             {STAGE_NAMES[stage]} · Stage {stage}

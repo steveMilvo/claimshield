@@ -1,24 +1,33 @@
 "use client";
 
+import { useId } from "react";
 import type { PipTiers } from "@/lib/game";
 
 const EYE_R = [3.2, 7, 10, 12, 14];
 const PUPIL_R = [3.2, 4, 6, 7, 8];
 
+export type Pattern = "none" | "spots" | "stripes" | "star";
+
 export default function Pip({
   tiers,
   color = "#7C6BE0",
+  pattern = "none",
   size = 240,
   className = "",
 }: {
   tiers: PipTiers;
   color?: string;
+  pattern?: Pattern;
   size?: number;
   className?: string;
 }) {
   const { eyes, mouth, body, source, glow } = tiers;
   const eyeR = EYE_R[eyes];
   const pupilR = PUPIL_R[eyes];
+  const uid = useId().replace(/:/g, "");
+  const glowId = `glow-${uid}`;
+  const softId = `soft-${uid}`;
+  const clipId = `clip-${uid}`;
 
   return (
     <svg
@@ -30,13 +39,16 @@ export default function Pip({
       aria-label={pipDescription(tiers)}
     >
       <defs>
-        <radialGradient id="pipGlow" cx="50%" cy="50%" r="50%">
+        <radialGradient id={glowId} cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#FFE6A1" stopOpacity={0.9} />
           <stop offset="100%" stopColor="#FFE6A1" stopOpacity={0} />
         </radialGradient>
-        <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+        <filter id={softId} x="-30%" y="-30%" width="160%" height="160%">
           <feDropShadow dx="0" dy="6" stdDeviation="6" floodColor="#5746B0" floodOpacity="0.18" />
         </filter>
+        <clipPath id={clipId}>
+          <ellipse cx="110" cy="124" rx="58" ry="60" />
+        </clipPath>
       </defs>
 
       {/* calibration glow */}
@@ -45,7 +57,7 @@ export default function Pip({
         cy="124"
         rx={86}
         ry={88}
-        fill="url(#pipGlow)"
+        fill={`url(#${glowId})`}
         opacity={0.18 + glow * 0.55}
         style={{ transition: "opacity .6s ease" }}
       />
@@ -57,6 +69,7 @@ export default function Pip({
           <ellipse cx="130" cy="184" rx="15" ry="9" fill={shade(color, -0.18)} />
         </g>
       )}
+
 
       {/* arms (overconfidence >= 1) */}
       {body >= 1 && (
@@ -82,8 +95,12 @@ export default function Pip({
       )}
 
       {/* body */}
-      <g filter="url(#soft)">
+      <g filter={`url(#${softId})`}>
         <ellipse cx="110" cy="124" rx="58" ry="60" fill={color} />
+        {/* free cosmetic pattern, clipped to the body */}
+        {pattern !== "none" && (
+          <g clipPath={`url(#${clipId})`}>{renderPattern(pattern, color)}</g>
+        )}
         {/* bottom shadow */}
         <ellipse cx="110" cy="150" rx="50" ry="30" fill="#000000" opacity="0.06" />
         {/* top highlight */}
@@ -162,6 +179,49 @@ export default function Pip({
         </g>
       )}
     </svg>
+  );
+}
+
+function renderPattern(pattern: Pattern, color: string) {
+  const dark = shade(color, -0.14);
+  const light = shade(color, 0.22);
+  if (pattern === "spots") {
+    const pts = [
+      [86, 104], [134, 132], [104, 150], [78, 138], [128, 100], [110, 124],
+    ];
+    return (
+      <>
+        {pts.map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y} r={7} fill={light} opacity={0.55} />
+        ))}
+      </>
+    );
+  }
+  if (pattern === "stripes") {
+    return (
+      <>
+        {[-40, -16, 8, 32, 56].map((o, i) => (
+          <rect
+            key={i}
+            x={50 + o}
+            y={60}
+            width={12}
+            height={130}
+            fill={i % 2 ? light : dark}
+            opacity={0.35}
+            transform={`rotate(18 110 124)`}
+          />
+        ))}
+      </>
+    );
+  }
+  // star
+  return (
+    <path
+      d="M110 100 L116 118 L135 118 L120 130 L126 148 L110 137 L94 148 L100 130 L85 118 L104 118 Z"
+      fill={light}
+      opacity={0.7}
+    />
   );
 }
 
