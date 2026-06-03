@@ -18,7 +18,10 @@ export default function TeacherPage() {
   const [content, setContent] = useState("");
   const [name, setName] = useState("");
   const [types, setTypes] = useState<SkillKey[]>(["factual", "source", "overconfidence"]);
+  const [transferName, setTransferName] = useState("");
+  const [transferContent, setTransferContent] = useState("");
   const [items, setItems] = useState<Item[] | null>(null);
+  const [practisedTopic, setPractisedTopic] = useState<string | undefined>(undefined);
   const [published, setPublished] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -29,6 +32,8 @@ export default function TeacherPage() {
 
   async function onGenerate() {
     const topic = name.trim() || "Our class topic";
+    const tTopic = transferName.trim() || "New topic";
+    const tContent = transferContent.trim();
     setPublished(false);
     setGenerating(true);
     setNotice(null);
@@ -36,15 +41,29 @@ export default function TeacherPage() {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content, topic, types, count: 10, truthRatio: 0.4 }),
+        body: JSON.stringify({
+          content,
+          topic,
+          types,
+          count: 10,
+          truthRatio: 0.4,
+          transferContent: tContent,
+          transferTopic: tTopic,
+        }),
       });
       const data = await res.json();
       if (res.ok && data.items?.length) {
-        setItems(data.items);
-        setNotice("Generated and verified by Claude. Review each item below.");
+        setItems([...data.items, ...(data.transferItems ?? [])]);
+        setPractisedTopic(data.practisedTopic);
+        setNotice(
+          data.transferTopic
+            ? `Generated and verified by Claude, plus ${data.transferItems?.length ?? 0} new-topic transfer probes from "${data.transferTopic}". Review each item below.`
+            : "Generated and verified by Claude. Review each item below."
+        );
       } else {
-        // graceful fallback to the offline generator
+        // graceful fallback to the offline generator (single topic only)
         setItems(generateItems(content, { topic, types, count: 10, truthRatio: 0.4 }));
+        setPractisedTopic(undefined);
         setNotice(
           data.error === "no_key"
             ? "No ANTHROPIC_API_KEY set — used the offline generator. Add a key to .env.local for Claude-quality items."
@@ -53,6 +72,7 @@ export default function TeacherPage() {
       }
     } catch {
       setItems(generateItems(content, { topic, types, count: 10, truthRatio: 0.4 }));
+      setPractisedTopic(undefined);
       setNotice("Couldn't reach the server — used the offline generator instead.");
     } finally {
       setGenerating(false);
@@ -66,7 +86,7 @@ export default function TeacherPage() {
   function publish() {
     if (!items || items.length === 0) return;
     const topic = name.trim() || "Our class topic";
-    localStorage.setItem("pip-pack", JSON.stringify({ name: topic, items }));
+    localStorage.setItem("pip-pack", JSON.stringify({ name: topic, items, practisedTopic }));
     setPublished(true);
   }
 
@@ -142,6 +162,31 @@ export default function TeacherPage() {
           </div>
         </div>
 
+        {/* optional second topic → genuine new-topic transfer probe */}
+        <details className="mt-4 rounded-xl border border-ink/10 bg-ink/[0.02] p-3">
+          <summary className="cursor-pointer font-display text-sm font-semibold text-ink/70">
+            ➕ Add a different topic to test transfer (optional)
+          </summary>
+          <p className="mt-2 text-xs text-ink/55">
+            Paste a few sentences from a <b>different</b> subject. Pip makes 2–3 extra items from it
+            so the report can show whether the skill <b>transfers</b> to content they never practised —
+            evidence they learned to spot AI errors, not just memorise these answers.
+          </p>
+          <input
+            value={transferName}
+            onChange={(e) => setTransferName(e.target.value)}
+            placeholder="Other topic name — e.g. Ancient Egypt"
+            className="mt-2 w-full rounded-xl border border-ink/15 px-3 py-2 text-sm"
+          />
+          <textarea
+            value={transferContent}
+            onChange={(e) => setTransferContent(e.target.value)}
+            rows={3}
+            placeholder="A few correct sentences from a different subject…"
+            className="mt-2 w-full rounded-xl border border-ink/15 px-3 py-2 text-sm leading-relaxed"
+          />
+        </details>
+
         <button
           onClick={onGenerate}
           disabled={generating || content.trim().split(/\s+/).length < 4}
@@ -182,6 +227,11 @@ export default function TeacherPage() {
                     {it.provenance === "ai" && (
                       <span className="rounded-full bg-sky/15 px-2 py-0.5 text-xs font-bold text-sky">
                         ✨ Verified by Claude
+                      </span>
+                    )}
+                    {practisedTopic && it.topic && it.topic !== practisedTopic && (
+                      <span className="rounded-full bg-mint/25 px-2 py-0.5 text-xs font-bold text-ink/70">
+                        🔀 New-topic probe · {it.topic}
                       </span>
                     )}
                   </div>

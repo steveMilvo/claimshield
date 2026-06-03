@@ -85,11 +85,109 @@ const WHY: Record<SkillKey, string> = {
   bias: "That's an unfair idea — anyone can do this.",
 };
 
+// Generate + verify one batch of items from a single body of content, tagging
+// every item with `topic` so the report can tell practised from transfer.
+async function buildItems(
+  client: Anthropic,
+  content: string,
+  topic: string,
+  types: SkillKey[],
+  count: number,
+  truthRatio: number,
+  idPrefix: string
+): Promise<Item[]> {
+  const genMsg = await client.messages.create({
+    model: GEN_MODEL,
+    max_tokens: 2000,
+    system: [{ type: "text", text: GEN_SYSTEM, cache_control: { type: "ephemeral" } }],
+    messages: [
+      {
+        role: "user",
+        content: `Topic: ${topic}\nMake ${count} items. About ${Math.round(
+          truthRatio * 100
+        )}% should be type "none" (all true). For the rest, use these error kinds, spread evenly: ${types.join(
+          ", "
+        )}.\n\nTEACHER CONTENT:\n"""${content}"""`,
+      },
+    ],
+  });
+  const genText = genMsg.content.find((b) => b.type === "text")?.text ?? "";
+  const raw: RawItem[] = extractJson(genText).items ?? [];
+  if (!Array.isArray(raw) || raw.length === 0) return [];
+
+  let verdicts: { ok: boolean; reason?: string }[] = [];
+  try {
+    const vMsg = await client.messages.create({
+      model: VERIFY_MODEL,
+      max_tokens: 1000,
+      system: [{ type: "text", text: VERIFY_SYSTEM, cache_control: { type: "ephemeral" } }],
+      messages: [{ role: "user", content: JSON.stringify({ items: raw }) }],
+    });
+    const vText = vMsg.content.find((b) => b.type === "text")?.text ?? "";
+    verdicts = extractJson(vText).results ?? [];
+  } catch {
+    verdicts = raw.map(() => ({ ok: true })); // if verify call fails, don't hard-block
+  }
+
+  const items: Item[] = [];
+  raw.forEach((r, i) => {
+    if (verdicts[i] && verdicts[i].ok === false) return;
+    const verifyReason = verdicts[i]?.reason;
+    const tokens = r.text.trim().split(/\s+/);
+    if (r.type === "none") {
+      items.push({
+        id: `${idPrefix}-${i}-none`,
+        topic,
+        chip: "Share what you learned",
+        mission: topic,
+        errorType: "NONE",
+        band: 1,
+        tokens,
+        errorIdx: [],
+        whyWrong: "",
+        corrections: [],
+        provenance: "ai",
+        verifyReason,
+      });
+      return;
+    }
+    const errorIdx = locate(tokens, r.errorPhrase || "");
+    if (errorIdx.length === 0) return; // can't anchor the error → drop (safety)
+    items.push({
+      id: `${idPrefix}-${i}-${r.type}`,
+      topic,
+      chip: "Share what you learned",
+      mission: topic,
+      errorType: r.type,
+      band: 2,
+      tokens,
+      errorIdx,
+      whyWrong: WHY[r.type as SkillKey] ?? "Something about that wasn't right.",
+      corrections: [
+        { text: r.trueSentence, correct: true },
+        { text: r.text, correct: false },
+        { text: "Pip isn't sure — let's check a trusted book.", correct: false },
+      ],
+      provenance: "ai",
+      verifyReason,
+    });
+  });
+  return items;
+}
+
 export async function POST(req: Request) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) return Response.json({ error: "no_key" }, { status: 400 });
 
-  let body: { content?: string; topic?: string; types?: SkillKey[]; count?: number; truthRatio?: number };
+  let body: {
+    content?: string;
+    topic?: string;
+    types?: SkillKey[];
+    count?: number;
+    truthRatio?: number;
+    transferContent?: string;
+    transferTopic?: string;
+  };
   try {
     body = await req.json();
   } catch {
@@ -102,90 +200,28 @@ export async function POST(req: Request) {
   const truthRatio = body.truthRatio ?? 0.4;
   if (content.split(/\s+/).length < 6) return Response.json({ error: "too_short" }, { status: 400 });
 
+  // Optional second topic → genuine new-topic transfer probe items.
+  const transferContent = (body.transferContent || "").trim();
+  const transferTopic = (body.transferTopic || "New topic").trim();
+  const hasTransfer = transferContent.split(/\s+/).length >= 6;
+
   const client = new Anthropic({ apiKey: key });
 
   try {
-    // 1) generate
-    const genMsg = await client.messages.create({
-      model: GEN_MODEL,
-      max_tokens: 2000,
-      system: [{ type: "text", text: GEN_SYSTEM, cache_control: { type: "ephemeral" } }],
-      messages: [
-        {
-          role: "user",
-          content: `Topic: ${topic}\nMake ${count} items. About ${Math.round(
-            truthRatio * 100
-          )}% should be type "none" (all true). For the rest, use these error kinds, spread evenly: ${types.join(
-            ", "
-          )}.\n\nTEACHER CONTENT:\n"""${content}"""`,
-        },
-      ],
-    });
-    const genText = genMsg.content.find((b) => b.type === "text")?.text ?? "";
-    const raw: RawItem[] = extractJson(genText).items ?? [];
-    if (!Array.isArray(raw) || raw.length === 0)
-      return Response.json({ error: "empty_generation" }, { status: 502 });
-
-    // 2) verify
-    let verdicts: { ok: boolean; reason?: string }[] = [];
-    try {
-      const vMsg = await client.messages.create({
-        model: VERIFY_MODEL,
-        max_tokens: 1000,
-        system: [{ type: "text", text: VERIFY_SYSTEM, cache_control: { type: "ephemeral" } }],
-        messages: [{ role: "user", content: JSON.stringify({ items: raw }) }],
-      });
-      const vText = vMsg.content.find((b) => b.type === "text")?.text ?? "";
-      verdicts = extractJson(vText).results ?? [];
-    } catch {
-      verdicts = raw.map(() => ({ ok: true })); // if verify call fails, don't hard-block
-    }
-
-    // 3) assemble verified items
-    const items: Item[] = [];
-    raw.forEach((r, i) => {
-      if (verdicts[i] && verdicts[i].ok === false) return;
-      const verifyReason = verdicts[i]?.reason;
-      const tokens = r.text.trim().split(/\s+/);
-      if (r.type === "none") {
-        items.push({
-          id: `ai-${i}-none`,
-          chip: "Share what you learned",
-          mission: topic,
-          errorType: "NONE",
-          band: 1,
-          tokens,
-          errorIdx: [],
-          whyWrong: "",
-          corrections: [],
-          provenance: "ai",
-          verifyReason,
-        });
-        return;
-      }
-      const errorIdx = locate(tokens, r.errorPhrase || "");
-      if (errorIdx.length === 0) return; // can't anchor the error → drop (safety)
-      items.push({
-        id: `ai-${i}-${r.type}`,
-        chip: "Share what you learned",
-        mission: topic,
-        errorType: r.type,
-        band: 2,
-        tokens,
-        errorIdx,
-        whyWrong: WHY[r.type as SkillKey] ?? "Something about that wasn't right.",
-        corrections: [
-          { text: r.trueSentence, correct: true },
-          { text: r.text, correct: false },
-          { text: "Pip isn't sure — let's check a trusted book.", correct: false },
-        ],
-        provenance: "ai",
-        verifyReason,
-      });
-    });
+    const [items, transferItems] = await Promise.all([
+      buildItems(client, content, topic, types, count, truthRatio, "ai"),
+      hasTransfer
+        ? buildItems(client, transferContent, transferTopic, types, 3, 0, "tr")
+        : Promise.resolve([] as Item[]),
+    ]);
 
     if (items.length === 0) return Response.json({ error: "all_failed_verification" }, { status: 502 });
-    return Response.json({ items });
+    return Response.json({
+      items,
+      transferItems,
+      practisedTopic: topic,
+      transferTopic: hasTransfer ? transferTopic : null,
+    });
   } catch (e: any) {
     return Response.json({ error: "model_error", detail: String(e?.message ?? e) }, { status: 502 });
   }

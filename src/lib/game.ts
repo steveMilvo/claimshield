@@ -93,6 +93,9 @@ export interface GameState {
   caught: number; // total good catches (for streaks/celebration)
   turns: number;
   log: TurnLog[];
+  // the practised content domain for this session (a custom pack overrides
+  // the built-in default); anything else in the log counts as transfer.
+  practisedTopic?: string;
 }
 
 export const PRIOR = 0.18;
@@ -204,10 +207,11 @@ export interface TransferReport {
 
 // Detection rate on the practised topic vs on new (transfer) topics.
 export function transferReport(state: GameState): TransferReport {
+  const practised = state.practisedTopic ?? PRIMARY_TOPIC;
   let pH = 0, pT = 0, tH = 0, tT = 0;
   for (const l of state.log) {
     if (!l.isError) continue;
-    if (l.topic === PRIMARY_TOPIC) {
+    if (l.topic === practised) {
       pT++;
       if (l.correct) pH++;
     } else {
