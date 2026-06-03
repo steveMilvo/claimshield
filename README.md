@@ -39,6 +39,10 @@ signal of critical-AI skill).
   — build-ready spec for the **ages 8–9 "Catch Pip's Mistake" loop**: error-spec
   schema, generation+verifier pipeline, student model & d′ scoring, UX, pilot
   protocol, and a week-by-week plan to a 31 Aug 2026 classroom pilot.
+- [`docs/03-pip-avatar-and-workshop.md`](docs/03-pip-avatar-and-workshop.md)
+  — Pip's avatar evolution + the customisation menu ("Pip Workshop"): how
+  appearance is a readout of real mastery, the choose-freely / earn-detail model,
+  the slot/tier/option system, equity guardrails, and the buildable rig spec.
 
 ## The two sacred design rules
 
