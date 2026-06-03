@@ -20,16 +20,43 @@ export default function TeacherPage() {
   const [types, setTypes] = useState<SkillKey[]>(["factual", "source", "overconfidence"]);
   const [items, setItems] = useState<Item[] | null>(null);
   const [published, setPublished] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
 
   function toggle(t: SkillKey) {
     setTypes((cur) => (cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t]));
   }
 
-  function onGenerate() {
+  async function onGenerate() {
     const topic = name.trim() || "Our class topic";
-    const generated = generateItems(content, { topic, types, count: 10, truthRatio: 0.4 });
-    setItems(generated);
     setPublished(false);
+    setGenerating(true);
+    setNotice(null);
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, topic, types, count: 10, truthRatio: 0.4 }),
+      });
+      const data = await res.json();
+      if (res.ok && data.items?.length) {
+        setItems(data.items);
+        setNotice("Generated and verified by Claude. Review each item below.");
+      } else {
+        // graceful fallback to the offline generator
+        setItems(generateItems(content, { topic, types, count: 10, truthRatio: 0.4 }));
+        setNotice(
+          data.error === "no_key"
+            ? "No ANTHROPIC_API_KEY set — used the offline generator. Add a key to .env.local for Claude-quality items."
+            : "Claude generation unavailable right now — used the offline generator instead."
+        );
+      }
+    } catch {
+      setItems(generateItems(content, { topic, types, count: 10, truthRatio: 0.4 }));
+      setNotice("Couldn't reach the server — used the offline generator instead.");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   function removeItem(id: string) {
@@ -117,11 +144,12 @@ export default function TeacherPage() {
 
         <button
           onClick={onGenerate}
-          disabled={content.trim().split(/\s+/).length < 4}
+          disabled={generating || content.trim().split(/\s+/).length < 4}
           className="mt-5 w-full rounded-full bg-sky px-6 py-3 font-display text-lg font-bold text-white shadow-soft transition hover:scale-[1.01] disabled:opacity-40"
         >
-          ✨ Generate Pip practice
+          {generating ? "✨ Generating…" : "✨ Generate Pip practice"}
         </button>
+        {notice && <p className="mt-3 rounded-xl bg-sunny/15 px-4 py-2 text-sm text-ink/70">{notice}</p>}
       </section>
 
       {/* review */}

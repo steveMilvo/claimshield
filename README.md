@@ -16,6 +16,12 @@ npm install
 npm run dev      # http://localhost:3000  → click "Start teaching Pip"
 ```
 
+**Optional — Claude-powered Content Studio:** copy `.env.example` to `.env.local`
+and set `ANTHROPIC_API_KEY`. The `/teacher` Studio then calls `POST /api/generate`
+(Claude **generate** → Claude **verify** "exactly one controlled change from the
+teacher's text"). Without a key it automatically falls back to the offline
+rule-based generator, so it always works.
+
 **Teacher Content Studio (`/teacher`)** — a teacher pastes what the class is
 studying; Pip turns it into practice, keeping most of it true and planting **one
 controlled mistake** in the rest (a deviation from the teacher's vetted text,
