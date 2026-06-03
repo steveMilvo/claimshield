@@ -67,8 +67,25 @@ on any error so the loop never hard-fails.
 cd margin
 npm install
 cp .env.example .env.local   # optional — add ANTHROPIC_API_KEY for the real judge
-npm run dev                  # http://localhost:3100
+npm run dev                  # then open http://localhost:3100 in your browser
 ```
+
+> Windows PowerShell: run the commands on separate lines (old PowerShell has no `&&`).
+> The dev server does **not** auto-open a browser — go to `http://localhost:3100` yourself.
+
+### Calibration harness (no browser needed)
+
+The most important script in the repo. Measures how closely the scorer agrees with
+human marks, per rubric trait — the go/no-go gate that must clear before the student
+model can be trusted. Prints a table to your terminal:
+
+```bash
+npm run calibrate
+```
+
+Runs on the deterministic mock by default; set `ANTHROPIC_API_KEY` in `.env.local` to
+calibrate the real Claude judge. Uses `fixtures/anchor-scripts.json` (illustrative seed
+data — swap in a double-marked corpus of real scripts for a real readiness decision).
 
 ## What's deliberately NOT here yet (roadmap)
 

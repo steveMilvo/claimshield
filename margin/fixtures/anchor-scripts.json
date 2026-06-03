@@ -1,0 +1,95 @@
+{
+  "_note": "ILLUSTRATIVE SEED DATA — not real NAPLAN scripts. These short, synthetic middle-school pieces carry 'reference' bands that stand in for human-marker scores so the calibration harness is runnable today. Replace with a real, double-marked corpus before trusting any agreement numbers.",
+  "scripts": [
+    {
+      "id": "p1",
+      "textType": "persuasive",
+      "text": "Phones should be allowed in school. They help us learn, a study found students learn 15% more with apps, we should use them. Also phones are fun they keep us happy. Teachers think phones are bad but they are wrong.",
+      "reference": {
+        "ideas": 2,
+        "cohesion": 1,
+        "text_structure": 1,
+        "paragraphing": 0,
+        "vocabulary": 2,
+        "sentence_structure": 2,
+        "persuasive_devices": 1,
+        "audience": 2
+      }
+    },
+    {
+      "id": "p2",
+      "textType": "persuasive",
+      "text": "Homework should not be banned. Firstly, homework gives students extra practice. For example, a maths problem done at home helps the idea stick, which means students remember it for the test. This shows that practice at home directly improves results.\n\nHowever, some say homework causes stress. While that can be true, the answer is better-designed homework, not no homework. As a result, schools should set short, useful tasks rather than ban them altogether.",
+      "reference": {
+        "ideas": 4,
+        "cohesion": 3,
+        "text_structure": 3,
+        "paragraphing": 2,
+        "vocabulary": 3,
+        "sentence_structure": 4,
+        "persuasive_devices": 2,
+        "audience": 4
+      }
+    },
+    {
+      "id": "p3",
+      "textType": "persuasive",
+      "text": "Our school library should stay open at lunch. Last term, on the days it was open, forty more students came inside than on the days it was shut. This shows students genuinely want a quiet space to read and work, so keeping it open clearly meets a need they are already showing. Isn't a calm place to think worth a single staff roster change? If we want a school that values learning, the library doors should be open every lunch.",
+      "reference": {
+        "ideas": 4,
+        "cohesion": 4,
+        "text_structure": 3,
+        "paragraphing": 1,
+        "vocabulary": 3,
+        "sentence_structure": 4,
+        "persuasive_devices": 3,
+        "audience": 4
+      }
+    },
+    {
+      "id": "n1",
+      "textType": "narrative",
+      "text": "The door was old. I opened it. Inside was dark and I was scared. I walked in and there was a noise. I was really scared so I ran away fast. Then I went home and it was fine. The end.",
+      "reference": {
+        "ideas": 2,
+        "cohesion": 2,
+        "text_structure": 2,
+        "paragraphing": 1,
+        "vocabulary": 2,
+        "sentence_structure": 2,
+        "character_setting": 1,
+        "audience": 2
+      }
+    },
+    {
+      "id": "n2",
+      "textType": "narrative",
+      "text": "My hand froze on the handle. Dad had said never to open this door, and for eleven years I hadn't. Now the brass was cold under my fingers and the house was asleep.\n\nI counted three breaths and turned it. The hinges sighed. Inside, dust hung in a single bar of moonlight, and on the desk sat a photograph of a woman who had my exact eyes. I had never seen her before. Somehow, I already knew her name.",
+      "reference": {
+        "ideas": 4,
+        "cohesion": 4,
+        "text_structure": 3,
+        "paragraphing": 2,
+        "vocabulary": 4,
+        "sentence_structure": 5,
+        "character_setting": 3,
+        "audience": 4
+      }
+    },
+    {
+      "id": "n3",
+      "textType": "narrative",
+      "text": "There was a message in the sand. It said my name. I was confused and a bit happy. The waves were coming so I read it fast. It said meet me at the rocks. I went to the rocks but no one was there, only a small box with a shell inside. I picked it up and smiled and then I walked back along the beach thinking about who left it.",
+      "reference": {
+        "ideas": 3,
+        "cohesion": 2,
+        "text_structure": 3,
+        "paragraphing": 1,
+        "vocabulary": 2,
+        "sentence_structure": 3,
+        "character_setting": 2,
+        "audience": 3
+      }
+    }
+  ]
+}
