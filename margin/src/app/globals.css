@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* System font stacks chosen so the app runs offline with no font fetch.
+     Swap these CSS vars for next/font (e.g. Fraunces + Inter) once a build
+     pipeline with network is in place. */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, Cambria, serif;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: theme("colors.canvas");
+  color: theme("colors.ink.DEFAULT");
+  font-family: var(--font-sans);
+}
+
+/* Paper grain: a barely-there texture so surfaces feel like paper, not screen. */
+.paper-grain {
+  background-color: theme("colors.paper");
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(27, 27, 34, 0.025) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+/* The writing surface itself. */
+.prose-write {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  line-height: 2.05rem;
+  color: theme("colors.ink.DEFAULT");
+}
+.prose-write::placeholder {
+  color: theme("colors.ink.faint");
+  font-style: italic;
+}
+
+/* Ruled-paper baseline for the editor. */
+.ruled {
+  background-image: linear-gradient(theme("colors.line") 1px, transparent 1px);
+  background-size: 100% 2.05rem;
+  background-position-y: 1.95rem;
+}
+
+/* Highlighted evidence span referenced by a margin note. */
+.evidence {
+  background: linear-gradient(180deg, transparent 60%, theme("colors.pencil.100") 60%);
+  border-radius: 2px;
+  padding: 0 1px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.evidence:hover,
+.evidence[data-active="true"] {
+  background: theme("colors.pencil.100");
+  box-shadow: 0 0 0 2px theme("colors.pencil.100");
+}
+
+/* Thin scrollbar that doesn't break the paper feel. */
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(27, 27, 34, 0.14);
+  border-radius: 99px;
+}
+
+/* Focus ring consistent with the violet accent. */
+*:focus-visible {
+  outline: 2px solid theme("colors.focus.500");
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
