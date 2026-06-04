@@ -8,3 +8,6 @@ dist
 .DS_Store
 .vscode
 .idea
+
+# TypeScript incremental build info
+*.tsbuildinfo
