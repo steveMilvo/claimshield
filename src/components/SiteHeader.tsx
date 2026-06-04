@@ -14,6 +14,7 @@ export function SiteHeader() {
           <Link href="/#pricing" className="hover:text-ink">Pricing</Link>
           <Link href="/#faq" className="hover:text-ink">FAQ</Link>
           <Link href="/cases" className="hover:text-ink">My cases</Link>
+          <Link href="/advisor" className="hover:text-ink">ER Advisor</Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link

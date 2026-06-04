@@ -2,22 +2,30 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { z } from "zod";
+import { KB_VERSION_DATE, retrieve } from "@/lib/advisor/kb";
 import {
-  KB_VERSION_DATE,
-  chunkByCitation,
-  retrieve,
-  type KbChunk,
-} from "@/lib/advisor/kb";
+  chunkPolicies,
+  retrievePolicy,
+  type PolicyChunk,
+} from "@/lib/advisor/policyKb";
 import {
   ADVISOR_SYSTEM_PROMPT,
   VERIFIER_SYSTEM_PROMPT,
   jurisdictionNote,
   renderSources,
+  type PromptSource,
 } from "@/lib/advisor/prompts";
-import type {
-  AdvisorySource,
-  VerifiedClaim,
-} from "@/lib/advisor/types";
+import type { AdvisorySource, VerifiedClaim } from "@/lib/advisor/types";
+
+/** A unified record for every source available this turn, keyed by citation. */
+type SourceRecord = {
+  citationLabel: string;
+  title: string;
+  text: string;
+  url: string | null;
+  version: string;
+  kind: "legislation" | "company";
+};
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -86,6 +94,16 @@ const BodySchema = z.object({
       }),
     )
     .min(1),
+  // The org's own policy documents (the private second KB layer). Optional.
+  policies: z
+    .array(
+      z.object({
+        title: z.string(),
+        text: z.string(),
+        addedAt: z.string().optional(),
+      }),
+    )
+    .optional(),
 });
 
 function transcript(messages: { role: string; content: string }[]): string {
@@ -112,14 +130,58 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  const { messages } = parsedBody;
+  const { messages, policies } = parsedBody;
 
   // Retrieve against everything the manager has said so far.
   const query = messages
     .filter((m) => m.role === "user")
     .map((m) => m.content)
     .join("\n");
+
+  // Layer 1: legislation. Layer 2: the org's own policies (if supplied).
   const retrieved = retrieve(query, 8);
+  const policyChunks: PolicyChunk[] = policies?.length
+    ? retrievePolicy(query, chunkPolicies(policies), 4)
+    : [];
+
+  // Unified index of every source available this turn, keyed by citation label.
+  // Used to render the prompt, ground the verifier, and build the source list.
+  const sourceIndex = new Map<string, SourceRecord>();
+  for (const c of retrieved) {
+    sourceIndex.set(c.citationLabel, {
+      citationLabel: c.citationLabel,
+      title: c.heading,
+      text: c.text,
+      url: c.url,
+      version: c.version,
+      kind: "legislation",
+    });
+  }
+  for (const p of policyChunks) {
+    sourceIndex.set(p.citationLabel, {
+      citationLabel: p.citationLabel,
+      title: p.docTitle,
+      text: p.text,
+      url: null,
+      version: p.version,
+      kind: "company",
+    });
+  }
+
+  const promptSources: PromptSource[] = [
+    ...retrieved.map((c) => ({
+      citationLabel: c.citationLabel,
+      heading: c.heading,
+      text: c.text,
+      kind: "LEGISLATION" as const,
+    })),
+    ...policyChunks.map((p) => ({
+      citationLabel: p.citationLabel,
+      heading: p.docTitle,
+      text: p.text,
+      kind: "COMPANY POLICY" as const,
+    })),
+  ];
 
   const client = new Anthropic({ apiKey });
 
@@ -144,7 +206,7 @@ export async function POST(req: NextRequest) {
           role: "user",
           content:
             `Conversation so far:\n\n${transcript(messages)}\n\n` +
-            `${renderSources(retrieved)}\n\n` +
+            `${renderSources(promptSources)}\n\n` +
             `Decide whether you can advise yet. If not, set mode "clarify" and ask up to 3 clarifying questions. ` +
             `If you can, set mode "advise" and ground every claim's citationLabel in the SOURCES above.`,
         },
@@ -178,11 +240,11 @@ export async function POST(req: NextRequest) {
   }
 
   // --- 2. Verify ------------------------------------------------------------
-  // For each claim, pull the exact text of the provision it cited (if the
-  // citation matches a real KB chunk) and have the verifier judge it strictly
-  // against that text. A citation that matches no chunk is a fabricated cite.
-  const claimSources: (KbChunk | null)[] = turn.claims.map((c) =>
-    c.citationLabel ? chunkByCitation(c.citationLabel) ?? null : null,
+  // For each claim, pull the exact text of the source it cited (legislation OR
+  // company policy) and have the verifier judge it strictly against that text.
+  // A citation that matches no available source is a fabricated cite.
+  const claimSources: (SourceRecord | null)[] = turn.claims.map((c) =>
+    c.citationLabel ? sourceIndex.get(c.citationLabel) ?? null : null,
   );
 
   let verified: VerifiedClaim[] = [];
@@ -254,17 +316,18 @@ export async function POST(req: NextRequest) {
   const shownClaims = verified.filter((c) => c.supported !== "unsupported");
   const droppedCount = verified.length - shownClaims.length;
 
-  // Sources = the distinct provisions actually backing shown claims.
+  // Sources = the distinct sources (both layers) actually backing shown claims.
   const sourceMap = new Map<string, AdvisorySource>();
   for (const c of shownClaims) {
     if (!c.citationLabel) continue;
-    const chunk = chunkByCitation(c.citationLabel);
-    if (chunk && !sourceMap.has(chunk.citationLabel)) {
-      sourceMap.set(chunk.citationLabel, {
-        citationLabel: chunk.citationLabel,
-        title: chunk.heading,
-        url: chunk.url,
-        version: chunk.version,
+    const src = sourceIndex.get(c.citationLabel);
+    if (src && !sourceMap.has(src.citationLabel)) {
+      sourceMap.set(src.citationLabel, {
+        citationLabel: src.citationLabel,
+        title: src.title,
+        url: src.url,
+        version: src.version,
+        kind: src.kind,
       });
     }
   }

@@ -70,6 +70,9 @@ export function MobileNav() {
             <MobileLink href="/cases" close={() => setOpen(false)}>
               My cases
             </MobileLink>
+            <MobileLink href="/advisor" close={() => setOpen(false)}>
+              ER Advisor
+            </MobileLink>
             <Link
               href="/start"
               onClick={() => setOpen(false)}

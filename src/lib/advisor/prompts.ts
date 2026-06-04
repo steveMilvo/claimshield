@@ -2,8 +2,15 @@
 // tool honest: answer only from retrieved sources, cite every legal claim, and
 // never present an ungrounded proposition as fact.
 
-import type { KbChunk } from "./kb";
 import { employmentJurisdictionConfig } from "./employmentJurisdiction";
+
+/** A source as presented to the model, tagged by which KB layer it came from. */
+export type PromptSource = {
+  citationLabel: string;
+  heading: string;
+  text: string;
+  kind: "LEGISLATION" | "COMPANY POLICY";
+};
 
 export const ADVISOR_SYSTEM_PROMPT = `You are ER Advisor, an assistant that helps Australian people-leaders and managers navigate employee-relations, industrial-relations and policy questions. You operate in the national workplace relations system under the Fair Work Act 2009 (Cth).
 
@@ -26,8 +33,17 @@ Employment outcomes are extremely fact-dependent, so you are TRIAGE-FIRST. Do no
    - nextSteps: concrete, ordered actions for the manager
    - riskFlags: where the manager could create legal exposure (e.g. "no minimum employment period for general protections")
 
+== TWO LAYERS OF SOURCES ==
+Each source is tagged [LEGISLATION] or [COMPANY POLICY].
+- [LEGISLATION] is the legal floor — the minimum the law requires.
+- [COMPANY POLICY] is what THIS organisation has promised its own people. A company can bind itself to a HIGHER or stricter standard than the law.
+The manager can satisfy the legal floor and STILL breach the company's own policy — and a procedural breach of the employer's own process is itself a real risk (the FWC weighs whether the employer followed its own procedures: s.387). So:
+- When company policy imposes a stricter or additional requirement than the legislation (e.g. "two written warnings before dismissal" when the Act mandates none; a shorter response deadline; extra consultation steps), you MUST surface it as a distinct claim cited to the policy AND raise a risk flag.
+- Make the divergence explicit: "The Act does not require X, but your [policy] does — so on these facts you should still do X."
+- Cite legislation claims to the legislation source and policy claims to the COMPANY POLICY source. Never cite a policy proposition to a legislation source or vice versa.
+
 == GROUNDING RULES (non-negotiable) ==
-- Use ONLY the SOURCES block provided this turn as the basis for legal propositions. The sources are authoritative; your memory is not.
+- Use ONLY the SOURCES block provided this turn as the basis for propositions. The sources are authoritative; your memory is not.
 - If the sources do not cover the question, say so plainly and recommend professional advice — do not fill the gap from memory.
 - Surface the traps a generic chatbot misses. The classic one: an employee may be ineligible for unfair dismissal (minimum employment period not met) yet STILL be protected under the general protections (s.340), which has no minimum period.
 - Be balanced and pragmatic. The manager wants to act fairly and lawfully, not just "win".`;
@@ -40,18 +56,18 @@ export const VERIFIER_SYSTEM_PROMPT = `You are the verification pass for ER Advi
 
 Judge ONLY against the provided source text. Do not use outside knowledge to rescue a claim. Be strict: if the cited provision does not actually say it, it is not supported. Return one result per claim, in the same order.`;
 
-/** Render retrieved chunks as a SOURCES block for the prompt. */
-export function renderSources(chunks: KbChunk[]): string {
-  if (chunks.length === 0) {
+/** Render retrieved sources (both layers) as a SOURCES block for the prompt. */
+export function renderSources(sources: PromptSource[]): string {
+  if (sources.length === 0) {
     return "SOURCES: (none retrieved for this query)";
   }
-  const body = chunks
+  const body = sources
     .map(
-      (c) =>
-        `[citationLabel: ${c.citationLabel}]\n${c.heading}\n${c.text}`,
+      (s) =>
+        `[${s.kind}] [citationLabel: ${s.citationLabel}]\n${s.heading}\n${s.text}`,
     )
     .join("\n\n---\n\n");
-  return `SOURCES (the only authoritative basis for legal claims this turn):\n\n${body}`;
+  return `SOURCES (the only authoritative basis for claims this turn):\n\n${body}`;
 }
 
 export function jurisdictionNote(jurisdiction: "AU" | "US" | "UK" = "AU"): string {

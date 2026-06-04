@@ -25,6 +25,10 @@ type Item =
   | { role: "assistant"; kind: "advise"; reply: string; answer: AnswerPayload }
   | { role: "assistant"; kind: "error"; content: string };
 
+type PolicyDoc = { title: string; text: string };
+
+const POLICY_STORE_KEY = "er-advisor-policies";
+
 const STARTERS = [
   "An employee has been late repeatedly. Can I dismiss them?",
   "We need to make a role redundant — what do I have to do?",
@@ -54,7 +58,28 @@ export default function AdvisorPage() {
   const [items, setItems] = useState<Item[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [policies, setPolicies] = useState<PolicyDoc[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // The org's policy bank lives client-side (no employee PII; server-side +
+  // auth is a Phase 1 item) and is sent with every request as the 2nd KB layer.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(POLICY_STORE_KEY);
+      if (raw) setPolicies(JSON.parse(raw));
+    } catch {
+      /* ignore malformed store */
+    }
+  }, []);
+
+  function updatePolicies(next: PolicyDoc[]) {
+    setPolicies(next);
+    try {
+      localStorage.setItem(POLICY_STORE_KEY, JSON.stringify(next));
+    } catch {
+      /* storage full / unavailable — keep in memory */
+    }
+  }
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -71,7 +96,10 @@ export default function AdvisorPage() {
       const res = await fetch("/api/advisor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: toApiMessages(nextItems) }),
+        body: JSON.stringify({
+          messages: toApiMessages(nextItems),
+          policies: policies.filter((p) => p.title.trim() && p.text.trim()),
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || `Request failed (${res.status}).`);
@@ -115,6 +143,8 @@ export default function AdvisorPage() {
           against the provision it cites before you see it.
         </p>
       </header>
+
+      <PolicyPanel policies={policies} onChange={updatePolicies} />
 
       <div className="rounded-2xl bg-white border border-black/5 shadow-card overflow-hidden flex flex-col">
         <div ref={scrollRef} className="max-h-[60vh] overflow-y-auto p-5 md:p-6 space-y-4">
@@ -186,6 +216,113 @@ export default function AdvisorPage() {
         Act 2009 (Cth) as held in the knowledge base; always confirm against the
         current source.
       </p>
+    </div>
+  );
+}
+
+function PolicyPanel({
+  policies,
+  onChange,
+}: {
+  policies: PolicyDoc[];
+  onChange: (next: PolicyDoc[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+
+  const count = policies.filter((p) => p.title.trim() && p.text.trim()).length;
+
+  function add() {
+    if (!title.trim() || !text.trim()) return;
+    onChange([...policies, { title: title.trim(), text: text.trim() }]);
+    setTitle("");
+    setText("");
+  }
+
+  return (
+    <div className="mb-5 rounded-2xl border border-black/8 bg-white shadow-card overflow-hidden">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 text-left"
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium">Company policy bank</span>
+          <span
+            className={cn(
+              "rounded-full px-2 py-0.5 text-[11px] font-medium",
+              count > 0 ? "bg-accent/12 text-accent-dark" : "bg-black/5 text-ink-muted",
+            )}
+          >
+            {count > 0 ? `${count} loaded` : "none added"}
+          </span>
+        </div>
+        <span className="text-ink-muted text-sm">{open ? "Hide" : "Manage"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-black/5 p-4 space-y-4">
+          <p className="text-xs text-ink-muted leading-relaxed">
+            Add your organisation&apos;s own policies (disciplinary procedure, PIP
+            policy, flexible-work policy, EA clauses…). ER Advisor cross-references
+            them against the legislation and flags where your policy requires{" "}
+            <em>more</em> than the law does. Stored only in this browser.
+          </p>
+
+          {policies.length > 0 && (
+            <ul className="space-y-1.5">
+              {policies.map((p, i) => (
+                <li
+                  key={`${p.title}-${i}`}
+                  className="flex items-center justify-between gap-3 rounded-lg bg-canvas px-3 py-2 text-sm"
+                >
+                  <span className="min-w-0 flex-1 truncate">
+                    <span className="font-medium">{p.title}</span>{" "}
+                    <span className="text-ink-muted text-xs">
+                      ({p.text.length.toLocaleString()} chars)
+                    </span>
+                  </span>
+                  <button
+                    onClick={() => onChange(policies.filter((_, idx) => idx !== i))}
+                    aria-label={`Remove ${p.title}`}
+                    className="text-ink-muted text-xs px-2 py-1 rounded-full hover:bg-white"
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="space-y-2">
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Policy name — e.g. Disciplinary Procedure"
+              className="w-full rounded-lg border border-black/12 bg-white px-3 py-2 text-sm outline-none focus:border-shield-500 focus:ring-4 focus:ring-shield-500/12"
+            />
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              rows={4}
+              placeholder="Paste the policy text. Tip: keep clause numbers (e.g. 3.4.5) so they can be cited."
+              className="w-full resize-y rounded-lg border border-black/12 bg-white px-3 py-2 text-sm outline-none focus:border-shield-500 focus:ring-4 focus:ring-shield-500/12"
+            />
+            <button
+              onClick={add}
+              disabled={!title.trim() || !text.trim()}
+              className={cn(
+                "rounded-lg px-4 py-2 text-sm font-medium transition",
+                !title.trim() || !text.trim()
+                  ? "bg-black/10 text-ink-muted cursor-not-allowed"
+                  : "bg-shield-600 text-white hover:bg-shield-700",
+              )}
+            >
+              Add policy
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -308,15 +445,24 @@ function MessageBlock({ item, onPick }: { item: Item; onPick: (q: string) => voi
             </p>
             <ul className="mt-1.5 space-y-1">
               {answer.sources.map((s) => (
-                <li key={s.citationLabel} className="text-xs">
-                  <a
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-shield-700 hover:underline font-medium"
-                  >
-                    {s.citationLabel}
-                  </a>{" "}
+                <li key={s.citationLabel} className="text-xs flex items-baseline gap-1.5">
+                  {s.url ? (
+                    <a
+                      href={s.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-shield-700 hover:underline font-medium"
+                    >
+                      {s.citationLabel}
+                    </a>
+                  ) : (
+                    <span className="font-medium text-ink">{s.citationLabel}</span>
+                  )}
+                  {s.kind === "company" && (
+                    <span className="rounded-full bg-accent/12 text-accent-dark px-1.5 py-0.5 text-[10px] font-medium">
+                      Your policy
+                    </span>
+                  )}
                   <span className="text-ink-muted">— {s.title}</span>
                 </li>
               ))}

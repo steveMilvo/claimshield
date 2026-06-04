@@ -49,8 +49,9 @@ export type RiskFlag = {
 export type AdvisorySource = {
   citationLabel: string;
   title: string;
-  url: string;
+  url: string | null; // company-policy sources have no external URL
   version: string;
+  kind: "legislation" | "company";
 };
 
 export type AdvisoryAnswer = {

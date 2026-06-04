@@ -154,8 +154,8 @@ function tokenize(s: string): string[] {
     .filter((t) => t.length > 1 && !STOPWORDS.has(t));
 }
 
-/** Words of a string, for prefix-based matching. */
-function wordsOf(s: string): string[] {
+/** Words of a string, for prefix-based matching. Shared with the policy KB. */
+export function wordsOf(s: string): string[] {
   return s.toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(Boolean);
 }
 
@@ -168,6 +168,18 @@ function termMatches(term: string, words: string[]): boolean {
   if (term.length < 5) return words.includes(term);
   const prefix = term.slice(0, 5);
   return words.some((w) => w.length >= 5 && w.slice(0, 5) === prefix);
+}
+
+/** Query → significant search terms (stopwords removed). Shared with policy KB. */
+export function queryTerms(query: string): string[] {
+  return tokenize(query);
+}
+
+/** Count of query terms that match the given words (1 point each). */
+export function scoreWords(terms: string[], words: string[]): number {
+  let score = 0;
+  for (const term of terms) if (termMatches(term, words)) score += 1;
+  return score;
 }
 
 const STOPWORDS = new Set([
