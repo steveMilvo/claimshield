@@ -174,15 +174,36 @@ The system prompt enforces the rules:
 
 ### 5.4 The verification pass (the differentiator)
 
-After generation, a second Claude call (or a structured-output grader) receives
-the draft answer **and** the retrieved sources, and for each claim returns:
+**Guiding principle: the KB is the oracle, not a second opinion.** A coding
+agent can "validate" code because code has a ground-truth oracle — the compiler
+and the test suite give an objective pass/fail. Legal advice has no compiler, so
+asking a second LLM "does this look right?" from memory just relocates the
+hallucination problem. The authoritative **source text in the KB is our
+compiler**: verification means checking each claim against the actual provision,
+never against a model's recollection. (This is why repurposing a generic coding
+agent like opencode for validation doesn't work out of the box — same loop, but
+pointed at no oracle. We borrow the *agentic pattern*, not the project.)
+
+So the verifier is **agentic and retrieval-tool-driven**, not a single-shot
+grader. It receives the draft answer and is given tools to interrogate the KB:
+
+```ts
+// Tools exposed to the verifier (Anthropic SDK tool-use — the same primitive
+// ClaimShield already uses in src/app/api/analyze/route.ts; no new dependency).
+kb_lookup(citation: string): { citationLabel; text; version; effectiveFrom } | null
+kb_search(query: string):    Array<{ citationLabel; text; score }>
+```
+
+For each claim in the draft it: (1) looks up the cited provision (or searches
+for the right one), (2) reads the actual text, (3) judges support against *that
+text*. Output per claim:
 
 ```ts
 type ClaimCheck = {
   claim: string;
   citation: string | null;       // e.g. "s.387 FW Act"
   supported: "supported" | "partial" | "unsupported";
-  sourceQuote: string | null;    // the exact text that backs it
+  sourceQuote: string | null;    // the exact retrieved text that backs it
   note: string | null;
 };
 ```
@@ -194,7 +215,9 @@ Rendering rule:
   grounded" disclosure). Never present an unsupported legal claim as fact.
 
 This mirrors ClaimShield's `FindingSchema` (which already pairs a claim with a
-nullable `citation`) but adds the grounding check ClaimShield doesn't do today.
+nullable `citation`) but adds the active, tool-driven grounding check
+ClaimShield doesn't do today. A single-shot grader is the acceptable fallback
+for the Phase 0 demo; the agentic verifier is the Phase 1 target.
 
 ### 5.5 Data model (sketch)
 
