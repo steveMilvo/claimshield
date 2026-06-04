@@ -131,13 +131,22 @@ export default function Home() {
           .
         </h1>
         <p className="mt-5 max-w-2xl animate-fade-up text-lg leading-relaxed text-ink-soft">
-          Most tools grade an essay and stop. Margin builds a living, trait-by-trait model of
-          how <span className="text-ink">your</span> writing is developing — then turns every
-          draft into one targeted, faded practice that moves a real skill. The grade is the
-          thermostat. The practice is the furnace.
+          Marking a class set tells you where students are. It doesn&apos;t move them forward. Margin closes that gap. Every draft runs through a five-step loop: write, diagnose, practise, revise, prove. The AI scores each rubric trait, surfaces the one move with the most leverage, and builds a scaffolded exercise around it — grounded in the student&apos;s own words. Teachers get a live competency grid showing the whole cohort&apos;s weakest trait and the single mini-lesson that shifts the most students. No more guessing what to teach next.
         </p>
 
-        <div className="mt-7 flex flex-wrap items-center gap-3" id="start">
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <a
+            href="#evidence"
+            className="inline-flex items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1 text-xs font-medium text-ink-soft transition hover:border-focus-200 hover:bg-focus-50 hover:text-focus-700"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+              <path d="M6 1.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9zM6 5v3M6 4h.005" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+            </svg>
+            Grounded in peer-reviewed educational research
+          </a>
+        </div>
+
+        <div className="mt-5 flex flex-wrap items-center gap-3" id="start">
           <a href="#tasks" className="rounded-xl bg-focus-500 px-5 py-2.5 font-medium text-white shadow-card transition hover:bg-focus-600">
             Choose a writing task
           </a>
@@ -208,7 +217,7 @@ export default function Home() {
       </section>
 
       {/* ── Research foundations ─────────────────────────────────────── */}
-      <section className="border-t border-line/70 bg-paper paper-grain">
+      <section id="evidence" className="border-t border-line/70 bg-paper paper-grain">
         <div className="mx-auto max-w-5xl px-5 py-16">
 
           {/* Header */}
