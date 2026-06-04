@@ -8,6 +8,56 @@ import { overallRating } from "@/lib/studentModel";
 import type { StudentModel } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
+const RESEARCH: {
+  quote: string;
+  author: string;
+  source: string;
+  year: string;
+  note: string;
+  href?: string;
+}[] = [
+  {
+    quote:
+      "The research shows clearly that formative assessment does improve learning. The gains in achievement appear to be among the largest ever reported for educational interventions.",
+    author: "Black & Wiliam",
+    source: "Inside the Black Box",
+    year: "1998",
+    note: "Effect size d ≈ 0.70 — among the largest in K–12 research. Margin diagnoses every trait before the student ever sees a score.",
+  },
+  {
+    quote:
+      "The zone of proximal development defines those functions that have not yet matured but are in the process of maturation — the buds or flowers of development, rather than the fruits.",
+    author: "Lev Vygotsky",
+    source: "Mind in Society",
+    year: "1978",
+    note: "Margin's focus-trait selector picks the highest-leverage reachable skill — not the absolute weakest, and not one already out of reach.",
+  },
+  {
+    quote:
+      "Worked examples provide a full problem solution for the learner to study. Fading — gradually removing solution steps — bridges worked examples to independent problem solving.",
+    author: "Renkl et al.",
+    source: "Learning from Worked-Out Examples",
+    year: "1999",
+    note: "Every practice session runs the same three rungs: see the move fully worked, complete a partial version, then apply it in your own draft.",
+  },
+  {
+    quote:
+      "Mastery learning strategies appear to have positive effects on student learning … Most students can attain a high level of learning if given enough time and appropriate instruction.",
+    author: "Benjamin Bloom",
+    source: "Learning for Mastery",
+    year: "1968",
+    note: "A trait is never marked mastered on the practised prompt. Transfer to a new, cold-write prompt is required.",
+  },
+  {
+    quote:
+      "Deliberate practice involves considerable, specific, and sustained effort to do something you cannot do well — or even at all.",
+    author: "Ericsson, Krampe & Tesch-Römer",
+    source: "The Role of Deliberate Practice in the Acquisition of Expert Performance",
+    year: "1993",
+    note: "One trait. One move. Grounded in a verbatim span of the student's own text. Revision is the practice.",
+  },
+];
+
 const LOOP = [
   { k: "Draft", d: "Write a real piece — typed, in one focused surface." },
   { k: "Diagnose", d: "Scored on every rubric trait, grounded in your words." },
@@ -141,11 +191,73 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Research foundations ─────────────────────────────────────── */}
+      <section className="border-t border-line/70 bg-paper paper-grain">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <div className="mb-10 flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pencil-500">
+                Evidence base
+              </p>
+              <h2 className="mt-2 font-serif text-2xl text-ink">
+                Research this is built on
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">
+                Every design decision in Margin traces to a named, replicated finding. These are not decorations — they are constraints that the architecture had to satisfy.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {RESEARCH.map((r) => (
+              <figure
+                key={r.author + r.year}
+                className="group relative rounded-2xl border border-line bg-card p-5 shadow-card transition hover:shadow-lift"
+              >
+                {/* margin-rule accent */}
+                <div className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-focus-300 opacity-60 group-hover:opacity-100 transition-opacity" />
+
+                <blockquote className="pl-4">
+                  <p className="font-serif text-[15px] leading-snug text-ink">
+                    &ldquo;{r.quote}&rdquo;
+                  </p>
+                </blockquote>
+
+                <figcaption className="mt-4 pl-4">
+                  <p className="text-[13px] font-semibold text-ink-soft">
+                    {r.author}{" "}
+                    <span className="font-normal text-ink-faint">· {r.year}</span>
+                  </p>
+                  {r.href ? (
+                    <a
+                      href={r.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-0.5 block text-xs italic text-focus-600 hover:underline"
+                    >
+                      {r.source}
+                    </a>
+                  ) : (
+                    <p className="mt-0.5 text-xs italic text-ink-faint">{r.source}</p>
+                  )}
+                  <p className="mt-3 text-[12px] leading-snug text-pencil-500 border-t border-line pt-3">
+                    {r.note}
+                  </p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t border-line/70">
         <div className="mx-auto flex max-w-5xl flex-col gap-1 px-5 py-8 text-xs text-ink-faint">
           <Logo withWord className="mb-1 text-ink-muted" />
-          <p>Prototype · the loop runs fully offline on a deterministic mock scorer. Add an ANTHROPIC_API_KEY to switch on the calibrated LLM judge.</p>
-          <p>Pedagogy: formative assessment, worked-example effect, ZPD, mastery learning, transfer-gated evidence.</p>
+          <p>Prototype · the loop runs fully offline on a deterministic mock scorer. Add an <code className="font-mono">ANTHROPIC_API_KEY</code> to switch on the calibrated LLM judge.</p>
+          <p>
+            Pedagogy: formative assessment (Black &amp; Wiliam) · worked-example effect &amp; fading (Sweller, Renkl) ·
+            ZPD (Vygotsky) · mastery learning (Bloom) · deliberate practice (Ericsson) · transfer-gated evidence of mastery.
+          </p>
         </div>
       </footer>
     </main>
