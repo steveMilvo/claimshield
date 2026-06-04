@@ -8,25 +8,30 @@ import { overallRating } from "@/lib/studentModel";
 import type { StudentModel } from "@/lib/types";
 import { cn } from "@/lib/cn";
 
-const RESEARCH: {
-  quote: string;
-  author: string;
-  source: string;
-  year: string;
-  note: string;
-  href?: string;
-  featured?: boolean;
-}[] = [
+const PAPERS = [
   {
+    tag: "AU · NAPLAN",
     quote:
       "Margin is not merely an automated grading tool; it is a pedagogical engine built on decades of cognitive science and educational research. By enforcing deliberate practice, targeting the Zone of Proximal Development, managing cognitive load through worked examples, and demanding transfer-gated mastery, Margin ensures that writing instruction actually compounds.",
     author: "Steve Milverton MSL",
     source: "Margin: The Pedagogical Engine for Writing Instruction that Compounds",
     year: "2026",
-    note: "The full analysis — how each design decision maps to a named, replicated finding in cognitive science and education research.",
+    note: "The Australian edition — how each architectural decision maps to a named, replicated finding, anchored to the NAPLAN writing rubric.",
     href: "/research/margin-pedagogical-engine.pdf",
-    featured: true,
   },
+  {
+    tag: "International · US · UK · AU · NZ · CA",
+    quote:
+      "Across the Anglosphere — including the United States, Canada, the United Kingdom, Australia, and New Zealand — national and international assessments reveal a troubling stagnation or decline in writing and literacy scores during the middle and secondary school years.",
+    author: "Steve Milverton MSL",
+    source: "Margin: The Pedagogical Engine for Writing Instruction that Compounds — International Edition",
+    year: "2026",
+    note: "The global case: NAEP, Ofsted, NAPLAN, EQAO/PISA, NCEA — the same instructional failure across every Anglosphere framework, and one evidence-based response.",
+    href: "/research/margin-pedagogical-engine-international.pdf",
+  },
+];
+
+const RESEARCH = [
   {
     quote:
       "The research shows clearly that formative assessment does improve learning. The gains in achievement appear to be among the largest ever reported for educational interventions.",
@@ -205,99 +210,95 @@ export default function Home() {
       {/* ── Research foundations ─────────────────────────────────────── */}
       <section className="border-t border-line/70 bg-paper paper-grain">
         <div className="mx-auto max-w-5xl px-5 py-16">
-          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pencil-500">
-                Evidence base
-              </p>
-              <h2 className="mt-2 font-serif text-2xl text-ink">
-                Research this is built on
-              </h2>
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">
-                Every design decision in Margin traces to a named, replicated finding. These are not decorations — they are constraints that the architecture had to satisfy.
-              </p>
-            </div>
-            <a
-              href="/research/margin-pedagogical-engine.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-focus-200 bg-focus-50 px-4 py-2.5 text-sm font-medium text-focus-700 shadow-card transition hover:bg-focus-100 hover:shadow-lift"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-                <path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
-                <path d="M10 2v4h4M6 9h4M6 11.5h2.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-              </svg>
-              Read the research paper
-            </a>
+
+          {/* Header */}
+          <div className="mb-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pencil-500">
+              Evidence base
+            </p>
+            <h2 className="mt-2 font-serif text-2xl text-ink">
+              Research this is built on
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">
+              Every design decision in Margin traces to a named, replicated finding. These are not decorations — they are constraints that the architecture had to satisfy.
+            </p>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {RESEARCH.map((r) => (
+          {/* Our papers — side by side */}
+          <div className="mb-6 grid gap-5 sm:grid-cols-2">
+            {PAPERS.map((p) => (
               <figure
-                key={r.author + r.year}
-                className={cn(
-                  "group relative rounded-2xl border p-5 shadow-card transition hover:shadow-lift",
-                  r.featured
-                    ? "border-focus-200 bg-focus-50/60 sm:col-span-2 lg:col-span-3"
-                    : "border-line bg-card"
-                )}
+                key={p.href}
+                className="group relative flex flex-col rounded-2xl border border-focus-200 bg-focus-50/60 p-5 shadow-card transition hover:shadow-lift"
               >
-                {/* margin-rule accent */}
-                <div className={cn(
-                  "absolute left-0 top-6 bottom-6 w-[3px] rounded-full transition-opacity",
-                  r.featured
-                    ? "bg-focus-500 opacity-80 group-hover:opacity-100"
-                    : "bg-focus-300 opacity-60 group-hover:opacity-100"
-                )} />
+                <div className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-focus-500 opacity-70 transition-opacity group-hover:opacity-100" />
 
-                <blockquote className="pl-4">
-                  <p className={cn(
-                    "font-serif leading-snug text-ink",
-                    r.featured ? "text-[17px] sm:text-[18px]" : "text-[15px]"
-                  )}>
-                    &ldquo;{r.quote}&rdquo;
+                <div className="mb-3 pl-4">
+                  <span className="rounded-full border border-focus-200 bg-focus-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-focus-700">
+                    {p.tag}
+                  </span>
+                </div>
+
+                <blockquote className="flex-1 pl-4">
+                  <p className="font-serif text-[15px] leading-snug text-ink">
+                    &ldquo;{p.quote}&rdquo;
                   </p>
                 </blockquote>
 
                 <figcaption className="mt-4 pl-4 flex flex-wrap items-end justify-between gap-3">
                   <div>
                     <p className="text-[13px] font-semibold text-ink-soft">
-                      {r.author}{" "}
-                      <span className="font-normal text-ink-faint">· {r.year}</span>
+                      {p.author}{" "}
+                      <span className="font-normal text-ink-faint">· {p.year}</span>
                     </p>
-                    {r.href ? (
-                      <a
-                        href={r.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-0.5 block text-xs italic text-focus-600 hover:underline"
-                      >
-                        {r.source}
-                      </a>
-                    ) : (
-                      <p className="mt-0.5 text-xs italic text-ink-faint">{r.source}</p>
-                    )}
-                    <p className="mt-3 text-[12px] leading-snug text-pencil-500 border-t border-line pt-3">
-                      {r.note}
+                    <p className="mt-0.5 text-xs italic text-ink-faint">{p.source}</p>
+                    <p className="mt-3 border-t border-line pt-3 text-[12px] leading-snug text-pencil-500">
+                      {p.note}
                     </p>
                   </div>
-                  {r.featured && (
-                    <a
-                      href={r.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-focus-500 px-3.5 py-2 text-xs font-semibold text-white shadow-card transition hover:bg-focus-600"
-                    >
-                      Download PDF
-                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
-                        <path d="M6.5 2v7M3.5 6l3 3 3-3M2 11h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </a>
-                  )}
+                  <a
+                    href={p.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-focus-500 px-3.5 py-2 text-xs font-semibold text-white shadow-card transition hover:bg-focus-600"
+                  >
+                    Download PDF
+                    <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
+                      <path d="M6.5 2v7M3.5 6l3 3 3-3M2 11h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </a>
                 </figcaption>
               </figure>
             ))}
           </div>
+
+          {/* External foundational research */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {RESEARCH.map((r) => (
+              <figure
+                key={r.author + r.year}
+                className="group relative rounded-2xl border border-line bg-card p-5 shadow-card transition hover:shadow-lift"
+              >
+                <div className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-focus-300 opacity-60 transition-opacity group-hover:opacity-100" />
+                <blockquote className="pl-4">
+                  <p className="font-serif text-[15px] leading-snug text-ink">
+                    &ldquo;{r.quote}&rdquo;
+                  </p>
+                </blockquote>
+                <figcaption className="mt-4 pl-4">
+                  <p className="text-[13px] font-semibold text-ink-soft">
+                    {r.author}{" "}
+                    <span className="font-normal text-ink-faint">· {r.year}</span>
+                  </p>
+                  <p className="mt-0.5 text-xs italic text-ink-faint">{r.source}</p>
+                  <p className="mt-3 border-t border-line pt-3 text-[12px] leading-snug text-pencil-500">
+                    {r.note}
+                  </p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+
         </div>
       </section>
 
