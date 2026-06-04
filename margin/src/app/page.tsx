@@ -15,12 +15,23 @@ const RESEARCH: {
   year: string;
   note: string;
   href?: string;
+  featured?: boolean;
 }[] = [
+  {
+    quote:
+      "Margin is not merely an automated grading tool; it is a pedagogical engine built on decades of cognitive science and educational research. By enforcing deliberate practice, targeting the Zone of Proximal Development, managing cognitive load through worked examples, and demanding transfer-gated mastery, Margin ensures that writing instruction actually compounds.",
+    author: "Steve Milverton MSL",
+    source: "Margin: The Pedagogical Engine for Writing Instruction that Compounds",
+    year: "2026",
+    note: "The full analysis — how each design decision maps to a named, replicated finding in cognitive science and education research.",
+    href: "/research/margin-pedagogical-engine.pdf",
+    featured: true,
+  },
   {
     quote:
       "The research shows clearly that formative assessment does improve learning. The gains in achievement appear to be among the largest ever reported for educational interventions.",
     author: "Black & Wiliam",
-    source: "Inside the Black Box",
+    source: "Assessment and Classroom Learning",
     year: "1998",
     note: "Effect size d ≈ 0.70 — among the largest in K–12 research. Margin diagnoses every trait before the student ever sees a score.",
   },
@@ -34,18 +45,18 @@ const RESEARCH: {
   },
   {
     quote:
-      "Worked examples provide a full problem solution for the learner to study. Fading — gradually removing solution steps — bridges worked examples to independent problem solving.",
-    author: "Renkl et al.",
-    source: "Learning from Worked-Out Examples",
-    year: "1999",
+      "The optimal instructional sequence is gradual: a fully worked example, then a completion problem, then an independent problem.",
+    author: "Alexander Renkl",
+    source: "Worked-Out Examples: Instructional Explanations Support Learning by Self-Explanations",
+    year: "2002",
     note: "Every practice session runs the same three rungs: see the move fully worked, complete a partial version, then apply it in your own draft.",
   },
   {
     quote:
-      "Mastery learning strategies appear to have positive effects on student learning … Most students can attain a high level of learning if given enough time and appropriate instruction.",
+      "The 2 sigma problem: the search for methods of group instruction as effective as one-to-one tutoring.",
     author: "Benjamin Bloom",
-    source: "Learning for Mastery",
-    year: "1968",
+    source: "Educational Researcher",
+    year: "1984",
     note: "A trait is never marked mastered on the practised prompt. Transfer to a new, cold-write prompt is required.",
   },
   {
@@ -194,7 +205,7 @@ export default function Home() {
       {/* ── Research foundations ─────────────────────────────────────── */}
       <section className="border-t border-line/70 bg-paper paper-grain">
         <div className="mx-auto max-w-5xl px-5 py-16">
-          <div className="mb-10 flex items-start justify-between gap-4">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-pencil-500">
                 Evidence base
@@ -206,43 +217,83 @@ export default function Home() {
                 Every design decision in Margin traces to a named, replicated finding. These are not decorations — they are constraints that the architecture had to satisfy.
               </p>
             </div>
+            <a
+              href="/research/margin-pedagogical-engine.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-focus-200 bg-focus-50 px-4 py-2.5 text-sm font-medium text-focus-700 shadow-card transition hover:bg-focus-100 hover:shadow-lift"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+                <path d="M3 2h7l3 3v9H3V2z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+                <path d="M10 2v4h4M6 9h4M6 11.5h2.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
+              </svg>
+              Read the research paper
+            </a>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {RESEARCH.map((r) => (
               <figure
                 key={r.author + r.year}
-                className="group relative rounded-2xl border border-line bg-card p-5 shadow-card transition hover:shadow-lift"
+                className={cn(
+                  "group relative rounded-2xl border p-5 shadow-card transition hover:shadow-lift",
+                  r.featured
+                    ? "border-focus-200 bg-focus-50/60 sm:col-span-2 lg:col-span-3"
+                    : "border-line bg-card"
+                )}
               >
                 {/* margin-rule accent */}
-                <div className="absolute left-0 top-6 bottom-6 w-[3px] rounded-full bg-focus-300 opacity-60 group-hover:opacity-100 transition-opacity" />
+                <div className={cn(
+                  "absolute left-0 top-6 bottom-6 w-[3px] rounded-full transition-opacity",
+                  r.featured
+                    ? "bg-focus-500 opacity-80 group-hover:opacity-100"
+                    : "bg-focus-300 opacity-60 group-hover:opacity-100"
+                )} />
 
                 <blockquote className="pl-4">
-                  <p className="font-serif text-[15px] leading-snug text-ink">
+                  <p className={cn(
+                    "font-serif leading-snug text-ink",
+                    r.featured ? "text-[17px] sm:text-[18px]" : "text-[15px]"
+                  )}>
                     &ldquo;{r.quote}&rdquo;
                   </p>
                 </blockquote>
 
-                <figcaption className="mt-4 pl-4">
-                  <p className="text-[13px] font-semibold text-ink-soft">
-                    {r.author}{" "}
-                    <span className="font-normal text-ink-faint">· {r.year}</span>
-                  </p>
-                  {r.href ? (
+                <figcaption className="mt-4 pl-4 flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <p className="text-[13px] font-semibold text-ink-soft">
+                      {r.author}{" "}
+                      <span className="font-normal text-ink-faint">· {r.year}</span>
+                    </p>
+                    {r.href ? (
+                      <a
+                        href={r.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-0.5 block text-xs italic text-focus-600 hover:underline"
+                      >
+                        {r.source}
+                      </a>
+                    ) : (
+                      <p className="mt-0.5 text-xs italic text-ink-faint">{r.source}</p>
+                    )}
+                    <p className="mt-3 text-[12px] leading-snug text-pencil-500 border-t border-line pt-3">
+                      {r.note}
+                    </p>
+                  </div>
+                  {r.featured && (
                     <a
                       href={r.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-0.5 block text-xs italic text-focus-600 hover:underline"
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-focus-500 px-3.5 py-2 text-xs font-semibold text-white shadow-card transition hover:bg-focus-600"
                     >
-                      {r.source}
+                      Download PDF
+                      <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden>
+                        <path d="M6.5 2v7M3.5 6l3 3 3-3M2 11h9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </a>
-                  ) : (
-                    <p className="mt-0.5 text-xs italic text-ink-faint">{r.source}</p>
                   )}
-                  <p className="mt-3 text-[12px] leading-snug text-pencil-500 border-t border-line pt-3">
-                    {r.note}
-                  </p>
                 </figcaption>
               </figure>
             ))}
