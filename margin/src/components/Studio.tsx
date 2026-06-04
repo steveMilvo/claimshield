@@ -33,6 +33,7 @@ export function Studio({ task }: { task: WritingTask }) {
   const [focusDelta, setFocusDelta] = useState<number | null>(null);
   const [practised, setPractised] = useState(false);
   const [support, setSupport] = useState<SupportInfo | null>(null);
+  const [diagError, setDiagError] = useState<string | null>(null);
   const editsRef = useRef(0);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export function Studio({ task }: { task: WritingTask }) {
 
   async function runDiagnose() {
     if (words < 20) return;
+    setDiagError(null);
     setLoading(true);
     try {
       const res = await fetch("/api/diagnose", {
@@ -58,6 +60,10 @@ export function Studio({ task }: { task: WritingTask }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, textType: task.textType, taskId: task.id }),
       });
+      if (!res.ok) {
+        setDiagError("The scorer couldn't read the draft. Try again.");
+        return;
+      }
       const data = await res.json();
 
       // Safeguarding: an urgent disclosure suppresses feedback and shows a
@@ -69,6 +75,11 @@ export function Studio({ task }: { task: WritingTask }) {
       }
 
       const diag: Diagnosis = data.diagnosis;
+      if (!diag) {
+        setDiagError("Scorer returned an empty diagnosis. Try again.");
+        return;
+      }
+
       setEngine(data.engine);
 
       const newBand = diag.scores.find((s) => s.trait === diag.focusTrait)?.band ?? 0;
@@ -78,7 +89,10 @@ export function Studio({ task }: { task: WritingTask }) {
       setModel(data.student); // server is the source of truth
       setDiagnosis(diag);
       setHasDiagnosed(true);
+      setPractised(false); // reset so the "Practise" button reappears on next round
       setPhase("diagnosed");
+    } catch {
+      setDiagError("Connection error — check your network and try again.");
     } finally {
       setLoading(false);
     }
@@ -188,7 +202,9 @@ export function Studio({ task }: { task: WritingTask }) {
               topic={task.title}
               onDone={() => {
                 setPractised(true);
-                setPhase("write");
+                // Return to "diagnosed" so the feedback stays visible while
+                // the student revises — "write" hid the diagnosis section.
+                setPhase("diagnosed");
               }}
             />
           ) : (
@@ -237,6 +253,9 @@ export function Studio({ task }: { task: WritingTask }) {
               {words < 20 && (
                 <p className="mt-2 text-xs text-ink-faint">Write at least 20 words to get a diagnosis.</p>
               )}
+              {diagError && (
+                <p className="mt-2 text-xs text-red-600">{diagError}</p>
+              )}
             </div>
           )}
         </section>
@@ -279,20 +298,33 @@ export function Studio({ task }: { task: WritingTask }) {
             </div>
           )}
 
-          <div className="rounded-2xl border border-focus-200 bg-focus-50 p-5 shadow-card">
+          <div className={cn(
+            "rounded-2xl border p-5 shadow-card",
+            practised ? "border-pencil-200 bg-pencil-50/60" : "border-focus-200 bg-focus-50"
+          )}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-focus-700">
-                  Your next move · highest leverage
+                <p className={cn(
+                  "text-[11px] font-semibold uppercase tracking-[0.16em]",
+                  practised ? "text-pencil-600" : "text-focus-700"
+                )}>
+                  {practised ? "Revise your draft · apply the move below" : "Your next move · highest leverage"}
                 </p>
                 <h3 className="mt-1 font-serif text-2xl text-ink">{focusDef.label}</h3>
               </div>
-              <button
-                onClick={() => setPhase("practice")}
-                className="rounded-xl bg-focus-500 px-5 py-2.5 font-medium text-white shadow-card transition hover:bg-focus-600"
-              >
-                Practise this move →
-              </button>
+              {!practised && (
+                <button
+                  onClick={() => setPhase("practice")}
+                  className="rounded-xl bg-focus-500 px-5 py-2.5 font-medium text-white shadow-card transition hover:bg-focus-600"
+                >
+                  Practise this move →
+                </button>
+              )}
+              {practised && (
+                <span className="rounded-xl bg-pencil-100 px-4 py-2 text-sm font-medium text-pencil-700">
+                  Practised ✓ — now revise, then re-check
+                </span>
+              )}
             </div>
             <p className="mt-3 max-w-2xl text-ink-soft">
               {TAXONOMY_MAP[diagnosis.focusTag]?.studentFraming ?? focusScore.note}

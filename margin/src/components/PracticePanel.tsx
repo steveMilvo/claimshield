@@ -37,8 +37,10 @@ export function PracticePanel({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ trait, tag, topic }),
         });
+        if (!res.ok) { if (alive) setError(true); return; }
         const data = await res.json();
         if (!alive) return;
+        if (!data.ladder) { setError(true); return; }
         setLadder(data.ladder);
         setEngine(data.engine);
       } catch {
